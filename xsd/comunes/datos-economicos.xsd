@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v1"
+    targetNamespace="https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v1"
+    elementFormDefault="qualified">
+
+  <xs:annotation>
+    <xs:documentation>
+      Datos económicos del acto: valuación fiscal del inmueble y monto del acto.
+    </xs:documentation>
+  </xs:annotation>
+
+  <!-- Tipo: monto monetario con 2 decimales -->
+  <xs:simpleType name="MontoType">
+    <xs:annotation>
+      <xs:documentation>
+        Monto monetario con hasta 2 decimales. Sin separador de miles.
+        El separador decimal es el punto.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:decimal">
+      <xs:fractionDigits value="2"/>
+      <xs:minInclusive value="0"/>
+      <xs:totalDigits value="18"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Tipo: moneda -->
+  <xs:simpleType name="MonedaEnum">
+    <xs:annotation>
+      <xs:documentation>
+        Moneda del monto. En v1.0: pesos argentinos ($) y dólares estadounidenses (USD).
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="$"/>
+      <xs:enumeration value="USD"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Tipo: ValuacionFiscal -->
+  <xs:complexType name="ValuacionFiscalType">
+    <xs:annotation>
+      <xs:documentation>
+        Valuación fiscal del inmueble en pesos argentinos (siempre $).
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="valor" type="MontoType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Tipo: Monto del acto -->
+  <xs:complexType name="MontoActoType">
+    <xs:annotation>
+      <xs:documentation>
+        Monto del acto. Si la moneda es USD, debe incluir la cotización al
+        día del acto.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="valor" type="MontoType"/>
+      <xs:element name="moneda" type="MonedaEnum"/>
+      <xs:element name="cotizacion" type="MontoType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Cotización en pesos por unidad de moneda extranjera. Obligatorio
+            si moneda != "$".
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Tipo: DatosEconomicos -->
+  <xs:complexType name="DatosEconomicosType">
+    <xs:sequence>
+      <xs:element name="ValuacionFiscal" type="ValuacionFiscalType"/>
+      <xs:element name="Monto" type="MontoActoType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>

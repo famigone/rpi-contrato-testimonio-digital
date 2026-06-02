@@ -1,0 +1,31 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+.*.swp
+
+# Editors
+.vscode/
+.idea/
+*.iml
+.project
+.classpath
+.settings/
+
+# Temporary files
+*.tmp
+*.bak
+*.log
+
+# OS-generated archives
+*.zip
+*.tar.gz
+*.tgz

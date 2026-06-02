@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v1"
+    targetNamespace="https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v1"
+    elementFormDefault="qualified">
+
+  <xs:include schemaLocation="../comunes/persona-humana.xsd"/>
+  <xs:include schemaLocation="../comunes/identificacion-inmueble.xsd"/>
+
+  <xs:annotation>
+    <xs:documentation>
+      Acto de compraventa de inmueble. En v1.0 es el único tipo de acto
+      soportado.
+
+      Restricciones de v1.0:
+      - Solo personas humanas como adquirentes y transmitentes.
+      - Sin representantes legales ni poderes.
+      - Sin asentimiento conyugal estructurado (puede aparecer en el cuerpo).
+    </xs:documentation>
+  </xs:annotation>
+
+  <xs:complexType name="CompraventaType">
+    <xs:sequence>
+      <xs:element name="Adquirentes">
+        <xs:annotation>
+          <xs:documentation>
+            Lista de personas que adquieren el inmueble. Al menos uno.
+            La suma de proporciones debe ser igual a 1 (100%).
+          </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Persona" type="PersonaHumanaType" minOccurs="1" maxOccurs="20">
+              <xs:annotation>
+                <xs:documentation>
+                  Adquirente. Requiere: Apellido, Nombres, Documento,
+                  EstadoCivil, Nacionalidad, FechaNacimiento, Proporcion.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+
+      <xs:element name="Transmitentes">
+        <xs:annotation>
+          <xs:documentation>
+            Lista de personas que transmiten el inmueble. Al menos uno.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Persona" type="PersonaHumanaType" minOccurs="1" maxOccurs="20">
+              <xs:annotation>
+                <xs:documentation>
+                  Transmitente. Requiere: Apellido, Nombres, Documento.
+                  EstadoCivil y demás campos son opcionales para transmitentes.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+
+      <xs:element name="Inmuebles">
+        <xs:annotation>
+          <xs:documentation>
+            Inmuebles afectados por la compraventa. Al menos uno.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Inmueble" minOccurs="1" maxOccurs="50">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="IdentificacionInmueble" type="IdentificacionInmuebleType"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>
