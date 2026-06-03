@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v1"
+    targetNamespace="https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v1"
+    elementFormDefault="qualified">
+
+  <xs:annotation>
+    <xs:documentation>
+      Certificación catastral del inmueble. Bloque obligatorio.
+      Si Emitido=false, los demás campos pueden omitirse.
+      Si Emitido=true, Numero y CodigoValidacion son obligatorios; la validación
+      condicional se hace en el servicio.
+    </xs:documentation>
+  </xs:annotation>
+
+  <xs:complexType name="CertificacionCatastralType">
+    <xs:sequence>
+      <xs:element name="Emitido" type="xs:boolean"/>
+      <xs:element name="Numero" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Obligatorio si Emitido=true. Validación en el servicio.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:maxLength value="40"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="CodigoValidacion" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Obligatorio si Emitido=true. Validación en el servicio.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:maxLength value="40"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="TieneObservaciones" type="xs:boolean" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Solo aplica si Emitido=true.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Observaciones" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Obligatorio si TieneObservaciones=true.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:maxLength value="4000"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>
