@@ -30,6 +30,18 @@ y este contrato adhiere a [Semantic Versioning 2.0.0](https://semver.org/spec/v2
 - Documento `docs/10-campos-del-formulario.md` con tabla plana de campos.
 
 #### Cambiado
+- `xsd/xmldsig-core-schema.xsd`: cambio de `namespace="##any"` a
+  `namespace="##other"` en `SignatureMethodType`, `CanonicalizationMethodType`
+  y `DigestMethodType`. Corrige violación de Unique Particle Attribution
+  (UPA) que hace que el XSD canónico de W3C falle con validadores
+  estrictos como xmllint.
+- `xsd/testimonio-digital.xsd`: agregado atributo opcional `Id` (xs:ID)
+  al elemento raíz `TestimonioDigital`. Necesario para compatibilidad
+  con librerías de firma XML-DSig que agregan automáticamente este
+  atributo (xml-crypto, Apache Santuario, etc.).
+- `docs/05-firma-digital.md`: agregada sección sobre compatibilidad con
+  firmadores que agregan `Id`. Agregada nota sobre el estado actual de
+  verificación de certificado en v1.0.
 - `IdentificacionInmueble/Matricula`: ahora es `xs:integer` 1-8 dígitos (antes string "DD-NNNN").
 - `IdentificacionInmueble/Departamento`: ahora es código numérico 1-16 con enum (antes string libre).
 - `IdentificacionInmueble`: campo `Barrio` renombrado a `Barra` (alineamiento al Excel).

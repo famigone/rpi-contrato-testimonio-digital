@@ -79,6 +79,31 @@ Ejemplo de bloque `<Signature>` esperado:
 El `URI=""` en `Reference` indica que se firma el documento completo
 (con la transformación `enveloped-signature` excluyendo la propia firma).
 
+## Compatibilidad con firmadores que agregan `Id`
+
+Algunas librerías de firma XML-DSig (`xml-crypto` de Node.js, Apache
+Santuario, etc.) agregan automáticamente un atributo `Id` al elemento
+raíz `<TestimonioDigital>` cuando firman, para que la firma pueda
+referenciarlo internamente.
+
+El contrato acepta este atributo como opcional. Tanto
+
+```xml
+<TestimonioDigital version="1.0" xmlns="...">
+```
+
+como
+
+```xml
+<TestimonioDigital version="1.0" Id="_0" xmlns="...">
+```
+
+son válidos. El RPI ignora el contenido del atributo `Id`; lo acepta solo
+para compatibilidad con firmadores que lo generan.
+
+Si la librería que usás no agrega `Id`, no es necesario incluirlo
+manualmente.
+
 ## Verificación que hace el RPI
 
 Cuando el RPI recibe el testimonio:
@@ -121,6 +146,33 @@ están bien probadas:
 - **Cambiar el XML después de firmar**: cualquier cambio (incluso reformatear
   espacios en blanco fuera de elementos textuales) puede invalidar la firma.
   El XML que se envía debe ser **exactamente** el que se firmó.
+
+## Nota sobre verificación de certificado en v1.0
+
+La implementación actual del servicio del RPI verifica criptográficamente
+la firma XML-DSig (canonicalización, hash, RSA) pero **no verifica** los
+siguientes aspectos del certificado del firmante:
+
+- Habilitación de la autoridad certificante por ONTI.
+- Vigencia del certificado al momento del envío.
+- Estado de revocación (CRL/OCSP).
+
+Esta limitación está documentada como deuda técnica del servicio y será
+resuelta antes de la publicación oficial de `v1.0`. El contrato describe
+el comportamiento objetivo (verificación completa); la implementación se
+alineará antes de salir a producción.
+
+Para clientes implementadores: asumir que en producción el RPI verificará
+los tres aspectos mencionados. Asegurar que el certificado del escribano:
+
+- Sea emitido por una autoridad certificante habilitada por ONTI.
+- Esté vigente al momento de cada envío (renovar antes del vencimiento).
+- No esté revocado.
+
+Si alguno de estos checks falla en el futuro, el RPI rechazará el
+testimonio con un código de error específico (`CERTIFICADO_NO_VIGENTE`,
+`CERTIFICADO_REVOCADO`, `CERTIFICADO_NO_RECONOCIDO`) que ya están
+documentados en `07-respuestas-y-errores.md`.
 
 ## Próximos pasos
 
