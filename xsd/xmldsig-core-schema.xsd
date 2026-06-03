@@ -17,6 +17,21 @@
     Esta es una copia local del XSD oficial de XML Signature de W3C.
     Se incluye en el paquete para permitir validación offline del contrato.
 -->
+<!--
+  W3C XML-DSig Schema con corrección de UPA.
+
+  El XSD canónico de W3C usa namespace="##any" en SignatureMethodType,
+  CanonicalizationMethodType y DigestMethodType, lo que viola la regla
+  Unique Particle Attribution de XSD. Validadores estrictos como xmllint
+  rechazan el XSD por este motivo.
+
+  Esta versión del archivo reemplaza ##any por ##other en los tres tipos
+  afectados. Es un fix funcionalmente compatible (los procesadores XML-DSig
+  estándar siguen funcionando) y compatible con validadores estrictos.
+
+  Originalmente publicado por W3C — http://www.w3.org/2000/09/xmldsig#
+  Esta versión: adaptada localmente para validación estricta.
+-->
 <schema xmlns="http://www.w3.org/2001/XMLSchema"
         xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
         targetNamespace="http://www.w3.org/2000/09/xmldsig#"
@@ -66,7 +81,7 @@
   <element name="CanonicalizationMethod" type="ds:CanonicalizationMethodType"/>
   <complexType name="CanonicalizationMethodType" mixed="true">
     <sequence>
-      <any namespace="##any" minOccurs="0" maxOccurs="unbounded"/>
+      <any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
       <!-- (0,unbounded) elements from (1,1) namespace -->
     </sequence>
     <attribute name="Algorithm" type="anyURI" use="required"/>
@@ -76,7 +91,7 @@
   <complexType name="SignatureMethodType" mixed="true">
     <sequence>
       <element name="HMACOutputLength" minOccurs="0" type="ds:HMACOutputLengthType"/>
-      <any namespace="##any" minOccurs="0" maxOccurs="unbounded"/>
+      <any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
       <!-- (0,unbounded) elements from (1,1) external namespace -->
     </sequence>
     <attribute name="Algorithm" type="anyURI" use="required"/>
