@@ -9,29 +9,59 @@
 
   <xs:annotation>
     <xs:documentation>
-      Datos del rogante del trámite. Persona que representa el trámite ante
-      el RPI. Típicamente es el escribano autorizante.
+      Rogante del trámite. Representa el trámite ante el RPI.
+      Datos de contacto son obligatorios.
     </xs:documentation>
   </xs:annotation>
 
   <xs:complexType name="RoganteType">
     <xs:sequence>
-      <xs:element name="CUIT" type="CUITType">
-        <xs:annotation>
-          <xs:documentation>
-            CUIT del rogante. Si coincide con el del escribano autorizante,
-            se asume que es el mismo.
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
+      <xs:element name="CUIT" type="CUITType"/>
       <xs:element name="Nombre">
-        <xs:annotation>
-          <xs:documentation>Nombre completo del rogante.</xs:documentation>
-        </xs:annotation>
         <xs:simpleType>
           <xs:restriction base="xs:string">
             <xs:minLength value="1"/>
             <xs:maxLength value="120"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="NumeroRegistro">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="20"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="Localidad">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="30"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="Provincia">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="20"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="Domicilio">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="40"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="Telefono">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="20"/>
           </xs:restriction>
         </xs:simpleType>
       </xs:element>
