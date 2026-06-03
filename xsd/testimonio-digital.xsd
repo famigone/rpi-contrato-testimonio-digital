@@ -58,6 +58,30 @@
           </xs:complexType>
         </xs:element>
         <xs:element name="Rogante" type="RoganteType"/>
+        <xs:element name="TextoCuerpo">
+          <xs:annotation>
+            <xs:documentation>
+              Transcripción del cuerpo del acto (texto plano).
+
+              Debe ser una transcripción fiel del cuerpo de la escritura que
+              figura en el PDF firmado adjunto. La responsabilidad de la fidelidad
+              del texto es del escribano autorizante.
+
+              Formato: texto plano. NO se espera HTML, Markdown ni otros marcados.
+              Los saltos de línea naturales del texto se preservan.
+
+              Uso del servicio del RPI: análisis NLP, visualización en interfaces
+              del RPI, búsqueda full-text. No se valida coincidencia textual con
+              el PDF; la integridad legal está dada por las firmas digitales.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:minLength value="1"/>
+              <xs:maxLength value="500000"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
         <xs:element name="Observaciones" minOccurs="0">
           <xs:simpleType>
             <xs:restriction base="xs:string">
