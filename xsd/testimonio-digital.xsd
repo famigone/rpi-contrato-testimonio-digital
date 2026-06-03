@@ -6,19 +6,21 @@
     targetNamespace="https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v1"
     elementFormDefault="qualified">
 
-  <!-- Importar el namespace de XML-DSig. El XSD oficial de W3C está incluido
-       en este paquete como xmldsig-core-schema.xsd para validación offline. -->
+  <!-- XML-DSig local para validación offline -->
   <xs:import
       namespace="http://www.w3.org/2000/09/xmldsig#"
       schemaLocation="xmldsig-core-schema.xsd"/>
 
-  <!-- Includes (mismo namespace) -->
+  <!-- Includes de tipos comunes -->
   <xs:include schemaLocation="comunes/metadatos-envio.xsd"/>
   <xs:include schemaLocation="comunes/escribano-autorizante.xsd"/>
-  <xs:include schemaLocation="comunes/persona-humana.xsd"/>
+  <xs:include schemaLocation="comunes/persona.xsd"/>
   <xs:include schemaLocation="comunes/identificacion-inmueble.xsd"/>
   <xs:include schemaLocation="comunes/datos-economicos.xsd"/>
   <xs:include schemaLocation="comunes/certificacion-registral.xsd"/>
+  <xs:include schemaLocation="comunes/certificacion-catastral.xsd"/>
+  <xs:include schemaLocation="comunes/nomenclatura-catastral.xsd"/>
+  <xs:include schemaLocation="comunes/visado-rentas.xsd"/>
   <xs:include schemaLocation="comunes/otorgamiento.xsd"/>
   <xs:include schemaLocation="comunes/rogante.xsd"/>
   <xs:include schemaLocation="actos/compraventa.xsd"/>
@@ -26,81 +28,46 @@
   <xs:annotation>
     <xs:documentation>
       Contrato XSD del Testimonio Digital del RPI Neuquén — v1.0
+      (expansión alineada al Excel de estructura de minuta del RPI).
 
-      Entry point del contrato. Valida la estructura completa de un
-      testimonio digital, incluyendo metadatos, datos del acto y firma
-      XML-DSig embebida.
-
-      En v1.0 solo se soporta el acto Compraventa de personas humanas.
-
-      Versionado: el namespace incluye la versión MAJOR del contrato.
-      Cuando se agreguen actos compatibles, se libera v1.1, v1.2, etc.
-      Cuando haya cambios incompatibles, se libera v2.0 con namespace nuevo.
+      En v1.0 se soporta el acto Compraventa de personas humanas, jurídicas
+      y organismos públicos, con o sin representante.
     </xs:documentation>
   </xs:annotation>
 
-  <!-- Elemento raíz -->
   <xs:element name="TestimonioDigital">
-    <xs:annotation>
-      <xs:documentation>
-        Elemento raíz del testimonio digital.
-      </xs:documentation>
-    </xs:annotation>
     <xs:complexType>
       <xs:sequence>
         <xs:element name="MetadatosEnvio" type="MetadatosEnvioType"/>
         <xs:element name="EscribanoAutorizante" type="EscribanoAutorizanteType"/>
         <xs:element name="Otorgamiento" type="OtorgamientoType"/>
         <xs:element name="CertificacionRegistralPrevia" type="CertificacionRegistralPreviaType"/>
+        <xs:element name="CertificacionCatastral" type="CertificacionCatastralType"/>
+        <xs:element name="NomenclaturaCatastral" type="NomenclaturaCatastralType" minOccurs="0"/>
         <xs:element name="DatosEconomicos" type="DatosEconomicosType"/>
+        <xs:element name="VisadoRentas" type="VisadoRentasType"/>
         <xs:element name="Acto">
-          <xs:annotation>
-            <xs:documentation>
-              Acto registral. En v1.0 contiene exactamente un Compraventa.
-              En versiones futuras, este elemento usará xs:choice para
-              soportar otros tipos de actos (hipoteca, donación, etc.).
-            </xs:documentation>
-          </xs:annotation>
           <xs:complexType>
             <xs:choice>
               <xs:element name="Compraventa" type="CompraventaType"/>
-              <!-- Aquí se agregarán futuros actos en v1.x:
+              <!-- Próximos actos en versiones futuras:
                    <xs:element name="Hipoteca" type="HipotecaType"/>
                    <xs:element name="Donacion" type="DonacionType"/>
-                   etc.
               -->
             </xs:choice>
           </xs:complexType>
         </xs:element>
         <xs:element name="Rogante" type="RoganteType"/>
         <xs:element name="Observaciones" minOccurs="0">
-          <xs:annotation>
-            <xs:documentation>
-              Observaciones libres del escribano. Opcional.
-            </xs:documentation>
-          </xs:annotation>
           <xs:simpleType>
             <xs:restriction base="xs:string">
-              <xs:maxLength value="2000"/>
+              <xs:maxLength value="4000"/>
             </xs:restriction>
           </xs:simpleType>
         </xs:element>
-        <xs:element ref="ds:Signature">
-          <xs:annotation>
-            <xs:documentation>
-              Firma XML-DSig del escribano autorizante. Debe firmar todo el
-              documento usando transformación enveloped-signature.
-            </xs:documentation>
-          </xs:annotation>
-        </xs:element>
+        <xs:element ref="ds:Signature"/>
       </xs:sequence>
-      <xs:attribute name="version" type="xs:string" use="required" fixed="1.0">
-        <xs:annotation>
-          <xs:documentation>
-            Versión del contrato. Para esta versión: "1.0".
-          </xs:documentation>
-        </xs:annotation>
-      </xs:attribute>
+      <xs:attribute name="version" type="xs:string" use="required" fixed="1.0"/>
     </xs:complexType>
   </xs:element>
 
