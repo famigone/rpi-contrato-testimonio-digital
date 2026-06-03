@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v1"
+    targetNamespace="https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v1"
+    elementFormDefault="qualified">
+
+  <!-- CUITType se reutiliza desde escribano-autorizante.xsd vía include. -->
+  <xs:include schemaLocation="escribano-autorizante.xsd"/>
+
+  <xs:annotation>
+    <xs:documentation>
+      Persona involucrada en el acto. Tipo reutilizable para adquirentes y
+      transmitentes. Soporta personas humanas (H), jurídicas (J) y organismos
+      públicos (O), con o sin representante.
+
+      Las validaciones cruzadas entre Tipo y campos condicionales se hacen en
+      el servicio del RPI, no en el XSD.
+    </xs:documentation>
+  </xs:annotation>
+
+  <!-- Tipo de persona: H/J/O -->
+  <xs:simpleType name="TipoPersonaEnum">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="H"/>  <!-- Humana -->
+      <xs:enumeration value="J"/>  <!-- Jurídica -->
+      <xs:enumeration value="O"/>  <!-- Organismo público -->
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Tipo de documento de identidad -->
+  <xs:simpleType name="TipoDocumentoEnum">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="DNI"/>
+      <xs:enumeration value="LE"/>
+      <xs:enumeration value="LC"/>
+      <xs:enumeration value="PAS"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Tipo de documento para representantes (el Excel no incluye PAS) -->
+  <xs:simpleType name="TipoDocumentoRepresentanteEnum">
+    <xs:annotation>
+      <xs:documentation>Para representantes el Excel no incluye PAS.</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="DNI"/>
+      <xs:enumeration value="LE"/>
+      <xs:enumeration value="LC"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Estado civil -->
+  <xs:simpleType name="EstadoCivilEnum">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="SOLTERO"/>
+      <xs:enumeration value="SOLTERA"/>
+      <xs:enumeration value="CASADO"/>
+      <xs:enumeration value="CASADA"/>
+      <xs:enumeration value="DIVORCIADO"/>
+      <xs:enumeration value="DIVORCIADA"/>
+      <xs:enumeration value="VIUDO"/>
+      <xs:enumeration value="VIUDA"/>
+      <xs:enumeration value="CONVIVIENTE"/>
+      <xs:enumeration value="OTRO"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Proporción como fracción "N/D" -->
+  <xs:simpleType name="ProporcionType">
+    <xs:annotation>
+      <xs:documentation>
+        Proporción de adquisición como fracción en formato "N/D".
+        Ejemplos: "1/1", "1/2", "1/3", "2/5".
+        La validación de que las proporciones sumen 1 se hace en el servicio.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:pattern value="\d+/\d+"/>
+      <xs:maxLength value="20"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Representante (bloque opcional) -->
+  <xs:complexType name="RepresentanteType">
+    <xs:sequence>
+      <xs:element name="Apellido">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="80"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="Nombres">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="80"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="CUIT" type="CUITType"/>
+      <xs:element name="TipoDocumento" type="TipoDocumentoRepresentanteEnum"/>
+      <xs:element name="NumeroDocumento">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="20"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="PEP" type="xs:boolean"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Persona (tipo principal) -->
+  <xs:complexType name="PersonaType">
+    <xs:annotation>
+      <xs:documentation>
+        Persona involucrada en el acto. Discrimina por Tipo:
+        - H: humana (requiere Nombres; EstadoCivil/Nacionalidad/FechaNacimiento
+             son obligatorios para adquirente y opcionales para transmitente).
+        - J: jurídica (Nombres no aplica; usar ApellidoODenominacion como razón social).
+        - O: organismo público.
+
+        Las validaciones cruzadas entre Tipo y campos condicionales se hacen
+        en el servicio del RPI, no en el XSD.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Tipo" type="TipoPersonaEnum"/>
+      <xs:element name="ApellidoODenominacion">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="180"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="Nombres" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Obligatorio si Tipo=H. No aplica si Tipo=J u O.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="80"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="CUIT" type="CUITType"/>
+      <xs:element name="TipoDocumento" type="TipoDocumentoEnum" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Obligatorio si Tipo=H. Opcional si Tipo=J u O.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="NumeroDocumento">
+        <xs:annotation>
+          <xs:documentation>
+            Para Tipo=H: número del documento de identidad.
+            Para Tipo=J u O: repite el CUIT sin guiones.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="20"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="EstadoCivil" type="EstadoCivilEnum" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Obligatorio para adquirente humano. Opcional para transmitente humano.
+            No aplica para J u O.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Nupcias" minOccurs="0">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:maxLength value="10"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="Conyuge" minOccurs="0">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:maxLength value="80"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="Nacionalidad" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Obligatorio para adquirente humano. Opcional para transmitente humano.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:maxLength value="20"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="FechaNacimiento" type="xs:date" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Obligatorio para adquirente humano. Opcional para transmitente humano.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="PEP" type="xs:boolean"/>
+      <xs:element name="InscripcionOrganismoSede" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Para Tipo=J u O. Inscripción ante organismo o registro y sede.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:maxLength value="80"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="Proporcion" type="ProporcionType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Solo para adquirentes. Formato fracción "N/D" (ej: "1/2", "1/1").
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Representante" type="RepresentanteType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Bloque opcional. Si la persona actúa por representante, incluir
+            los datos. Si no, omitir el elemento completo.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>
