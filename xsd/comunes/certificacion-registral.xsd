@@ -21,20 +21,20 @@
         <xs:simpleType>
           <xs:restriction base="xs:string">
             <xs:minLength value="1"/>
-            <xs:maxLength value="30"/>
+            <xs:maxLength value="40"/>
           </xs:restriction>
         </xs:simpleType>
       </xs:element>
-      <xs:element name="FechaEmision" type="xs:date">
+      <xs:element name="FechaEmisionPrimera" type="xs:date">
         <xs:annotation>
-          <xs:documentation>Fecha de emisión del certificado.</xs:documentation>
+          <xs:documentation>Fecha de emisión (primera) del certificado.</xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="FechaVigencia" type="xs:date">
+      <xs:element name="FechaEmisionSegunda" type="xs:date">
         <xs:annotation>
           <xs:documentation>
-            Fecha hasta la cual el certificado mantiene vigencia. Debe ser
-            posterior a FechaEmision y posterior a la fecha del otorgamiento.
+            Segunda fecha de emisión del certificado (nombre alineado al Excel
+            del RPI).
           </xs:documentation>
         </xs:annotation>
       </xs:element>
