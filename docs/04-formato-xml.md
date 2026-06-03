@@ -269,6 +269,43 @@ escribano autorizante. Los datos de contacto son **obligatorios**.
 </Rogante>
 ```
 
+### TextoCuerpo
+
+Transcripción del cuerpo del acto en texto plano. Es **obligatorio**.
+
+El `TextoCuerpo` lleva el texto completo del cuerpo de la escritura: la
+comparecencia de las partes, las cláusulas del acto, los asentimientos
+que figuren en el cuerpo, y el cierre del escribano. Es la versión
+textual estructurada de lo que aparece en el PDF firmado adjunto.
+
+**Formato esperado**: texto plano. No se espera HTML, Markdown, XML
+embebido ni otros marcados. Los saltos de línea del texto natural se
+preservan tal cual.
+
+**Longitud**: hasta 500.000 caracteres. Cubre testimonios de hasta
+aproximadamente 150 páginas de texto plano.
+
+**Responsabilidad**: la fidelidad del `TextoCuerpo` respecto al cuerpo de
+la escritura del PDF es responsabilidad del escribano autorizante. El RPI
+**no valida** la coincidencia textual entre XML y PDF. La integridad
+legal del testimonio está dada por las firmas digitales del XML y del
+PDF, no por la coincidencia textual entre ambos.
+
+**Uso del servicio del RPI**: el RPI procesa el `TextoCuerpo` para
+análisis NLP, visualización en interfaces internas, y búsqueda
+full-text. Es el insumo principal para estos casos de uso.
+
+Ejemplo:
+
+```xml
+<TextoCuerpo>En la ciudad de Neuquén, capital de la Provincia del Neuquén,
+República Argentina, a los diez días del mes de junio del año dos mil
+veintiséis, ante mí, JUAN CARLOS PÉREZ, escribano titular del Registro
+Notarial Número 123...
+
+[continúa el cuerpo completo de la escritura]</TextoCuerpo>
+```
+
 ### Observaciones (opcional)
 
 Texto libre que el escribano quiere transmitir al RPI (hasta 4000 caracteres).

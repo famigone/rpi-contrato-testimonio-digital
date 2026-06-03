@@ -56,3 +56,7 @@ Todos los datos son **ficticios**:
 - Montos: arbitrarios.
 
 No corresponden a personas o inmuebles reales.
+
+Todos los ejemplos incluyen un `<TextoCuerpo>` con texto notarial realista
+pero ficticio. En testimonios reales, el `TextoCuerpo` contiene la
+transcripción completa del cuerpo de la escritura, no un resumen.

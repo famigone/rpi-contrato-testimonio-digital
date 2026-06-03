@@ -12,6 +12,11 @@ y este contrato adhiere a [Semantic Versioning 2.0.0](https://semver.org/spec/v2
 ### Cambios mayores en el contrato (alineamiento al Excel del RPI)
 
 #### Agregado
+- Elemento `<TextoCuerpo>` obligatorio: transcripción del cuerpo del acto
+  en texto plano (max 500.000 caracteres). Hijo directo de
+  `<TestimonioDigital>`, ubicado después de `<Rogante>` y antes de
+  `<Observaciones>`. Usado por el servicio del RPI para análisis NLP,
+  visualización y búsqueda full-text.
 - Soporte para personas jurídicas (Tipo=J) y organismos públicos (Tipo=O).
 - Bloque `Representante` opcional en personas (adquirentes y transmitentes).
 - Bloque `CertificacionCatastral` con campos condicionales.

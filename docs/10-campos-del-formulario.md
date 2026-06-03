@@ -225,7 +225,15 @@ Camino base: `TestimonioDigital/Rogante`
 | Domicilio | `Domicilio` | Texto | 1-40 | Sí | | `CALLE FALSA 123` |
 | Teléfono | `Telefono` | Texto | 1-20 | Sí | | `0299-4567890` |
 
-## 11. Observaciones (opcional)
+## 11. Cuerpo del acto
+
+Texto del cuerpo de la escritura que el escribano transcribe del PDF.
+
+| Campo del formulario | Camino XML | Tipo | Longitud | Obligatorio | Valores / Notas |
+|---|---|---|---|---|---|
+| Cuerpo del acto | `TextoCuerpo` | Texto plano | 1 - 500.000 | Sí | Transcripción fiel del cuerpo de la escritura del PDF. Saltos de línea naturales preservados. Sin HTML/Markdown. |
+
+## 12. Observaciones (opcional)
 
 Camino XML: `TestimonioDigital/Observaciones`. Texto libre, hasta 4000
 caracteres. Opcional.
