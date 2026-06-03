@@ -5,70 +5,51 @@
     targetNamespace="https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v1"
     elementFormDefault="qualified">
 
-  <xs:include schemaLocation="../comunes/persona-humana.xsd"/>
+  <xs:include schemaLocation="../comunes/persona.xsd"/>
   <xs:include schemaLocation="../comunes/identificacion-inmueble.xsd"/>
 
   <xs:annotation>
     <xs:documentation>
-      Acto de compraventa de inmueble. En v1.0 es el único tipo de acto
-      soportado.
-
+      Acto de compraventa de inmueble.
       Restricciones de v1.0:
-      - Solo personas humanas como adquirentes y transmitentes.
-      - Sin representantes legales ni poderes.
-      - Sin asentimiento conyugal estructurado (puede aparecer en el cuerpo).
+      - Un solo acto por testimonio (no múltiples).
+      - Asentimiento conyugal se modela como texto libre (no estructurado).
     </xs:documentation>
   </xs:annotation>
 
   <xs:complexType name="CompraventaType">
     <xs:sequence>
-      <xs:element name="Adquirentes">
+      <xs:element name="DescripcionActoIncompleto" minOccurs="0">
         <xs:annotation>
           <xs:documentation>
-            Lista de personas que adquieren el inmueble. Al menos uno.
-            La suma de proporciones debe ser igual a 1 (100%).
+            Aclaración del escribano sobre el acto si no es una compraventa
+            completa estándar. Texto libre, opcional.
           </xs:documentation>
         </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:maxLength value="106"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+
+      <xs:element name="Adquirentes">
         <xs:complexType>
           <xs:sequence>
-            <xs:element name="Persona" type="PersonaHumanaType" minOccurs="1" maxOccurs="20">
-              <xs:annotation>
-                <xs:documentation>
-                  Adquirente. Requiere: Apellido, Nombres, Documento,
-                  EstadoCivil, Nacionalidad, FechaNacimiento, Proporcion.
-                </xs:documentation>
-              </xs:annotation>
-            </xs:element>
+            <xs:element name="Persona" type="PersonaType" minOccurs="1" maxOccurs="20"/>
           </xs:sequence>
         </xs:complexType>
       </xs:element>
 
       <xs:element name="Transmitentes">
-        <xs:annotation>
-          <xs:documentation>
-            Lista de personas que transmiten el inmueble. Al menos uno.
-          </xs:documentation>
-        </xs:annotation>
         <xs:complexType>
           <xs:sequence>
-            <xs:element name="Persona" type="PersonaHumanaType" minOccurs="1" maxOccurs="20">
-              <xs:annotation>
-                <xs:documentation>
-                  Transmitente. Requiere: Apellido, Nombres, Documento.
-                  EstadoCivil y demás campos son opcionales para transmitentes.
-                </xs:documentation>
-              </xs:annotation>
-            </xs:element>
+            <xs:element name="Persona" type="PersonaType" minOccurs="1" maxOccurs="20"/>
           </xs:sequence>
         </xs:complexType>
       </xs:element>
 
       <xs:element name="Inmuebles">
-        <xs:annotation>
-          <xs:documentation>
-            Inmuebles afectados por la compraventa. Al menos uno.
-          </xs:documentation>
-        </xs:annotation>
         <xs:complexType>
           <xs:sequence>
             <xs:element name="Inmueble" minOccurs="1" maxOccurs="50">
@@ -80,6 +61,42 @@
             </xs:element>
           </xs:sequence>
         </xs:complexType>
+      </xs:element>
+
+      <xs:element name="ReconocimientoHipotecaMedidasCautelares" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Texto libre, opcional.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:maxLength value="4000"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+
+      <xs:element name="AfectacionesAlDominio" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Texto libre, opcional.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:maxLength value="4000"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+
+      <xs:element name="AsentimientoConyugal" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Asentimiento conyugal como texto libre. Si se requiere estructura
+            (cónyuge, fecha, etc.), evolución v2.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:maxLength value="4000"/>
+          </xs:restriction>
+        </xs:simpleType>
       </xs:element>
     </xs:sequence>
   </xs:complexType>
