@@ -29,9 +29,13 @@
 
   <CertificacionRegistralPrevia>
     <Numero>2026-002001</Numero>
-    <FechaEmision>2026-06-05</FechaEmision>
-    <FechaVigencia>2026-07-05</FechaVigencia>
+    <FechaEmisionPrimera>2026-06-05</FechaEmisionPrimera>
+    <FechaEmisionSegunda>2026-07-05</FechaEmisionSegunda>
   </CertificacionRegistralPrevia>
+
+  <CertificacionCatastral>
+    <Emitido>false</Emitido>
+  </CertificacionCatastral>
 
   <DatosEconomicos>
     <ValuacionFiscal>
@@ -44,36 +48,45 @@
     </Monto>
   </DatosEconomicos>
 
+  <VisadoRentas>
+    <Tipo>A</Tipo>
+  </VisadoRentas>
+
   <Acto>
     <Compraventa>
       <Adquirentes>
         <Persona>
-          <Apellido>VEGA</Apellido>
+          <Tipo>H</Tipo>
+          <ApellidoODenominacion>VEGA</ApellidoODenominacion>
           <Nombres>ROBERTO DANIEL</Nombres>
-          <Documento tipo="DNI">25678901</Documento>
           <CUIT>20-25678901-7</CUIT>
+          <TipoDocumento>DNI</TipoDocumento>
+          <NumeroDocumento>25678901</NumeroDocumento>
           <EstadoCivil>SOLTERO</EstadoCivil>
           <Nacionalidad>ARGENTINA</Nacionalidad>
           <FechaNacimiento>1977-04-18</FechaNacimiento>
           <PEP>false</PEP>
-          <Proporcion numerador="1" denominador="1"/>
+          <Proporcion>1/1</Proporcion>
         </Persona>
       </Adquirentes>
 
       <Transmitentes>
         <Persona>
-          <Apellido>HERNÁNDEZ</Apellido>
+          <Tipo>H</Tipo>
+          <ApellidoODenominacion>HERNÁNDEZ</ApellidoODenominacion>
           <Nombres>OSCAR LUIS</Nombres>
-          <Documento tipo="DNI">11223344</Documento>
+          <CUIT>20-11223344-6</CUIT>
+          <TipoDocumento>DNI</TipoDocumento>
+          <NumeroDocumento>11223344</NumeroDocumento>
+          <PEP>false</PEP>
         </Persona>
       </Transmitentes>
 
       <Inmuebles>
         <Inmueble>
           <IdentificacionInmueble>
-            <Matricula>12-3499</Matricula>
-            <Departamento>Confluencia</Departamento>
-            <UbicacionLibre>Casa con terreno - Calle Las Lengas 890, Neuquén Capital</UbicacionLibre>
+            <Matricula>3499</Matricula>
+            <Departamento>5</Departamento>
           </IdentificacionInmueble>
         </Inmueble>
       </Inmuebles>
@@ -83,6 +96,11 @@
   <Rogante>
     <CUIT>27-22334455-6</CUIT>
     <Nombre>MARÍA INÉS GARCÍA</Nombre>
+    <NumeroRegistro>87</NumeroRegistro>
+    <Localidad>NEUQUÉN</Localidad>
+    <Provincia>NEUQUÉN</Provincia>
+    <Domicilio>AV. ARGENTINA 456</Domicilio>
+    <Telefono>0299-4441122</Telefono>
   </Rogante>
 
   <ds:Signature>

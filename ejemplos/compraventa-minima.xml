@@ -29,9 +29,16 @@
 
   <CertificacionRegistralPrevia>
     <Numero>2026-001234</Numero>
-    <FechaEmision>2026-06-01</FechaEmision>
-    <FechaVigencia>2026-06-30</FechaVigencia>
+    <FechaEmisionPrimera>2026-06-01</FechaEmisionPrimera>
+    <FechaEmisionSegunda>2026-06-30</FechaEmisionSegunda>
   </CertificacionRegistralPrevia>
+
+  <CertificacionCatastral>
+    <Emitido>true</Emitido>
+    <Numero>CAT-2026-5678</Numero>
+    <CodigoValidacion>VAL-ABCD-1234</CodigoValidacion>
+    <TieneObservaciones>false</TieneObservaciones>
+  </CertificacionCatastral>
 
   <DatosEconomicos>
     <ValuacionFiscal>
@@ -43,37 +50,46 @@
     </Monto>
   </DatosEconomicos>
 
+  <VisadoRentas>
+    <Tipo>R</Tipo>
+    <NumeroTramite>RNT-987654</NumeroTramite>
+  </VisadoRentas>
+
   <Acto>
     <Compraventa>
       <Adquirentes>
         <Persona>
-          <Apellido>GONZÁLEZ</Apellido>
+          <Tipo>H</Tipo>
+          <ApellidoODenominacion>GONZÁLEZ</ApellidoODenominacion>
           <Nombres>MARÍA LAURA</Nombres>
-          <Documento tipo="DNI">28456789</Documento>
           <CUIT>27-28456789-3</CUIT>
+          <TipoDocumento>DNI</TipoDocumento>
+          <NumeroDocumento>28456789</NumeroDocumento>
           <EstadoCivil>SOLTERA</EstadoCivil>
           <Nacionalidad>ARGENTINA</Nacionalidad>
           <FechaNacimiento>1981-03-15</FechaNacimiento>
           <PEP>false</PEP>
-          <Proporcion numerador="1" denominador="1"/>
+          <Proporcion>1/1</Proporcion>
         </Persona>
       </Adquirentes>
 
       <Transmitentes>
         <Persona>
-          <Apellido>RODRÍGUEZ</Apellido>
+          <Tipo>H</Tipo>
+          <ApellidoODenominacion>RODRÍGUEZ</ApellidoODenominacion>
           <Nombres>CARLOS ALBERTO</Nombres>
-          <Documento tipo="DNI">15234567</Documento>
+          <CUIT>20-15234567-1</CUIT>
+          <TipoDocumento>DNI</TipoDocumento>
+          <NumeroDocumento>15234567</NumeroDocumento>
+          <PEP>false</PEP>
         </Persona>
       </Transmitentes>
 
       <Inmuebles>
         <Inmueble>
           <IdentificacionInmueble>
-            <Matricula>12-3456</Matricula>
-            <Departamento>Confluencia</Departamento>
-            <Barrio>Belgrano</Barrio>
-            <UbicacionLibre>Calle Tucumán 1234, Neuquén Capital</UbicacionLibre>
+            <Matricula>3456</Matricula>
+            <Departamento>5</Departamento>
           </IdentificacionInmueble>
         </Inmueble>
       </Inmuebles>
@@ -83,6 +99,11 @@
   <Rogante>
     <CUIT>20-12345678-9</CUIT>
     <Nombre>JUAN CARLOS PÉREZ</Nombre>
+    <NumeroRegistro>123</NumeroRegistro>
+    <Localidad>NEUQUÉN</Localidad>
+    <Provincia>NEUQUÉN</Provincia>
+    <Domicilio>CALLE FALSA 123</Domicilio>
+    <Telefono>0299-4567890</Telefono>
   </Rogante>
 
   <ds:Signature>

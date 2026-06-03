@@ -29,9 +29,24 @@
 
   <CertificacionRegistralPrevia>
     <Numero>2026-001235</Numero>
-    <FechaEmision>2026-06-01</FechaEmision>
-    <FechaVigencia>2026-06-30</FechaVigencia>
+    <FechaEmisionPrimera>2026-06-01</FechaEmisionPrimera>
+    <FechaEmisionSegunda>2026-06-30</FechaEmisionSegunda>
   </CertificacionRegistralPrevia>
+
+  <CertificacionCatastral>
+    <Emitido>true</Emitido>
+    <Numero>CAT-2026-5690</Numero>
+    <CodigoValidacion>VAL-EFGH-5678</CodigoValidacion>
+    <TieneObservaciones>false</TieneObservaciones>
+  </CertificacionCatastral>
+
+  <NomenclaturaCatastral>
+    <Campo1>09</Campo1>
+    <Campo2>21</Campo2>
+    <Campo3>045</Campo3>
+    <Campo4>0123</Campo4>
+    <Campo5>0008</Campo5>
+  </NomenclaturaCatastral>
 
   <DatosEconomicos>
     <ValuacionFiscal>
@@ -43,64 +58,87 @@
     </Monto>
   </DatosEconomicos>
 
+  <VisadoRentas>
+    <Tipo>R</Tipo>
+    <NumeroTramite>RNT-987655</NumeroTramite>
+  </VisadoRentas>
+
   <Acto>
     <Compraventa>
       <Adquirentes>
         <Persona>
-          <Apellido>MARTÍNEZ</Apellido>
+          <Tipo>H</Tipo>
+          <ApellidoODenominacion>MARTÍNEZ</ApellidoODenominacion>
           <Nombres>ANDREA SOFÍA</Nombres>
-          <Documento tipo="DNI">32567890</Documento>
           <CUIT>27-32567890-1</CUIT>
+          <TipoDocumento>DNI</TipoDocumento>
+          <NumeroDocumento>32567890</NumeroDocumento>
           <EstadoCivil>CASADA</EstadoCivil>
           <Nacionalidad>ARGENTINA</Nacionalidad>
           <FechaNacimiento>1986-08-22</FechaNacimiento>
           <PEP>false</PEP>
-          <Proporcion numerador="1" denominador="2"/>
+          <Proporcion>1/2</Proporcion>
         </Persona>
         <Persona>
-          <Apellido>LÓPEZ</Apellido>
+          <Tipo>H</Tipo>
+          <ApellidoODenominacion>LÓPEZ</ApellidoODenominacion>
           <Nombres>FEDERICO JAVIER</Nombres>
-          <Documento tipo="DNI">31234567</Documento>
           <CUIT>20-31234567-5</CUIT>
+          <TipoDocumento>DNI</TipoDocumento>
+          <NumeroDocumento>31234567</NumeroDocumento>
           <EstadoCivil>CASADO</EstadoCivil>
           <Nacionalidad>ARGENTINA</Nacionalidad>
           <FechaNacimiento>1985-11-30</FechaNacimiento>
           <PEP>false</PEP>
-          <Proporcion numerador="1" denominador="2"/>
+          <Proporcion>1/2</Proporcion>
         </Persona>
       </Adquirentes>
 
       <Transmitentes>
         <Persona>
-          <Apellido>FERNÁNDEZ</Apellido>
+          <Tipo>H</Tipo>
+          <ApellidoODenominacion>FERNÁNDEZ</ApellidoODenominacion>
           <Nombres>RICARDO DANIEL</Nombres>
-          <Documento tipo="DNI">12345678</Documento>
+          <CUIT>20-12345678-2</CUIT>
+          <TipoDocumento>DNI</TipoDocumento>
+          <NumeroDocumento>12345678</NumeroDocumento>
           <EstadoCivil>CASADO</EstadoCivil>
+          <PEP>false</PEP>
         </Persona>
         <Persona>
-          <Apellido>SUÁREZ DE FERNÁNDEZ</Apellido>
+          <Tipo>H</Tipo>
+          <ApellidoODenominacion>SUÁREZ DE FERNÁNDEZ</ApellidoODenominacion>
           <Nombres>SILVIA MARGARITA</Nombres>
-          <Documento tipo="DNI">14567890</Documento>
+          <CUIT>27-14567890-4</CUIT>
+          <TipoDocumento>DNI</TipoDocumento>
+          <NumeroDocumento>14567890</NumeroDocumento>
           <EstadoCivil>CASADA</EstadoCivil>
+          <PEP>false</PEP>
         </Persona>
       </Transmitentes>
 
       <Inmuebles>
         <Inmueble>
           <IdentificacionInmueble>
-            <Matricula>12-3470</Matricula>
-            <Departamento>Confluencia</Departamento>
-            <Barrio>Centro</Barrio>
-            <UbicacionLibre>Av. Argentina 567, Piso 3, Depto B, Neuquén Capital</UbicacionLibre>
+            <Matricula>3470</Matricula>
+            <Barra>A</Barra>
+            <Departamento>5</Departamento>
           </IdentificacionInmueble>
         </Inmueble>
       </Inmuebles>
+
+      <AsentimientoConyugal>El cónyuge del transmitente presta asentimiento conyugal en los términos del art. 470 del Código Civil y Comercial.</AsentimientoConyugal>
     </Compraventa>
   </Acto>
 
   <Rogante>
     <CUIT>20-12345678-9</CUIT>
     <Nombre>JUAN CARLOS PÉREZ</Nombre>
+    <NumeroRegistro>123</NumeroRegistro>
+    <Localidad>NEUQUÉN</Localidad>
+    <Provincia>NEUQUÉN</Provincia>
+    <Domicilio>CALLE FALSA 123</Domicilio>
+    <Telefono>0299-4567890</Telefono>
   </Rogante>
 
   <Observaciones>El inmueble se transmite libre de gravámenes según certificación previa.</Observaciones>
