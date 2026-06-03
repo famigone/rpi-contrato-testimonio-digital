@@ -13,10 +13,13 @@ xsd/
 ├── comunes/                     ← tipos reutilizables entre actos
 │   ├── metadatos-envio.xsd
 │   ├── escribano-autorizante.xsd
-│   ├── persona-humana.xsd
+│   ├── persona.xsd
 │   ├── identificacion-inmueble.xsd
 │   ├── datos-economicos.xsd
 │   ├── certificacion-registral.xsd
+│   ├── certificacion-catastral.xsd
+│   ├── nomenclatura-catastral.xsd
+│   ├── visado-rentas.xsd
 │   ├── otorgamiento.xsd
 │   └── rogante.xsd
 └── actos/
@@ -65,14 +68,14 @@ Para agregar, por ejemplo, hipoteca en v2.0:
 1. Crear `actos/hipoteca.xsd` con el tipo `HipotecaType`.
 2. Agregar el include en `testimonio-digital.xsd`.
 3. Agregar la opción al `xs:choice` del elemento `Acto`.
-4. Los tipos comunes (`PersonaHumana`, `IdentificacionInmueble`, etc.) se
+4. Los tipos comunes (`Persona`, `IdentificacionInmueble`, etc.) se
    reutilizan sin cambios.
 
 ## Convenciones
 
-- **Tipos**: nombres en PascalCase terminados en `Type` (ej: `PersonaHumanaType`).
+- **Tipos**: nombres en PascalCase terminados en `Type` (ej: `PersonaType`).
 - **Elementos**: nombres en PascalCase (ej: `Adquirentes`, `EscribanoAutorizante`).
-- **Atributos**: nombres en camelCase (ej: `numerador`, `denominador`).
+- **Atributos**: nombres en camelCase (ej: `version`).
 - **Documentación**: cada tipo y elemento principal lleva `xs:annotation/xs:documentation`
   en español.
 

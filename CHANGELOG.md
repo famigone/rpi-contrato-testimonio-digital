@@ -9,6 +9,39 @@ y este contrato adhiere a [Semantic Versioning 2.0.0](https://semver.org/spec/v2
 
 ## [No publicado]
 
+### Cambios mayores en el contrato (alineamiento al Excel del RPI)
+
+#### Agregado
+- Soporte para personas jurídicas (Tipo=J) y organismos públicos (Tipo=O).
+- Bloque `Representante` opcional en personas (adquirentes y transmitentes).
+- Bloque `CertificacionCatastral` con campos condicionales.
+- Bloque `NomenclaturaCatastral` opcional con 5 subcampos.
+- Bloque `VisadoRentas` obligatorio.
+- Campos en `<Compraventa>`: `DescripcionActoIncompleto`, `ReconocimientoHipotecaMedidasCautelares`, `AfectacionesAlDominio`, `AsentimientoConyugal`.
+- Campos de contacto obligatorios en `Rogante`: `NumeroRegistro`, `Localidad`, `Provincia`, `Domicilio`, `Telefono`.
+- Campos opcionales en `Persona` (humana): `Nupcias`, `Conyuge`, `InscripcionOrganismoSede`.
+- En `IdentificacionInmueble`: campos `Barra`, `Tomo`, `Folio`, `Finca`.
+- Tres ejemplos nuevos: `compraventa-persona-juridica.xml`, `compraventa-con-representante.xml`, `compraventa-inmueble-antiguo.xml`.
+- Documento `docs/10-campos-del-formulario.md` con tabla plana de campos.
+
+#### Cambiado
+- `IdentificacionInmueble/Matricula`: ahora es `xs:integer` 1-8 dígitos (antes string "DD-NNNN").
+- `IdentificacionInmueble/Departamento`: ahora es código numérico 1-16 con enum (antes string libre).
+- `IdentificacionInmueble`: campo `Barrio` renombrado a `Barra` (alineamiento al Excel).
+- `CertificacionRegistralPrevia/FechaEmision` renombrada a `FechaEmisionPrimera`.
+- `CertificacionRegistralPrevia/FechaVigencia` renombrada a `FechaEmisionSegunda`.
+- `EscribanoAutorizante/Nombre`: longitud max ajustada a 60 (antes 120).
+- `EscribanoAutorizante/RegistroNumero`: longitud max ajustada a 8 (antes 10).
+- `EscribanoAutorizante/Sede`: longitud max ajustada a 40 (antes 60).
+- `Persona/Proporcion`: ahora string fracción "N/D" (antes atributos numerador/denominador).
+- Enum `TipoDocumento`: removido `CI` (alineamiento al Excel: solo DNI, LE, LC, PAS).
+- Archivo `xsd/comunes/persona-humana.xsd` renombrado a `xsd/comunes/persona.xsd`.
+
+#### Removido
+- `Persona/Documento` con atributo `tipo`: reemplazado por `TipoDocumento` y `NumeroDocumento` como elementos separados (alineamiento al Excel).
+
+---
+
 Cambios pendientes antes de la primera publicación oficial:
 
 ### A definir antes de v1.0.0

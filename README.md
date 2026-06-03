@@ -47,6 +47,7 @@ Orden recomendado para integraciones nuevas:
 7. **[Respuestas y errores](docs/07-respuestas-y-errores.md)** — códigos HTTP, reintentos.
 8. **[Notificaciones de callback](docs/08-notificaciones-callback.md)** — qué te devuelve el RPI cuando inscribe.
 9. **[Glosario](docs/09-glosario.md)** — términos del dominio registral y notarial.
+10. **[Campos del formulario](docs/10-campos-del-formulario.md)** — tabla plana de todos los campos para armar el formulario del escribano.
 
 ---
 
@@ -70,7 +71,8 @@ Orden recomendado para integraciones nuevas:
 │   ├── 06-adjunto-pdf.md
 │   ├── 07-respuestas-y-errores.md
 │   ├── 08-notificaciones-callback.md
-│   └── 09-glosario.md
+│   ├── 09-glosario.md
+│   └── 10-campos-del-formulario.md
 │
 ├── xsd/                                   ← contratos XSD modulares
 │   ├── README.md
@@ -79,10 +81,13 @@ Orden recomendado para integraciones nuevas:
 │   ├── comunes/
 │   │   ├── metadatos-envio.xsd
 │   │   ├── escribano-autorizante.xsd
-│   │   ├── persona-humana.xsd
+│   │   ├── persona.xsd
 │   │   ├── identificacion-inmueble.xsd
 │   │   ├── datos-economicos.xsd
 │   │   ├── certificacion-registral.xsd
+│   │   ├── certificacion-catastral.xsd
+│   │   ├── nomenclatura-catastral.xsd
+│   │   ├── visado-rentas.xsd
 │   │   ├── otorgamiento.xsd
 │   │   └── rogante.xsd
 │   └── actos/
@@ -92,7 +97,10 @@ Orden recomendado para integraciones nuevas:
     ├── README.md
     ├── compraventa-minima.xml
     ├── compraventa-multiple-titulares.xml
-    └── compraventa-usd.xml
+    ├── compraventa-usd.xml
+    ├── compraventa-persona-juridica.xml
+    ├── compraventa-con-representante.xml
+    └── compraventa-inmueble-antiguo.xml
 ```
 
 ---
@@ -118,7 +126,7 @@ Para validar un XML de testimonio contra el contrato:
 xmllint --schema xsd/testimonio-digital.xsd ejemplos/compraventa-minima.xml --noout
 ```
 
-Los tres ejemplos en `ejemplos/` validan correctamente contra el XSD.
+Los seis ejemplos en `ejemplos/` validan correctamente contra el XSD.
 
 ---
 
