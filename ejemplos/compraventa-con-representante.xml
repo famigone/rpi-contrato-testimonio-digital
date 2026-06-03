@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestimonioDigital
+    xmlns="https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v1"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+    xsi:schemaLocation="https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v1 ../xsd/testimonio-digital.xsd"
+    version="1.0">
+
+  <MetadatosEnvio>
+    <IdentificadorEnvio>2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e</IdentificadorEnvio>
+    <TimestampEnvio>2026-06-18T08:45:00-03:00</TimestampEnvio>
+    <HashPDF>0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef</HashPDF>
+    <VersionContrato>1.0</VersionContrato>
+  </MetadatosEnvio>
+
+  <EscribanoAutorizante>
+    <Nombre>MARÍA INÉS GARCÍA</Nombre>
+    <CUIT>27-22334455-6</CUIT>
+    <RegistroNumero>87</RegistroNumero>
+    <Sede>NEUQUÉN</Sede>
+  </EscribanoAutorizante>
+
+  <Otorgamiento>
+    <Lugar>NEUQUÉN</Lugar>
+    <Fecha>2026-06-17</Fecha>
+    <NumeroEscritura>00000090</NumeroEscritura>
+    <FolioProtocolo>00000250</FolioProtocolo>
+  </Otorgamiento>
+
+  <CertificacionRegistralPrevia>
+    <Numero>2026-002010</Numero>
+    <FechaEmisionPrimera>2026-06-06</FechaEmisionPrimera>
+    <FechaEmisionSegunda>2026-07-06</FechaEmisionSegunda>
+  </CertificacionRegistralPrevia>
+
+  <CertificacionCatastral>
+    <Emitido>true</Emitido>
+    <Numero>CAT-2026-5710</Numero>
+    <CodigoValidacion>VAL-MNOP-3456</CodigoValidacion>
+    <TieneObservaciones>false</TieneObservaciones>
+  </CertificacionCatastral>
+
+  <DatosEconomicos>
+    <ValuacionFiscal>
+      <valor>6000000.00</valor>
+    </ValuacionFiscal>
+    <Monto>
+      <valor>60000000.00</valor>
+      <moneda>$</moneda>
+    </Monto>
+  </DatosEconomicos>
+
+  <VisadoRentas>
+    <Tipo>R</Tipo>
+    <NumeroTramite>RNT-987670</NumeroTramite>
+  </VisadoRentas>
+
+  <Acto>
+    <Compraventa>
+      <Adquirentes>
+        <!-- Adquirente humano menor de edad que actúa por medio de su tutor.
+             El bloque Representante contiene los datos del tutor. -->
+        <Persona>
+          <Tipo>H</Tipo>
+          <ApellidoODenominacion>MORALES</ApellidoODenominacion>
+          <Nombres>SOFÍA</Nombres>
+          <CUIT>27-50123456-4</CUIT>
+          <TipoDocumento>DNI</TipoDocumento>
+          <NumeroDocumento>50123456</NumeroDocumento>
+          <EstadoCivil>SOLTERA</EstadoCivil>
+          <Nacionalidad>ARGENTINA</Nacionalidad>
+          <FechaNacimiento>2012-09-10</FechaNacimiento>
+          <PEP>false</PEP>
+          <Proporcion>1/1</Proporcion>
+          <Representante>
+            <Apellido>MORALES</Apellido>
+            <Nombres>GUSTAVO ADRIÁN</Nombres>
+            <CUIT>20-27890123-5</CUIT>
+            <TipoDocumento>DNI</TipoDocumento>
+            <NumeroDocumento>27890123</NumeroDocumento>
+            <PEP>false</PEP>
+          </Representante>
+        </Persona>
+      </Adquirentes>
+
+      <Transmitentes>
+        <Persona>
+          <Tipo>H</Tipo>
+          <ApellidoODenominacion>HERNÁNDEZ</ApellidoODenominacion>
+          <Nombres>OSCAR LUIS</Nombres>
+          <CUIT>20-11223344-6</CUIT>
+          <TipoDocumento>DNI</TipoDocumento>
+          <NumeroDocumento>11223344</NumeroDocumento>
+          <PEP>false</PEP>
+        </Persona>
+      </Transmitentes>
+
+      <Inmuebles>
+        <Inmueble>
+          <IdentificacionInmueble>
+            <Matricula>3480</Matricula>
+            <Departamento>5</Departamento>
+          </IdentificacionInmueble>
+        </Inmueble>
+      </Inmuebles>
+    </Compraventa>
+  </Acto>
+
+  <Rogante>
+    <CUIT>27-22334455-6</CUIT>
+    <Nombre>MARÍA INÉS GARCÍA</Nombre>
+    <NumeroRegistro>87</NumeroRegistro>
+    <Localidad>NEUQUÉN</Localidad>
+    <Provincia>NEUQUÉN</Provincia>
+    <Domicilio>AV. ARGENTINA 456</Domicilio>
+    <Telefono>0299-4441122</Telefono>
+  </Rogante>
+
+  <ds:Signature>
+    <ds:SignedInfo>
+      <ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+      <ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>
+      <ds:Reference URI="">
+        <ds:Transforms>
+          <ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+          <ds:Transform Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+        </ds:Transforms>
+        <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+        <ds:DigestValue>UExBQ0VIT0xERVJfTk9fVVNBUl9WQUxJREFSX1NPTE9fRVNUUlVDVFVSQV9f</ds:DigestValue>
+      </ds:Reference>
+    </ds:SignedInfo>
+    <ds:SignatureValue>WFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWA==</ds:SignatureValue>
+    <ds:KeyInfo>
+      <ds:X509Data>
+        <ds:X509Certificate>UExBQ0VIT0xERVJfQ0VSVElGSUNBVEVfWDUwOV9ERUxfRVNDUklCQU5PX05PX1VTQVJfRVNfU09MT19QQVJBX1ZBTElEQVJfTEFfRVNUUlVDVFVSQV9ERUxfWE1MX0NPTlRSQV9FTF9YU0Q=</ds:X509Certificate>
+      </ds:X509Data>
+    </ds:KeyInfo>
+  </ds:Signature>
+
+</TestimonioDigital>

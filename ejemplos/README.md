@@ -7,9 +7,12 @@ como referencia mientras el programador construye su propio generador.
 
 | Archivo | Descripción |
 |---------|-------------|
-| `compraventa-minima.xml` | Caso más simple: 1 adquirente, 1 transmitente, 1 inmueble, monto en pesos. |
-| `compraventa-multiple-titulares.xml` | 2 adquirentes con proporción 1/2 cada uno, 2 transmitentes (matrimonio), 1 inmueble. |
-| `compraventa-usd.xml` | Compraventa en dólares estadounidenses con cotización. |
+| `compraventa-minima.xml` | Caso más simple: 1 adquirente humano soltero, 1 transmitente humano, 1 inmueble con matrícula, monto en pesos, visado de Rentas R, certificación catastral emitida sin observaciones. |
+| `compraventa-multiple-titulares.xml` | 2 adquirentes humanos casados al 50% cada uno, 2 transmitentes (matrimonio), 1 inmueble, con nomenclatura catastral y asentimiento conyugal. |
+| `compraventa-usd.xml` | Compraventa en dólares con cotización, visado de Rentas A (sin visado), certificación catastral no emitida. |
+| `compraventa-persona-juridica.xml` | Adquirente persona jurídica (S.A.) con `Tipo=J` e inscripción ante organismo; transmitente humano. |
+| `compraventa-con-representante.xml` | Adquirente humano menor de edad con bloque `Representante` (tutor); transmitente humano. |
+| `compraventa-inmueble-antiguo.xml` | Inmueble previo a la matriculación: sin `Matricula`, identificado por `Tomo`/`Folio`/`Finca`. |
 
 ## Sobre la firma XML-DSig en estos ejemplos
 
@@ -49,7 +52,7 @@ Si hay un error de validación, indica qué elemento o atributo no cumple.
 Todos los datos son **ficticios**:
 
 - CUITs, DNIs, nombres: inventados.
-- Matrículas: del rango ficticio 12-3456 a 12-3499.
+- Matrículas: del rango ficticio 3456 a 3499.
 - Montos: arbitrarios.
 
 No corresponden a personas o inmuebles reales.
