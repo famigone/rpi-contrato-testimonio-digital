@@ -74,6 +74,14 @@ El campo `detalle` es opcional y varía según el código de error.
 | `MATRICULA_NO_EXISTENTE` | La matrícula del inmueble no existe en el RPI. |
 | `CERTIFICACION_VENCIDA` | La certificación registral previa está vencida. |
 | `VERSION_CONTRATO_NO_SOPORTADA` | El RPI no soporta la versión del contrato declarada. |
+| `MONEDA_SIN_COTIZACION` | Si moneda=USD, cotización es obligatoria. |
+| `PERSONA_HUMANA_SIN_NOMBRES` | Tipo=H requiere Nombres. |
+| `CERT_CATASTRAL_DATOS_FALTANTES` | Si Emitido=true, Numero y CodigoValidacion obligatorios. |
+| `CERT_CATASTRAL_OBS_FALTANTE` | Si TieneObservaciones=true, Observaciones obligatorio. |
+| `VISADO_SIN_NUMERO_TRAMITE` | Si Tipo=R, NumeroTramite obligatorio. |
+| `INMUEBLE_SIN_IDENTIFICACION` | Inmueble debe tener Matricula o (Tomo+Folio+Finca). |
+| `PROPORCIONES_NO_SUMAN_UNO` | Suma de proporciones de Adquirentes debe ser 1. |
+| `CUIT_FIRMANTE_NO_COINCIDE` | El CUIT del certificado debe coincidir con el del XML. |
 
 ### Errores del servidor (5xx)
 

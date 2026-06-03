@@ -41,13 +41,20 @@ En versiones futuras se agregarán otros actos (hipoteca, donación, división d
 condominio, etc.) sin cambiar la estructura general del XML — solo se agregarán
 nuevos archivos XSD bajo `xsd/actos/`.
 
+A diferencia del borrador inicial, esta versión **sí** soporta:
+
+- **Personas jurídicas** (sociedades, asociaciones) y **organismos públicos**
+  como adquirentes o transmitentes, además de personas humanas.
+- **Representantes** (tutor, apoderado, etc.) mediante un bloque opcional dentro
+  de cada persona.
+
 Tampoco están soportadas en v1.0:
 
-- **Personas jurídicas** como adquirente o transmitente (solo personas humanas).
-- **Representantes legales** (poderes, tutela).
-- **Asentimiento conyugal estructurado** (puede mencionarse en el cuerpo del
-  testimonio pero no se modela como campo aparte).
-- **Múltiples actos** en un mismo testimonio.
+- **Asentimiento conyugal estructurado**: se modela como **texto libre** en el
+  campo `AsentimientoConyugal`, no como bloque con cónyuge, fecha, etc.
+- **Múltiples actos** en un mismo testimonio (un testimonio = un acto).
+- **Otros tipos de actos** (hipoteca, donación, división de condominio, etc.):
+  se incorporarán en versiones futuras.
 - **Ampliatorios** o reingresos del mismo testimonio (cada envío genera un
   trámite nuevo).
 

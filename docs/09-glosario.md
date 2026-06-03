@@ -44,6 +44,17 @@ operación, asentimientos, etc.
 
 ## Términos del RPI
 
+### Barra catastral
+
+División registral interna del inmueble. Campo opcional dentro de la
+identificación del inmueble.
+
+### Certificación catastral
+
+Certificación del inmueble emitida por catastro, distinta de la certificación
+registral. Informa el estado catastral (nomenclatura, superficie, plano) y
+puede tener observaciones.
+
 ### EG / Entrada General
 
 Número que el RPI asigna a cada trámite cuando ingresa. Es el identificador
@@ -69,8 +80,9 @@ mientras se subsanan los defectos. Tiene una vigencia limitada (típicamente
 ### Matrícula
 
 Identificador único del inmueble en el RPI. Cada inmueble tiene una matrícula
-y todas las anotaciones sobre él se hacen en esa matrícula. En Neuquén las
-matrículas tienen formato `DD-NNNN` (departamento-número).
+y todas las anotaciones sobre él se hacen en esa matrícula. En el contrato la
+matrícula es un número entero (hasta 8 dígitos) y el departamento se identifica
+por separado con un código numérico (1 a 16).
 
 ### Minuta
 
@@ -78,6 +90,12 @@ Documento que históricamente acompaña al testimonio en papel, conteniendo en
 forma resumida los datos del acto para facilitar su carga al sistema
 registral. En el flujo digital, la minuta es reemplazada por los datos
 estructurados del XML.
+
+### Nomenclatura catastral
+
+Identificación parcelaria del inmueble. En el contrato se modela como 5 campos
+de longitud fija (2, 2, 3, 4 y 4 caracteres) según la convención del RPI. Es un
+bloque opcional.
 
 ### Plataforma Digital (PD)
 
@@ -102,6 +120,13 @@ Persona que actúa como **representante del trámite ante el RPI**. Es quien
 ser otra persona designada. El RPI se comunica con el rogante para
 notificaciones formales del trámite.
 
+### Tomo / Folio / Finca
+
+Sistema de identificación de inmuebles previo al folio real (matrícula). Se usa
+para inmuebles antiguos que aún no fueron matriculados. En el contrato son tres
+campos opcionales que se completan en conjunto cuando el inmueble no tiene
+matrícula.
+
 ### Tasa registral
 
 Pago al RPI por el servicio de inscripción del trámite. Se acredita mediante
@@ -117,6 +142,12 @@ inscribible. Es lo que históricamente se presenta en papel al RPI.
 Persona que **entrega** el inmueble en una compraventa. En el sistema legacy
 se llama "titular transmitente".
 
+### Visado de Rentas
+
+Validación previa al acto por la Dirección Provincial de Rentas. En el contrato
+es un bloque obligatorio: con visado se indica `Tipo=R` (y se incluye el número
+de trámite); sin visado (exento u otra causal) se indica `Tipo=A`.
+
 ### VIP / VIO / Volante de Inscripción Provisoria
 
 Documento que el RPI emite cuando un trámite queda inscripto provisoriamente,
@@ -129,8 +160,8 @@ para referirse al estado de inscripción provisoria en sí.
 
 Cuando el inmueble es ganancial (durante el matrimonio en régimen de comunidad),
 el cónyuge del transmitente debe prestar asentimiento para la venta. En v1.0
-del contrato esto se documenta en el cuerpo del testimonio, no como campo
-estructurado.
+del contrato esto se modela como **texto libre** en el campo
+`AsentimientoConyugal` dentro de `Compraventa`, no como bloque estructurado.
 
 ### Escribano autorizante
 
@@ -147,6 +178,11 @@ El testimonio es una copia autenticada de la escritura.
 Cada escritura ocupa una o varias fojas (folios) numeradas dentro del
 protocolo del escribano. Se identifica por número y año.
 
+### Organismo público
+
+Persona pública estatal o paraestatal que puede ser parte del acto. En el
+contrato se identifica con `Tipo=O`.
+
 ### Otorgamiento
 
 El acto de firmar la escritura. Tiene lugar y fecha. El "otorgamiento" se
@@ -154,19 +190,24 @@ refiere tanto al hecho como a los datos que lo identifican.
 
 ### Persona humana
 
-Persona física (a diferencia de persona jurídica como sociedad). En v1.0 solo
-se soportan actos entre personas humanas.
+Persona física (a diferencia de persona jurídica). En el contrato se identifica
+con `Tipo=H`.
 
 ### Persona jurídica
 
-Sociedad, asociación, fundación, etc. **No soportado en v1.0** del contrato.
+Sociedad, asociación, fundación; persona no humana. En el contrato se identifica
+con `Tipo=J`. Usa `ApellidoODenominacion` como razón social.
 
 ### Proporción
 
 En una compraventa con varios adquirentes, indica qué fracción del inmueble
-adquiere cada uno. Se expresa como fracción (`1/2`, `1/3`, etc.) o porcentaje.
-En el contrato se modela como numerador/denominador para evitar errores de
-redondeo.
+adquiere cada uno. Se modela como string fracción (`"1/2"`, `"1/3"`, `"1/1"`).
+La validación de que las proporciones sumen 1 la hace el servicio del RPI.
+
+### Representante
+
+Persona que actúa por cuenta de otra (tutor, apoderado, etc.). En el contrato
+es un bloque opcional dentro de cada persona (adquirente o transmitente).
 
 ### Protocolo
 
