@@ -110,6 +110,12 @@
     <Telefono>0299-4567890</Telefono>
   </Rogante>
 
+  <TextoCuerpo>En la ciudad de Neuquén, ante mí, escribano autorizante, comparecen doña LUCÍA BEATRIZ ROMERO y don HÉCTOR RAÚL DÍAZ, en sus respectivos caracteres de adquirente y transmitente.
+
+Y dicen: que la operación tiene por objeto el inmueble identificado por tomo, folio y finca conforme se detalla en la minuta correspondiente, sin matriculación todavía por tratarse de inscripción previa al sistema de folio real.
+
+Previa lectura y ratificación, firman los comparecientes ante mí, doy fe.</TextoCuerpo>
+
   <ds:Signature>
     <ds:SignedInfo>
       <ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>

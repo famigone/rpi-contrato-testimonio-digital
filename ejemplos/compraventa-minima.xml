@@ -106,6 +106,12 @@
     <Telefono>0299-4567890</Telefono>
   </Rogante>
 
+  <TextoCuerpo>En la ciudad de Neuquén, capital de la Provincia del Neuquén, República Argentina, a los diez días del mes de junio del año dos mil veintiséis, ante mí, JUAN CARLOS PÉREZ, escribano titular del Registro Notarial Número 123 con sede en Neuquén, comparece la señora MARÍA LAURA GONZÁLEZ, argentina, soltera, mayor de edad, hábil, de mi conocimiento, doy fe.
+
+Y dice: que es propietaria del inmueble identificado con la matrícula 12-3456 del Departamento Confluencia, y que por la presente lo adquiere de don CARLOS ALBERTO RODRÍGUEZ, en el precio total de pesos cincuenta millones ($ 50.000.000,00) que se abonan en este acto.
+
+Previa lectura y ratificación, firman los comparecientes ante mí, doy fe.</TextoCuerpo>
+
   <ds:Signature>
     <ds:SignedInfo>
       <ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>

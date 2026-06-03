@@ -108,6 +108,12 @@
     <Telefono>0299-4567890</Telefono>
   </Rogante>
 
+  <TextoCuerpo>En la ciudad de Neuquén, ante mí, escribano autorizante, comparece la sociedad INMOBILIARIA DEL SUR S.A., CUIT 30-71234567-8, con inscripción ante la Inspección General de Justicia de la Ciudad Autónoma de Buenos Aires, representada en este acto por su presidente conforme acta de directorio que se tiene a la vista.
+
+Y dice: que adquiere el inmueble identificado registralmente conforme se detalla en la minuta correspondiente, transmitido por don CARLOS ALBERTO RODRÍGUEZ, persona humana, en el precio total convenido entre las partes.
+
+Previa lectura y ratificación, firman los comparecientes ante mí, doy fe.</TextoCuerpo>
+
   <ds:Signature>
     <ds:SignedInfo>
       <ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>

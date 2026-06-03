@@ -103,6 +103,12 @@
     <Telefono>0299-4441122</Telefono>
   </Rogante>
 
+  <TextoCuerpo>En la ciudad de Neuquén, a los quince días del mes de junio del año dos mil veintiséis, ante mí, MARÍA INÉS GARCÍA, escribana titular del Registro Notarial Número 87, comparece el señor ROBERTO DANIEL VEGA, argentino, soltero, mayor de edad, hábil, de mi conocimiento, doy fe.
+
+Y dice: que adquiere el inmueble identificado con la matrícula 12-3499 del Departamento Confluencia, transmitido por don OSCAR LUIS HERNÁNDEZ, en el precio total de dólares estadounidenses ciento cincuenta mil (U$S 150.000,00), equivalentes a pesos al tipo de cambio oficial vigente al día de la fecha, según cotización informada del Banco Central de la República Argentina.
+
+Previa lectura y ratificación, firman los comparecientes ante mí, doy fe.</TextoCuerpo>
+
   <ds:Signature>
     <ds:SignedInfo>
       <ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>

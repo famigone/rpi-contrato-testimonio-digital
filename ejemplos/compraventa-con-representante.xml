@@ -116,6 +116,12 @@
     <Telefono>0299-4441122</Telefono>
   </Rogante>
 
+  <TextoCuerpo>En la ciudad de Neuquén, ante mí, escribana autorizante, comparece el señor GUSTAVO ADRIÁN MORALES, en su carácter de representante legal de la menor de edad SOFÍA MORALES, conforme designación cuya copia certificada se incorpora a esta escritura.
+
+Y dice: que en nombre y representación de su hija menor adquiere el inmueble identificado en la minuta correspondiente, transmitido por don OSCAR LUIS HERNÁNDEZ, en el precio total convenido entre las partes, con la debida autorización judicial cuya copia se acompaña.
+
+Previa lectura y ratificación, firman los comparecientes ante mí, doy fe.</TextoCuerpo>
+
   <ds:Signature>
     <ds:SignedInfo>
       <ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
