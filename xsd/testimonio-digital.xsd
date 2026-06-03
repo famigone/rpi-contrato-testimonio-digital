@@ -92,6 +92,16 @@
         <xs:element ref="ds:Signature"/>
       </xs:sequence>
       <xs:attribute name="version" type="xs:string" use="required" fixed="1.0"/>
+      <xs:attribute name="Id" type="xs:ID" use="optional">
+        <xs:annotation>
+          <xs:documentation>
+            Atributo opcional usado por librerías de firma XML-DSig
+            (xml-crypto, Apache Santuario, etc.) para identificar el elemento
+            firmado. El RPI lo ignora a nivel de contenido, solo lo acepta para
+            compatibilidad con firmadores que lo agregan automáticamente.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
     </xs:complexType>
   </xs:element>
 
