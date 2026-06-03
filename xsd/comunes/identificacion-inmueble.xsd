@@ -7,62 +7,102 @@
 
   <xs:annotation>
     <xs:documentation>
-      Identificación registral del inmueble afectado por el acto.
+      Identificación del inmueble. Soporta dos modos:
+      - Por matrícula: para inmuebles registrados con sistema de folio real.
+      - Por tomo/folio/finca: para inmuebles antiguos sin matrícula.
+
+      Debe completarse al menos uno de los dos. El servicio valida en código.
     </xs:documentation>
   </xs:annotation>
 
-  <!-- Tipo: matrícula en formato DD-NNNN -->
+  <!-- Enum: código de departamento de Neuquén -->
+  <xs:simpleType name="CodigoDepartamentoEnum">
+    <xs:annotation>
+      <xs:documentation>
+        Código numérico del departamento según tabla del RPI Neuquén:
+        1=Aluminé, 2=Añelo, 3=Catán Lil, 4=Collón Curá, 5=Confluencia,
+        6=Chos Malal, 7=Huiliches, 8=Lácar, 9=Loncopué, 10=Los Lagos,
+        11=Minas, 12=Ñorquín, 13=Pehuenches, 14=Picunches, 15=Picún Leufú,
+        16=Zapala.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:integer">
+      <xs:enumeration value="1"/>
+      <xs:enumeration value="2"/>
+      <xs:enumeration value="3"/>
+      <xs:enumeration value="4"/>
+      <xs:enumeration value="5"/>
+      <xs:enumeration value="6"/>
+      <xs:enumeration value="7"/>
+      <xs:enumeration value="8"/>
+      <xs:enumeration value="9"/>
+      <xs:enumeration value="10"/>
+      <xs:enumeration value="11"/>
+      <xs:enumeration value="12"/>
+      <xs:enumeration value="13"/>
+      <xs:enumeration value="14"/>
+      <xs:enumeration value="15"/>
+      <xs:enumeration value="16"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Tipo: matrícula numérica -->
   <xs:simpleType name="MatriculaType">
     <xs:annotation>
       <xs:documentation>
-        Matrícula del inmueble en formato DD-NNNN (departamento-número).
-        Ejemplo: 12-3456.
+        Matrícula del inmueble como número entero positivo (hasta 8 dígitos).
       </xs:documentation>
     </xs:annotation>
-    <xs:restriction base="xs:string">
-      <xs:pattern value="\d{1,3}-\d{1,8}"/>
+    <xs:restriction base="xs:positiveInteger">
+      <xs:maxInclusive value="99999999"/>
     </xs:restriction>
   </xs:simpleType>
 
   <!-- Tipo: IdentificacionInmueble -->
   <xs:complexType name="IdentificacionInmuebleType">
     <xs:sequence>
-      <xs:element name="Matricula" type="MatriculaType">
-        <xs:annotation>
-          <xs:documentation>Matrícula registral del inmueble.</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="Departamento">
-        <xs:annotation>
-          <xs:documentation>Departamento donde está ubicado el inmueble.</xs:documentation>
-        </xs:annotation>
-        <xs:simpleType>
-          <xs:restriction base="xs:string">
-            <xs:minLength value="1"/>
-            <xs:maxLength value="60"/>
-          </xs:restriction>
-        </xs:simpleType>
-      </xs:element>
-      <xs:element name="Barrio" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation>Barrio (opcional).</xs:documentation>
-        </xs:annotation>
-        <xs:simpleType>
-          <xs:restriction base="xs:string">
-            <xs:minLength value="1"/>
-            <xs:maxLength value="60"/>
-          </xs:restriction>
-        </xs:simpleType>
-      </xs:element>
-      <xs:element name="UbicacionLibre" minOccurs="0">
+      <xs:element name="Matricula" type="MatriculaType" minOccurs="0">
         <xs:annotation>
           <xs:documentation>
-            Ubicación adicional en texto libre (calle, número, piso, depto, manzana, lote).
+            Opcional. Si se omite, debe completarse la terna Tomo+Folio+Finca.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Barra" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Barra catastral. Opcional, hasta 5 caracteres.
           </xs:documentation>
         </xs:annotation>
         <xs:simpleType>
           <xs:restriction base="xs:string">
-            <xs:maxLength value="500"/>
+            <xs:maxLength value="5"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="Departamento" type="CodigoDepartamentoEnum">
+        <xs:annotation>
+          <xs:documentation>Código de departamento, siempre obligatorio.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Tomo" minOccurs="0">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:maxLength value="10"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="Folio" minOccurs="0">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:maxLength value="10"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="Finca" minOccurs="0">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:maxLength value="10"/>
           </xs:restriction>
         </xs:simpleType>
       </xs:element>
