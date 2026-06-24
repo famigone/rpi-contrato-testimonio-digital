@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v2"
+    targetNamespace="https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v2"
+    elementFormDefault="qualified">
+
+  <xs:annotation>
+    <xs:documentation>
+      Datos del escribano autorizante de la escritura. Es la persona cuya firma
+      digital firma el XML del testimonio.
+    </xs:documentation>
+  </xs:annotation>
+
+  <!-- Tipo: CUIT con o sin guiones -->
+  <xs:simpleType name="CUITType">
+    <xs:annotation>
+      <xs:documentation>
+        CUIT/CUIL en formato XX-XXXXXXXX-X (con guiones) o XXXXXXXXXXX (sin guiones).
+        El XSD no valida el dígito verificador; lo hace el servicio del RPI.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:pattern value="\d{2}-?\d{8}-?\d{1}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Tipo: EscribanoAutorizante -->
+  <xs:complexType name="EscribanoAutorizanteType">
+    <xs:sequence>
+      <xs:element name="Nombre">
+        <xs:annotation>
+          <xs:documentation>Nombre completo del escribano (apellido y nombres).</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="60"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="CUIT" type="CUITType">
+        <xs:annotation>
+          <xs:documentation>
+            CUIT del escribano. Debe coincidir con el CUIT del certificado
+            que firma el XML.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="RegistroNumero">
+        <xs:annotation>
+          <xs:documentation>Número de registro notarial del escribano.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="8"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="Sede">
+        <xs:annotation>
+          <xs:documentation>Sede del registro (ej: NEUQUÉN).</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="40"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>

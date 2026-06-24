@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v2"
+    targetNamespace="https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v2"
+    elementFormDefault="qualified">
+
+  <!-- PersonaType (y ProporcionType, RepresentanteType, etc.) se reutiliza tal cual de v1. -->
+  <xs:include schemaLocation="persona.xsd"/>
+
+  <xs:annotation>
+    <xs:documentation>
+      Modelo de partes con ROL GENÉRICO (v2).
+
+      Reemplaza los contenedores nombrados por acto de v1 (Adquirentes /
+      Transmitentes). En v2 cada acto tiene una lista de &lt;Parte&gt;, donde el
+      rol de cada parte se expresa por atributo (RolParte) en vez de por el
+      nombre del contenedor.
+
+      Una Parte ES una persona (PersonaType, el único tipo con Tipo H/J/O,
+      Representante y Proporcion inline) más el atributo obligatorio "rol".
+      No se rehace la persona: se extiende. Por eso el contenido de &lt;Parte&gt;
+      es exactamente el de PersonaType (Tipo, ApellidoODenominacion, CUIT,
+      ..., Proporcion, Representante), con el agregado del atributo rol.
+
+      La Proporcion vive dentro de la Parte (heredada de PersonaType). Las
+      reglas "qué roles admiten proporción" y "las proporciones suman 1 por
+      acto" NO se validan en XSD: se validan en código, por acto (coherente con
+      ADR-002: reglas cross-componente en TypeScript).
+    </xs:documentation>
+  </xs:annotation>
+
+  <!--
+    Enum global de roles de parte conocidos hoy.
+
+    Estructura pensada para que agregar un rol futuro sea trivial: una sola
+    línea &lt;xs:enumeration&gt; aquí, sin tocar ningún otro XSD.
+
+    IMPORTANTE (intencional): el XSD acepta CUALQUIER RolParte en CUALQUIER
+    acto. La validez "qué roles corresponden a qué tipo de acto" (p. ej.
+    ADQUIRENTE/TRANSMITENTE para Compraventa, ACREEDOR/DEUDOR para Hipoteca)
+    NO se fuerza en el schema: es una validación condicional en código,
+    coherente con ADR-002. Los roles ACREEDOR/DEUDOR se dejan definidos desde
+    ya aunque Hipoteca todavía no esté en el choice de actos.
+  -->
+  <xs:simpleType name="RolParteEnum">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="ADQUIRENTE"/>
+      <xs:enumeration value="TRANSMITENTE"/>
+      <xs:enumeration value="ACREEDOR"/>
+      <xs:enumeration value="DEUDOR"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Parte = PersonaType + atributo rol obligatorio. -->
+  <xs:complexType name="ParteType">
+    <xs:annotation>
+      <xs:documentation>
+        Persona que interviene en un acto, con su rol expresado por atributo.
+        Hereda todo el contenido de PersonaType (incluida Proporcion y
+        Representante) y agrega el atributo obligatorio "rol".
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="PersonaType">
+        <xs:attribute name="rol" type="RolParteEnum" use="required">
+          <xs:annotation>
+            <xs:documentation>
+              Rol de la parte en el acto. Obligatorio. Cualquier RolParte es
+              aceptado por el XSD en cualquier acto; la correspondencia
+              rol/tipo-de-acto se valida en código.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+</xs:schema>

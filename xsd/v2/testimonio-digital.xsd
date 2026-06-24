@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v2"
+    xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+    targetNamespace="https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v2"
+    elementFormDefault="qualified">
+
+  <!-- XML-DSig local para validación offline. Se reutiliza la copia compartida
+       del paquete (un nivel arriba); es estándar W3C, dominio público. -->
+  <xs:import
+      namespace="http://www.w3.org/2000/09/xmldsig#"
+      schemaLocation="../xmldsig-core-schema.xsd"/>
+
+  <!-- Includes de tipos comunes (todos en namespace .../v2) -->
+  <xs:include schemaLocation="comunes/metadatos-envio.xsd"/>
+  <xs:include schemaLocation="comunes/escribano-autorizante.xsd"/>
+  <xs:include schemaLocation="comunes/persona.xsd"/>
+  <xs:include schemaLocation="comunes/parte.xsd"/>
+  <xs:include schemaLocation="comunes/identificacion-inmueble.xsd"/>
+  <xs:include schemaLocation="comunes/datos-economicos.xsd"/>
+  <xs:include schemaLocation="comunes/certificacion-registral.xsd"/>
+  <xs:include schemaLocation="comunes/certificacion-catastral.xsd"/>
+  <xs:include schemaLocation="comunes/nomenclatura-catastral.xsd"/>
+  <xs:include schemaLocation="comunes/visado-rentas.xsd"/>
+  <xs:include schemaLocation="comunes/otorgamiento.xsd"/>
+  <xs:include schemaLocation="comunes/rogante.xsd"/>
+  <xs:include schemaLocation="actos/compraventa.xsd"/>
+
+  <xs:annotation>
+    <xs:documentation>
+      Contrato XSD del Testimonio Digital del RPI Neuquén — v2.0.
+
+      Cambio central respecto de v1: un testimonio pasa de UN acto a N actos
+      (1..N). Los bloques sustantivos del acto (DatosEconomicos,
+      CertificacionCatastral, NomenclaturaCatastral, CertificacionRegistralPrevia,
+      VisadoRentas), las Partes y los Inmuebles BAJAN del nivel testimonio al
+      nivel de cada &lt;Acto&gt;. Las partes se modelan con rol genérico
+      (&lt;Parte rol="..."&gt;) en vez de contenedores nombrados por acto.
+
+      A nivel testimonio quedan: MetadatosEnvio, EscribanoAutorizante,
+      Otorgamiento, Rogante, TextoCuerpo, Observaciones y Signature (un trámite
+      y un cuerpo de escritura por testimonio, igual que v1).
+
+      En v2.0 el único tipo de acto definido en el choice es Compraventa, pero
+      la lista de actos ya admite tipos heterogéneos (el choice por acto lo
+      habilita). v2 reutiliza la mayoría de los componentes comunes de v1.
+    </xs:documentation>
+  </xs:annotation>
+
+  <!--
+    ActoType: un acto del testimonio.
+
+    Estructura: primero el discriminador del tipo de acto (choice), luego los
+    bloques que en v1 estaban a nivel raíz y ahora viven por acto.
+
+    El atributo "numero" es obligatorio (entero positivo). La UNICIDAD de
+    "numero" entre los actos NO se fuerza en XSD: se valida en código
+    (coherente con ADR-002, reglas cross-componente en TypeScript).
+  -->
+  <xs:complexType name="ActoType">
+    <xs:sequence>
+      <!-- Discriminador del tipo de acto. Heterogéneo entre actos: cada Acto
+           elige independientemente una opción del choice. Agregar un acto
+           futuro = una línea más aquí (p. ej. Hipoteca, Donacion). -->
+      <xs:choice>
+        <xs:element name="Compraventa" type="CompraventaType"/>
+        <!-- Próximos actos en versiones futuras:
+             <xs:element name="Hipoteca" type="HipotecaType"/>
+             <xs:element name="Donacion" type="DonacionType"/>
+        -->
+      </xs:choice>
+
+      <!-- Partes con rol genérico (1..N). El XSD acepta cualquier RolParte;
+           la validez rol/tipo-de-acto y "proporciones suman 1" se validan en
+           código, por acto. -->
+      <xs:element name="Partes">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Parte" type="ParteType" minOccurs="1" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+
+      <!-- Inmuebles del acto (1..M). Ya era lista en v1; baja al acto. -->
+      <xs:element name="Inmuebles">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Inmueble" minOccurs="1" maxOccurs="50">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="IdentificacionInmueble" type="IdentificacionInmuebleType"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+
+      <!-- Bloques sustantivos que BAJAN del testimonio (v1) al acto (v2). -->
+      <xs:element name="DatosEconomicos" type="DatosEconomicosType"/>
+      <xs:element name="CertificacionCatastral" type="CertificacionCatastralType"/>
+      <xs:element name="NomenclaturaCatastral" type="NomenclaturaCatastralType" minOccurs="0"/>
+      <xs:element name="CertificacionRegistralPrevia" type="CertificacionRegistralPreviaType"/>
+      <xs:element name="VisadoRentas" type="VisadoRentasType"/>
+    </xs:sequence>
+
+    <xs:attribute name="numero" type="xs:positiveInteger" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          Número de orden del acto dentro del testimonio. Entero positivo,
+          obligatorio. La unicidad entre actos NO se valida en XSD; se valida
+          en código.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:element name="TestimonioDigital">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="MetadatosEnvio" type="MetadatosEnvioType"/>
+        <xs:element name="EscribanoAutorizante" type="EscribanoAutorizanteType"/>
+        <xs:element name="Otorgamiento" type="OtorgamientoType"/>
+
+        <!-- Lista de actos: 1..N, sin tope. Tipos heterogéneos permitidos. -->
+        <xs:element name="Actos">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Acto" type="ActoType" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <xs:element name="Rogante" type="RoganteType"/>
+        <xs:element name="TextoCuerpo">
+          <xs:annotation>
+            <xs:documentation>
+              Transcripción del cuerpo de la escritura (texto plano).
+
+              Es a nivel testimonio: una escritura puede contener varios actos
+              pero es un único documento, y este es su cuerpo transcripto.
+
+              Debe ser una transcripción fiel del cuerpo de la escritura que
+              figura en el PDF firmado adjunto. La responsabilidad de la fidelidad
+              del texto es del escribano autorizante.
+
+              Formato: texto plano. NO se espera HTML, Markdown ni otros marcados.
+              Los saltos de línea naturales del texto se preservan.
+
+              Uso del servicio del RPI: análisis NLP, visualización en interfaces
+              del RPI, búsqueda full-text. No se valida coincidencia textual con
+              el PDF; la integridad legal está dada por las firmas digitales.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:minLength value="1"/>
+              <xs:maxLength value="500000"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+        <xs:element name="Observaciones" minOccurs="0">
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:maxLength value="4000"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+        <xs:element ref="ds:Signature"/>
+      </xs:sequence>
+      <xs:attribute name="version" type="xs:string" use="required" fixed="2.0"/>
+      <xs:attribute name="Id" type="xs:ID" use="optional">
+        <xs:annotation>
+          <xs:documentation>
+            Atributo opcional usado por librerías de firma XML-DSig
+            (xml-crypto, Apache Santuario, etc.) para identificar el elemento
+            firmado. El RPI lo ignora a nivel de contenido, solo lo acepta para
+            compatibilidad con firmadores que lo agregan automáticamente.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

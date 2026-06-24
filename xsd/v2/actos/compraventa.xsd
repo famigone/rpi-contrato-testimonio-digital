@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v2"
+    targetNamespace="https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v2"
+    elementFormDefault="qualified">
+
+  <xs:annotation>
+    <xs:documentation>
+      Acto de compraventa de inmueble (v2).
+
+      Diferencia clave respecto de v1: en v2 las PARTES y los INMUEBLES NO viven
+      dentro del tipo del acto, sino a nivel &lt;Acto&gt; (Partes con rol genérico
+      e Inmuebles son hermanos del choice de tipo de acto). Por eso
+      CompraventaType en v2 contiene únicamente los campos PROPIOS del tipo
+      compraventa (aclaraciones y textos libres específicos), no los
+      adquirentes/transmitentes/inmuebles que en v1 estaban embebidos aquí.
+
+      Todos los campos son opcionales: el sustento del acto (quiénes, qué
+      inmuebles, montos) está a nivel &lt;Acto&gt;. El elemento &lt;Compraventa&gt;
+      actúa como discriminador del tipo de acto dentro del choice, y porta sus
+      datos específicos cuando corresponde.
+
+      Asentimiento conyugal se modela como texto libre (no estructurado), igual
+      que en v1.
+    </xs:documentation>
+  </xs:annotation>
+
+  <xs:complexType name="CompraventaType">
+    <xs:sequence>
+      <xs:element name="DescripcionActoIncompleto" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Aclaración del escribano sobre el acto si no es una compraventa
+            completa estándar. Texto libre, opcional.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:maxLength value="106"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+
+      <xs:element name="ReconocimientoHipotecaMedidasCautelares" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Texto libre, opcional.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:maxLength value="4000"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+
+      <xs:element name="AfectacionesAlDominio" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Texto libre, opcional.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:maxLength value="4000"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+
+      <xs:element name="AsentimientoConyugal" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Asentimiento conyugal como texto libre. Si se requiere estructura
+            (cónyuge, fecha, etc.), evolución futura.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:maxLength value="4000"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>

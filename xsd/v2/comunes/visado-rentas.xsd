@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v2"
+    targetNamespace="https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v2"
+    elementFormDefault="qualified">
+
+  <xs:annotation>
+    <xs:documentation>
+      Visado de Rentas. Bloque obligatorio.
+      Si Tipo=R (con visado), NumeroTramite es obligatorio.
+      Si Tipo=A (sin visado), NumeroTramite no aplica.
+    </xs:documentation>
+  </xs:annotation>
+
+  <xs:simpleType name="TipoVisadoEnum">
+    <xs:annotation>
+      <xs:documentation>
+        R: Con visado de Rentas.
+        A: Sin visado de Rentas (exento u otra causal).
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="R"/>
+      <xs:enumeration value="A"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="VisadoRentasType">
+    <xs:sequence>
+      <xs:element name="Tipo" type="TipoVisadoEnum"/>
+      <xs:element name="NumeroTramite" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Obligatorio si Tipo=R. Validación en el servicio.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:maxLength value="10"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>

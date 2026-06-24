@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v2"
+    targetNamespace="https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v2"
+    elementFormDefault="qualified">
+
+  <xs:annotation>
+    <xs:documentation>
+      Datos del otorgamiento del acto: lugar, fecha, número de escritura,
+      folio del protocolo.
+    </xs:documentation>
+  </xs:annotation>
+
+  <xs:complexType name="OtorgamientoType">
+    <xs:sequence>
+      <xs:element name="Lugar">
+        <xs:annotation>
+          <xs:documentation>Ciudad o localidad donde se otorgó el acto.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="60"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="Fecha" type="xs:date">
+        <xs:annotation>
+          <xs:documentation>
+            Fecha del otorgamiento de la escritura. No puede ser futura.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="NumeroEscritura">
+        <xs:annotation>
+          <xs:documentation>
+            Número de escritura en el protocolo del escribano. Se admite
+            padding con ceros a la izquierda.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="8"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="FolioProtocolo">
+        <xs:annotation>
+          <xs:documentation>
+            Folio del protocolo donde se asienta la escritura. Se admite
+            padding con ceros a la izquierda.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="8"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>
