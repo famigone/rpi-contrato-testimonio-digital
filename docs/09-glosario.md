@@ -46,10 +46,13 @@ inscripto. Puede inscribir, observar (provisoriamente) o rechazar.
 Certificado emitido por el RPI antes del acto, que el escribano solicita antes
 de otorgar la escritura para asegurarse del estado del bien y de las personas.
 En el contrato v2 son **dos certificados distintos**, cada uno con su número y
-fecha de emisión: la **certificación de dominio** (`CertificacionDominio`),
-sobre el estado dominial del **inmueble**, y la **certificación de inhibición**
-(`CertificacionInhibicion`), sobre si la **persona** transmitente está inhibida
-para disponer de sus bienes.
+fecha de emisión, y cada uno vive donde recae lo que certifica: la **certificación
+de dominio** (`CertificacionDominio`), sobre el estado dominial del **inmueble**,
+va a **nivel acto**; la **certificación de inhibición** (`CertificacionInhibicion`),
+sobre si la **persona** transmitente está inhibida para disponer de sus bienes,
+va **dentro de cada `<Parte rol="TRANSMITENTE">`** (una por transmitente). Ambas
+son obligatorias por regla de servicio (dominio para compraventa; inhibición por
+cada transmitente).
 
 ### Compraventa
 

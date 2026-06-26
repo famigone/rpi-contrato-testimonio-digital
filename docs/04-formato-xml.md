@@ -41,7 +41,16 @@ El XML del testimonio digital tiene esta estructura raíz:
         <!-- Bloques de texto libre opcionales del acto -->
       </Compraventa>
       <Partes>
-        <!-- Una o varias <Parte rol="ADQUIRENTE|TRANSMITENTE|..."> -->
+        <Parte rol="TRANSMITENTE">
+          <!-- ...campos de la persona...
+               cada transmitente lleva su propia CertificacionInhibicion -->
+          <CertificacionInhibicion>
+            <!-- Inhibición del transmitente (sobre la persona): Numero + FechaEmision -->
+          </CertificacionInhibicion>
+        </Parte>
+        <Parte rol="ADQUIRENTE">
+          <!-- ...campos de la persona... (el adquirente NO lleva inhibición) -->
+        </Parte>
       </Partes>
       <Inmuebles>
         <Inmueble>
@@ -63,9 +72,6 @@ El XML del testimonio digital tiene esta estructura raíz:
       <CertificacionDominio>
         <!-- Certificado de dominio previo (sobre el inmueble): Numero + FechaEmision -->
       </CertificacionDominio>
-      <CertificacionInhibicion>
-        <!-- Certificado de inhibición previo (sobre la persona): Numero + FechaEmision -->
-      </CertificacionInhibicion>
       <VisadoRentas>
         <!-- Visado de Rentas (obligatorio) -->
       </VisadoRentas>
@@ -96,9 +102,10 @@ El XML del testimonio digital tiene esta estructura raíz:
 
 > El orden de los elementos dentro de `<Acto>` es fijo: primero el discriminador
 > del tipo (`Compraventa`), luego `Partes`, `Inmuebles`, `DatosEconomicos`,
-> `CertificacionDominio`, `CertificacionInhibicion` y `VisadoRentas`. Dentro de
-> cada `<Inmueble>` el orden también es fijo: `IdentificacionInmueble`,
-> `CertificacionCatastral`, `NomenclaturaCatastral`.
+> `CertificacionDominio` y `VisadoRentas`. Dentro de cada `<Inmueble>` el orden
+> también es fijo: `IdentificacionInmueble`, `CertificacionCatastral`,
+> `NomenclaturaCatastral`. Cada `<Parte rol="TRANSMITENTE">` lleva su
+> `CertificacionInhibicion` como último hijo de la parte.
 
 > El atributo `numero` de cada `<Acto>` es un entero positivo obligatorio. La
 > **unicidad** de `numero` entre los actos no la valida el XSD: la valida el
@@ -182,12 +189,13 @@ sí (en v2.0 el único tipo disponible es `Compraventa`).
 Cada `<Acto>` contiene, en este orden:
 
 1. El **discriminador del tipo de acto** (`Compraventa`).
-2. `Partes` — las personas que intervienen, con su rol por atributo.
+2. `Partes` — las personas que intervienen, con su rol por atributo. Cada
+   `<Parte rol="TRANSMITENTE">` lleva su `CertificacionInhibicion` (ver
+   [La Parte](#la-parte-persona--rol)).
 3. `Inmuebles` — uno o más `<Inmueble>`, cada uno con su `IdentificacionInmueble`,
    su `CertificacionCatastral` y su `NomenclaturaCatastral` (el catastro es **por
    inmueble**).
-4. `DatosEconomicos`, `CertificacionDominio`, `CertificacionInhibicion` y
-   `VisadoRentas`.
+4. `DatosEconomicos`, `CertificacionDominio` y `VisadoRentas`.
 
 Estos bloques en v1 vivían a nivel testimonio; en v2 **bajan al acto**, porque
 cada acto puede tener distintas partes, inmuebles, monto y certificaciones.
@@ -198,7 +206,13 @@ cada acto puede tener distintas partes, inmuebles, monto y certificaciones.
     <Compraventa>
       <DescripcionActoIncompleto>Compraventa con saldo de precio</DescripcionActoIncompleto>
     </Compraventa>
-    <Partes> ... </Partes>
+    <Partes>
+      <Parte rol="TRANSMITENTE">
+        <!-- ...persona... -->
+        <CertificacionInhibicion> ... </CertificacionInhibicion>
+      </Parte>
+      <Parte rol="ADQUIRENTE"> ... </Parte>
+    </Partes>
     <Inmuebles>
       <Inmueble>
         <IdentificacionInmueble> ... </IdentificacionInmueble>
@@ -208,42 +222,36 @@ cada acto puede tener distintas partes, inmuebles, monto y certificaciones.
     </Inmuebles>
     <DatosEconomicos> ... </DatosEconomicos>
     <CertificacionDominio> ... </CertificacionDominio>
-    <CertificacionInhibicion> ... </CertificacionInhibicion>
     <VisadoRentas> ... </VisadoRentas>
   </Acto>
 </Actos>
 ```
 
-El catastro (`CertificacionCatastral` y `NomenclaturaCatastral`) vive **dentro de
-cada `<Inmueble>`**; el resto de los bloques (`CertificacionDominio`,
-`CertificacionInhibicion`, `DatosEconomicos`, `VisadoRentas`, `Compraventa`,
-`Partes` e `Inmuebles`) viven **dentro de cada `<Acto>`**.
+Cada certificado vive donde recae lo que certifica: el **catastro**
+(`CertificacionCatastral` y `NomenclaturaCatastral`) dentro de cada `<Inmueble>`;
+la **inhibición** (`CertificacionInhibicion`) dentro de cada `<Parte>`
+transmitente; el resto de los bloques (`CertificacionDominio`, `DatosEconomicos`,
+`VisadoRentas`, `Compraventa`, `Partes` e `Inmuebles`) directamente **dentro de
+cada `<Acto>`**.
 
-### CertificacionDominio y CertificacionInhibicion
+### CertificacionDominio
 
-Las certificaciones registrales previas que el escribano solicitó al RPI antes
-de otorgar la escritura. Son **dos certificados distintos**, modelados como dos
-bloques separados a nivel acto:
+Certificado de dominio previo que el escribano solicitó al RPI antes de otorgar
+la escritura. Recae sobre el **inmueble** (estado de dominio, gravámenes,
+restricciones) y por eso vive a **nivel acto**.
 
-- **`CertificacionDominio`**: recae sobre el **inmueble** (estado de dominio,
-  gravámenes, restricciones).
-- **`CertificacionInhibicion`**: recae sobre la **persona** (si el transmitente
-  está inhibido para disponer de sus bienes).
-
-Cada uno tiene la misma estructura simple: `Numero` + `FechaEmision`. Reemplazan
-al antiguo `CertificacionRegistralPrevia` (un número con dos fechas heredado del
-legacy). Estructuralmente son opcionales en el XSD, pero **para compraventa el
-servicio del RPI exige ambos**.
+Estructura simple: `Numero` + `FechaEmision`. Junto con la certificación de
+inhibición (que recae sobre la persona y vive dentro de cada transmitente, ver
+[La Parte](#la-parte-persona--rol)) reemplaza al antiguo
+`CertificacionRegistralPrevia` (un número con dos fechas heredado del legacy).
+Estructuralmente opcional en el XSD, pero **para compraventa el servicio del RPI
+la exige**.
 
 ```xml
 <CertificacionDominio>
   <Numero>2026-001234</Numero>
   <FechaEmision>2026-06-01</FechaEmision>
 </CertificacionDominio>
-<CertificacionInhibicion>
-  <Numero>INH-2026-000789</Numero>
-  <FechaEmision>2026-06-02</FechaEmision>
-</CertificacionInhibicion>
 ```
 
 ### CertificacionCatastral (por inmueble)
@@ -355,9 +363,10 @@ rol se expresa con el atributo obligatorio `rol`. Una o más `Parte`.
 <Partes>
   <Parte rol="TRANSMITENTE">
     <!-- contenido de Persona (Tipo, ApellidoODenominacion, CUIT, ...) -->
+    <CertificacionInhibicion> ... </CertificacionInhibicion>  <!-- solo transmitentes -->
   </Parte>
   <Parte rol="ADQUIRENTE">
-    <!-- contenido de Persona, con Proporcion -->
+    <!-- contenido de Persona, con Proporcion (sin inhibición) -->
   </Parte>
 </Partes>
 ```
@@ -450,8 +459,10 @@ Firma XML-DSig del escribano. Detalle en [05 — Firma digital](05-firma-digital
 Cada `<Parte>` **es** una persona (el tipo `Persona`, reutilizado sin cambios de
 v1) más el atributo obligatorio `rol`. El contenido de `<Parte>` es exactamente
 el de una `Persona` (los mismos subelementos), con `rol` en el elemento de
-apertura. Por eso los campos descritos abajo aplican igual a cualquier parte,
-sea cual sea su rol.
+apertura, más —solo en los transmitentes— la `CertificacionInhibicion` como
+último subelemento. Por eso los campos de persona descritos abajo aplican igual a
+cualquier parte, sea cual sea su rol; la inhibición es la única excepción ligada
+al rol.
 
 `Persona` discrimina por `Tipo`:
 
@@ -475,6 +486,15 @@ Campos solo para `J`/`O`: `InscripcionOrganismoSede`.
 `Proporcion` (string fracción `"N/D"`, ej. `"1/2"`) aplica a las partes que
 adquieren (rol `ADQUIRENTE`). Las reglas "qué roles admiten proporción" y "las
 proporciones suman 1 **por acto**" las valida el servicio, no el XSD.
+
+**Certificación de inhibición** (`CertificacionInhibicion`, con `Numero` +
+`FechaEmision`): es el **último** subelemento de la `<Parte>` y corresponde **solo
+a los transmitentes**. Recae sobre la persona que transmite (si está inhibida
+para disponer de sus bienes); por eso vive en la parte y no a nivel acto. **Cada
+`<Parte rol="TRANSMITENTE">` lleva la suya** (humana o jurídica), obligatoria por
+transmitente (regla de servicio); los adquirentes no la incluyen. Si un mismo
+certificado cubre a varios transmitentes, se repite el mismo `Numero` y
+`FechaEmision` en cada uno.
 
 Ejemplo de parte humana adquirente:
 
@@ -505,6 +525,10 @@ guiones; `TipoDocumento` se omite):
   <NumeroDocumento>30701234567</NumeroDocumento>
   <PEP>false</PEP>
   <InscripcionOrganismoSede>IGJ NEUQUÉN</InscripcionOrganismoSede>
+  <CertificacionInhibicion>
+    <Numero>INH-2026-000789</Numero>
+    <FechaEmision>2026-06-02</FechaEmision>
+  </CertificacionInhibicion>
 </Parte>
 ```
 
@@ -599,12 +623,15 @@ Un `<Inmueble>` completo incluye, además de la identificación, su catastro
 Algunos tipos se reutilizan entre actos. Por eso están en archivos XSD
 separados bajo `xsd/v2/comunes/`:
 
-- **Parte** (`parte.xsd`): `Persona` + atributo `rol`. Define el enum de roles.
+- **Parte** (`parte.xsd`): `Persona` + atributo `rol` + `CertificacionInhibicion`
+  (solo para transmitentes). Define el enum de roles.
 - **Persona**: contenido de cada `Parte` (reutilizado tal cual de v1).
+- **CertificacionInhibicion** (`certificacion-inhibicion.xsd`): se referencia
+  **dentro de cada `<Parte>`** transmitente (sobre la persona).
 - **IdentificacionInmueble**, **CertificacionCatastral**, **NomenclaturaCatastral**:
   bloques comunes del inmueble (los tres viven dentro de cada `<Inmueble>`).
-- **CertificacionDominio**, **CertificacionInhibicion**, **VisadoRentas**,
-  **DatosEconomicos**: bloques comunes del acto.
+- **CertificacionDominio**, **VisadoRentas**, **DatosEconomicos**: bloques
+  comunes del acto.
 
 Cuando agreguemos nuevos actos (hipoteca, donación), van a reutilizar estos
 mismos tipos sin redefinirlos: el acto nuevo solo define sus campos propios, ya

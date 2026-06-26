@@ -8,12 +8,13 @@
 > documento sirve como referencia rápida pero ante discrepancia, el XSD manda.
 >
 > **v2.0**: un testimonio contiene **N actos**. La sección 4 y sus subsecciones
-> (4.1 a 4.7: compraventa, partes, inmuebles —con su catastro—, datos
-> económicos, certificaciones registrales y visado) se completan **una vez por
+> (4.1 a 4.6: compraventa, partes, inmuebles —con su catastro—, datos
+> económicos, certificación de dominio y visado) se completan **una vez por
 > cada acto** dentro de `TestimonioDigital/Actos/Acto`. El catastro
 > (certificación catastral y nomenclatura) va **por inmueble**, dentro de cada
-> `<Inmueble>` (sección 4.3). Las secciones 1 a 3 y 5 a 7 son a nivel testimonio
-> (una vez por envío).
+> `<Inmueble>` (sección 4.3); la **certificación de inhibición** va **por
+> transmitente**, dentro de cada `<Parte rol="TRANSMITENTE">` (sección 4.2). Las
+> secciones 1 a 3 y 5 a 7 son a nivel testimonio (una vez por envío).
 
 ## Cómo leer este documento
 
@@ -79,14 +80,15 @@ son de tipo `Compraventa`, pero la estructura admite tipos heterogéneos.
 |---|---|---|---|---|---|---|
 | Número de acto | `Acto/@numero` | Entero positivo | — | Sí | Atributo del `<Acto>`. Único entre actos (lo valida el servicio) | `1` |
 
-> **Las secciones 4.1 a 4.7 se completan dentro de cada `<Acto>`.** Su camino
+> **Las secciones 4.1 a 4.6 se completan dentro de cada `<Acto>`.** Su camino
 > base es `TestimonioDigital/Actos/Acto/...`. En v1 muchos de estos bloques
 > vivían a nivel testimonio; en v2 bajan al acto.
 >
 > El orden dentro de `<Acto>` es fijo: `Compraventa`, `Partes`, `Inmuebles`,
-> `DatosEconomicos`, `CertificacionDominio`, `CertificacionInhibicion`,
-> `VisadoRentas`. Dentro de cada `<Inmueble>` el orden es:
-> `IdentificacionInmueble`, `CertificacionCatastral`, `NomenclaturaCatastral`.
+> `DatosEconomicos`, `CertificacionDominio`, `VisadoRentas`. Dentro de cada
+> `<Inmueble>` el orden es: `IdentificacionInmueble`, `CertificacionCatastral`,
+> `NomenclaturaCatastral`. Cada `<Parte rol="TRANSMITENTE">` lleva además su
+> `CertificacionInhibicion` como último hijo (ver 4.2).
 
 ### 4.1 Compraventa (discriminador del acto)
 
@@ -142,6 +144,25 @@ atributo.
 - El XSD acepta cualquier `rol` en cualquier acto; la correspondencia
   rol/tipo-de-acto y que las proporciones de adquirentes **sumen 1 por acto**
   las valida el servicio.
+
+#### Certificación de inhibición (por transmitente)
+
+Camino base: `Actos/Acto/Partes/Parte/CertificacionInhibicion`
+
+La certificación de inhibición recae sobre **la persona que transmite**, no
+sobre el acto: por eso es un dato **de cada transmitente**, no del acto. **Cada
+`<Parte rol="TRANSMITENTE">` lleva la suya** (vendedor físico o jurídico),
+**obligatoria por transmitente** (regla de servicio). Va como **último hijo** de
+la `<Parte>`. Los adquirentes **no** la llevan.
+
+> **Certificado conjunto**: si un único certificado de inhibición cubre a varios
+> transmitentes, se repite el **mismo `Numero` y `FechaEmision`** en cada uno. Si
+> cada vendedor tiene el suyo, se ponen números/fechas distintos.
+
+| Campo del formulario | Camino XML | Tipo | Longitud | Obligatorio | Valores / Notas | Ejemplo |
+|---|---|---|---|---|---|---|
+| Número | `CertificacionInhibicion/Numero` | Texto | 1-40 | Sí (por transmitente) | | `INH-2026-000789` |
+| Fecha de emisión | `CertificacionInhibicion/FechaEmision` | Fecha | — | Sí (por transmitente) | | `2026-06-02` |
 
 #### Representante (opcional)
 
@@ -237,36 +258,18 @@ Camino base: `Actos/Acto/DatosEconomicos`
 
 Camino base: `Actos/Acto/CertificacionDominio`
 
-Certificado registral de **dominio** (sobre el inmueble). Junto con la
-certificación de inhibición (4.6), reemplaza al antiguo bloque
-`CertificacionRegistralPrevia` (número + dos fechas). Estructuralmente opcional
-en el XSD, pero **obligatorio para compraventa** (lo exige el servicio del RPI).
+Certificado registral de **dominio** (sobre el inmueble), a **nivel acto**. Junto
+con la certificación de inhibición (que va por transmitente, ver 4.2), reemplaza
+al antiguo bloque `CertificacionRegistralPrevia` (número + dos fechas).
+Estructuralmente opcional en el XSD, pero **obligatorio para compraventa** (lo
+exige el servicio del RPI).
 
 | Campo del formulario | Camino XML | Tipo | Longitud | Obligatorio | Valores / Notas | Ejemplo |
 |---|---|---|---|---|---|---|
 | Número | `Numero` | Texto | 1-40 | Sí (compraventa) | | `2026-001234` |
 | Fecha de emisión | `FechaEmision` | Fecha | — | Sí (compraventa) | | `2026-06-01` |
 
-### 4.6 Certificación de inhibición
-
-Camino base: `Actos/Acto/CertificacionInhibicion`
-
-Certificado registral de **inhibición** (sobre la persona transmitente).
-Estructuralmente opcional en el XSD, pero **obligatorio para compraventa** (lo
-exige el servicio del RPI).
-
-| Campo del formulario | Camino XML | Tipo | Longitud | Obligatorio | Valores / Notas | Ejemplo |
-|---|---|---|---|---|---|---|
-| Número | `Numero` | Texto | 1-40 | Sí (compraventa) | | `INH-2026-000789` |
-| Fecha de emisión | `FechaEmision` | Fecha | — | Sí (compraventa) | | `2026-06-02` |
-
-> **Nota**: la certificación de dominio y la de inhibición son **dos certificados
-> distintos**. La de **dominio** informa el estado registral del **inmueble**
-> (titularidad, gravámenes); la de **inhibición** informa si la **persona** que
-> transmite está inhibida para disponer de sus bienes. Por eso se solicitan por
-> separado, cada una con su propio número y fecha de emisión.
-
-### 4.7 Visado de Rentas
+### 4.6 Visado de Rentas
 
 Camino base: `Actos/Acto/VisadoRentas` (bloque obligatorio)
 

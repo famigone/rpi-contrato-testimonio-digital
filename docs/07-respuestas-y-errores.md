@@ -72,7 +72,7 @@ El campo `detalle` es opcional y varía según el código de error.
 |--------|-------------|
 | `ESCRIBANO_NO_REGISTRADO` | El escribano declarado no figura en el catálogo del RPI. Requiere acción manual. |
 | `MATRICULA_NO_EXISTENTE` | La matrícula del inmueble no existe en el RPI. |
-| `CERTIFICACION_VENCIDA` | La certificación registral previa (dominio o inhibición) está vencida. |
+| `CERTIFICACION_VENCIDA` | Una certificación registral previa está vencida: la de **dominio** (`Acto/CertificacionDominio`) o la de **inhibición** de algún transmitente (`Acto/Partes/Parte/CertificacionInhibicion`). |
 | `VERSION_CONTRATO_NO_SOPORTADA` | El RPI no soporta la versión del contrato declarada. |
 | `MONEDA_SIN_COTIZACION` | Si moneda=USD, cotización es obligatoria. |
 | `PERSONA_HUMANA_SIN_NOMBRES` | Tipo=H requiere Nombres. |
