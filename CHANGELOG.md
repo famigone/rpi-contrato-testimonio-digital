@@ -7,6 +7,46 @@ y este contrato adhiere a [Semantic Versioning 2.0.0](https://semver.org/spec/v2
 
 ---
 
+## [2.0.0] — 2026-06-24
+
+Cambio **MAJOR**: un testimonio pasa de **un acto** a **N actos (1..N)**. Nuevo
+namespace `https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v2` y
+atributo raíz `version="2.0"`. v2 **coexiste** con v1: los XSD de v1 quedan
+intactos en `xsd/` y los de v2 viven en `xsd/v2/`.
+
+### Agregado
+- Contenedor `<Actos>` con `<Acto numero="N">` (`minOccurs=1`, sin tope). Actos
+  de tipos heterogéneos permitidos. El atributo `numero` es entero positivo
+  obligatorio (su unicidad la valida el servicio, no el XSD).
+- `xsd/v2/comunes/parte.xsd`: tipo `ParteType` (= `PersonaType` + atributo `rol`)
+  y enum `RolParteEnum` con `ADQUIRENTE`, `TRANSMITENTE`, `ACREEDOR`, `DEUDOR`
+  (`ACREEDOR`/`DEUDOR` quedan listos para Hipoteca, aún no disponible).
+- Ejemplo `ejemplos/v2/compraventa-dos-actos.xml`: testimonio con dos actos.
+- Migración de los 6 ejemplos a `ejemplos/v2/`.
+- Códigos de error de negocio: `NUMERO_ACTO_DUPLICADO`, `ROL_NO_VALIDO_PARA_ACTO`,
+  `ACTO_SIN_ADQUIRENTE`.
+
+### Cambiado
+- **Bajan del nivel testimonio al nivel `<Acto>`**: `Partes` (antes
+  `Adquirentes`/`Transmitentes`), `Inmuebles`, `DatosEconomicos`,
+  `CertificacionCatastral`, `NomenclaturaCatastral` (opcional),
+  `CertificacionRegistralPrevia` y `VisadoRentas`. Cada acto tiene su propio
+  juego de estos bloques.
+- **Partes con rol genérico**: se reemplazan los contenedores `Adquirentes` /
+  `Transmitentes` de v1 por una lista de `<Parte rol="...">`. `CompraventaType`
+  ya no contiene partes ni inmuebles: solo los campos propios del tipo
+  (`DescripcionActoIncompleto` y los textos libres).
+- `PROPORCIONES_NO_SUMAN_UNO`: la suma de proporciones de adquirentes se valida
+  **por acto**.
+- Documentación de `docs/` reescrita a v2.
+
+### Quedan a nivel testimonio (sin cambios respecto de v1)
+- `MetadatosEnvio`, `EscribanoAutorizante`, `Otorgamiento`, `Rogante`,
+  `TextoCuerpo`, `Observaciones` y `<ds:Signature>` (un trámite, un cuerpo de
+  escritura por testimonio).
+
+---
+
 ## [No publicado]
 
 ### Cambios mayores en el contrato (alineamiento al Excel del RPI)

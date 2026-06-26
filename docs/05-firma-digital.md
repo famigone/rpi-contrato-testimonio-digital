@@ -89,13 +89,13 @@ referenciarlo internamente.
 El contrato acepta este atributo como opcional. Tanto
 
 ```xml
-<TestimonioDigital version="1.0" xmlns="...">
+<TestimonioDigital version="2.0" xmlns="...">
 ```
 
 como
 
 ```xml
-<TestimonioDigital version="1.0" Id="_0" xmlns="...">
+<TestimonioDigital version="2.0" Id="_0" xmlns="...">
 ```
 
 son válidos. El RPI ignora el contenido del atributo `Id`; lo acepta solo
@@ -147,7 +147,7 @@ están bien probadas:
   espacios en blanco fuera de elementos textuales) puede invalidar la firma.
   El XML que se envía debe ser **exactamente** el que se firmó.
 
-## Nota sobre verificación de certificado en v1.0
+## Nota sobre verificación de certificado en v2.0
 
 La implementación actual del servicio del RPI verifica criptográficamente
 la firma XML-DSig (canonicalización, hash, RSA) pero **no verifica** los
@@ -158,7 +158,7 @@ siguientes aspectos del certificado del firmante:
 - Estado de revocación (CRL/OCSP).
 
 Esta limitación está documentada como deuda técnica del servicio y será
-resuelta antes de la publicación oficial de `v1.0`. El contrato describe
+resuelta antes de la publicación oficial de `v2.0`. El contrato describe
 el comportamiento objetivo (verificación completa); la implementación se
 alineará antes de salir a producción.
 

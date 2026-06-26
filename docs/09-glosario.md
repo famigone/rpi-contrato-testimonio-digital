@@ -6,14 +6,30 @@ Términos del dominio registral y notarial que aparecen en este contrato.
 
 ### Acto
 
-La operación jurídica que se inscribe en el RPI. En v1.0 del contrato, solo
-**compraventa**. Otros actos son hipoteca, donación, división de condominio,
-inhibición, etc.
+La operación jurídica que se inscribe en el RPI. En v2.0 del contrato, el único
+tipo soportado es la **compraventa**, pero un mismo testimonio puede contener
+**N actos** (elemento `<Acto>` dentro de `<Actos>`). Otros tipos de acto son
+hipoteca, donación, división de condominio, inhibición, etc.
 
 ### Adquirente
 
 Persona que **recibe** el inmueble en una compraventa. En el sistema legacy
-se llama "titular adquirente".
+se llama "titular adquirente". En el contrato v2 es una `<Parte rol="ADQUIRENTE">`.
+
+### Parte
+
+Persona que interviene en un acto. En v2 cada acto tiene una lista de `<Parte>`,
+donde el rol se indica con el atributo `rol`. Reemplaza los contenedores
+`Adquirentes` / `Transmitentes` de v1. Una `Parte` es una persona (con su `Tipo`
+H/J/O, representante y proporción) más el atributo `rol`.
+
+### Rol de parte
+
+Atributo obligatorio de cada `<Parte>` que indica su papel en el acto. Roles
+definidos: `ADQUIRENTE`, `TRANSMITENTE`, `ACREEDOR`, `DEUDOR`
+(`ACREEDOR`/`DEUDOR` quedan listos para hipoteca, aún no disponible). El XSD
+acepta cualquier rol en cualquier acto; la correspondencia rol/tipo-de-acto la
+valida el servicio del RPI.
 
 ### Asiento
 
@@ -140,7 +156,8 @@ inscribible. Es lo que históricamente se presenta en papel al RPI.
 ### Transmitente
 
 Persona que **entrega** el inmueble en una compraventa. En el sistema legacy
-se llama "titular transmitente".
+se llama "titular transmitente". En el contrato v2 es una
+`<Parte rol="TRANSMITENTE">`.
 
 ### Visado de Rentas
 
@@ -159,7 +176,7 @@ para referirse al estado de inscripción provisoria en sí.
 ### Asentimiento conyugal
 
 Cuando el inmueble es ganancial (durante el matrimonio en régimen de comunidad),
-el cónyuge del transmitente debe prestar asentimiento para la venta. En v1.0
+el cónyuge del transmitente debe prestar asentimiento para la venta. En v2.0
 del contrato esto se modela como **texto libre** en el campo
 `AsentimientoConyugal` dentro de `Compraventa`, no como bloque estructurado.
 
@@ -201,13 +218,14 @@ con `Tipo=J`. Usa `ApellidoODenominacion` como razón social.
 ### Proporción
 
 En una compraventa con varios adquirentes, indica qué fracción del inmueble
-adquiere cada uno. Se modela como string fracción (`"1/2"`, `"1/3"`, `"1/1"`).
-La validación de que las proporciones sumen 1 la hace el servicio del RPI.
+adquiere cada uno. Se modela como string fracción (`"1/2"`, `"1/3"`, `"1/1"`)
+dentro de la `<Parte>`. La validación de que las proporciones sumen 1 **por
+acto** la hace el servicio del RPI.
 
 ### Representante
 
 Persona que actúa por cuenta de otra (tutor, apoderado, etc.). En el contrato
-es un bloque opcional dentro de cada persona (adquirente o transmitente).
+es un bloque opcional dentro de cada `<Parte>`, cualquiera sea su rol.
 
 ### Protocolo
 

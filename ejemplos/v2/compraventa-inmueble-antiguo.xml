@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestimonioDigital
+    xmlns="https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v2"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+    xsi:schemaLocation="https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v2 ../../xsd/v2/testimonio-digital.xsd"
+    version="2.0">
+
+  <MetadatosEnvio>
+    <IdentificadorEnvio>3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f</IdentificadorEnvio>
+    <TimestampEnvio>2026-06-19T16:10:00-03:00</TimestampEnvio>
+    <HashPDF>9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba</HashPDF>
+    <VersionContrato>2.0</VersionContrato>
+  </MetadatosEnvio>
+
+  <EscribanoAutorizante>
+    <Nombre>JUAN CARLOS PÉREZ</Nombre>
+    <CUIT>20-12345678-9</CUIT>
+    <RegistroNumero>123</RegistroNumero>
+    <Sede>NEUQUÉN</Sede>
+  </EscribanoAutorizante>
+
+  <Otorgamiento>
+    <Lugar>ZAPALA</Lugar>
+    <Fecha>2026-06-18</Fecha>
+    <NumeroEscritura>00012355</NumeroEscritura>
+    <FolioProtocolo>00000135</FolioProtocolo>
+  </Otorgamiento>
+
+  <Actos>
+
+    <Acto numero="1">
+      <Compraventa/>
+
+      <Partes>
+        <Parte rol="ADQUIRENTE">
+          <Tipo>H</Tipo>
+          <ApellidoODenominacion>ROMERO</ApellidoODenominacion>
+          <Nombres>LUCÍA BEATRIZ</Nombres>
+          <CUIT>27-29876543-2</CUIT>
+          <TipoDocumento>DNI</TipoDocumento>
+          <NumeroDocumento>29876543</NumeroDocumento>
+          <EstadoCivil>SOLTERA</EstadoCivil>
+          <Nacionalidad>ARGENTINA</Nacionalidad>
+          <FechaNacimiento>1982-12-01</FechaNacimiento>
+          <PEP>false</PEP>
+          <Proporcion>1/1</Proporcion>
+        </Parte>
+        <Parte rol="TRANSMITENTE">
+          <Tipo>H</Tipo>
+          <ApellidoODenominacion>DÍAZ</ApellidoODenominacion>
+          <Nombres>HÉCTOR RAÚL</Nombres>
+          <CUIT>20-10987654-3</CUIT>
+          <TipoDocumento>LE</TipoDocumento>
+          <NumeroDocumento>10987654</NumeroDocumento>
+          <PEP>false</PEP>
+        </Parte>
+      </Partes>
+
+      <Inmuebles>
+        <!-- Inmueble previo a la matriculación (folio real). No tiene Matricula;
+             se identifica por la terna Tomo / Folio / Finca del sistema antiguo. -->
+        <Inmueble>
+          <IdentificacionInmueble>
+            <Departamento>16</Departamento>
+            <Tomo>145</Tomo>
+            <Folio>231</Folio>
+            <Finca>8902</Finca>
+          </IdentificacionInmueble>
+        </Inmueble>
+      </Inmuebles>
+
+      <DatosEconomicos>
+        <ValuacionFiscal>
+          <valor>3000000.00</valor>
+        </ValuacionFiscal>
+        <Monto>
+          <valor>30000000.00</valor>
+          <moneda>$</moneda>
+        </Monto>
+      </DatosEconomicos>
+
+      <CertificacionCatastral>
+        <Emitido>true</Emitido>
+        <Numero>CAT-2026-5720</Numero>
+        <CodigoValidacion>VAL-QRST-7890</CodigoValidacion>
+        <TieneObservaciones>false</TieneObservaciones>
+      </CertificacionCatastral>
+
+      <CertificacionRegistralPrevia>
+        <Numero>2026-001250</Numero>
+        <FechaEmisionPrimera>2026-06-03</FechaEmisionPrimera>
+        <FechaEmisionSegunda>2026-07-03</FechaEmisionSegunda>
+      </CertificacionRegistralPrevia>
+
+      <VisadoRentas>
+        <Tipo>R</Tipo>
+        <NumeroTramite>RNT-987680</NumeroTramite>
+      </VisadoRentas>
+    </Acto>
+
+  </Actos>
+
+  <Rogante>
+    <CUIT>20-12345678-9</CUIT>
+    <Nombre>JUAN CARLOS PÉREZ</Nombre>
+    <NumeroRegistro>123</NumeroRegistro>
+    <Localidad>ZAPALA</Localidad>
+    <Provincia>NEUQUÉN</Provincia>
+    <Domicilio>CALLE FALSA 123</Domicilio>
+    <Telefono>0299-4567890</Telefono>
+  </Rogante>
+
+  <TextoCuerpo>En la ciudad de Neuquén, ante mí, escribano autorizante, comparecen doña LUCÍA BEATRIZ ROMERO y don HÉCTOR RAÚL DÍAZ, en sus respectivos caracteres de adquirente y transmitente.
+
+Y dicen: que la operación tiene por objeto el inmueble identificado por tomo, folio y finca conforme se detalla en la minuta correspondiente, sin matriculación todavía por tratarse de inscripción previa al sistema de folio real.
+
+Previa lectura y ratificación, firman los comparecientes ante mí, doy fe.</TextoCuerpo>
+
+  <ds:Signature>
+    <ds:SignedInfo>
+      <ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+      <ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>
+      <ds:Reference URI="">
+        <ds:Transforms>
+          <ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+          <ds:Transform Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+        </ds:Transforms>
+        <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+        <ds:DigestValue>UExBQ0VIT0xERVJfTk9fVVNBUl9WQUxJREFSX1NPTE9fRVNUUlVDVFVSQV9f</ds:DigestValue>
+      </ds:Reference>
+    </ds:SignedInfo>
+    <ds:SignatureValue>WFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWA==</ds:SignatureValue>
+    <ds:KeyInfo>
+      <ds:X509Data>
+        <ds:X509Certificate>UExBQ0VIT0xERVJfQ0VSVElGSUNBVEVfWDUwOV9ERUxfRVNDUklCQU5PX05PX1VTQVJfRVNfU09MT19QQVJBX1ZBTElEQVJfTEFfRVNUUlVDVFVSQV9ERUxfWE1MX0NPTlRSQV9FTF9YU0Q=</ds:X509Certificate>
+      </ds:X509Data>
+    </ds:KeyInfo>
+  </ds:Signature>
+
+</TestimonioDigital>

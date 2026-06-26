@@ -11,8 +11,9 @@ firmado digitalmente.
 
 Un testimonio digital es:
 
-- Un **XML estructurado** con los datos del acto (escribano, partes, inmueble,
-  monto, etc.), firmado por el escribano autorizante con su certificado digital.
+- Un **XML estructurado** con los datos de uno o más actos (escribano, partes,
+  inmueble, monto, etc.), firmado por el escribano autorizante con su
+  certificado digital.
 - Un **PDF firmado** del testimonio en sí, que es el documento legal con valor
   de testimonio.
 
@@ -31,32 +32,50 @@ El flujo actual en papel implica:
 El testimonio digital elimina la impresión, el desplazamiento físico y la carga
 manual. Los datos llegan estructurados al RPI y se procesan automáticamente.
 
-## Alcance de la v1.0
+## Alcance de la v2.0
 
-La primera versión del contrato cubre **un solo tipo de acto**:
+El cambio central de la v2.0 respecto de la v1.0 es que **un testimonio puede
+contener N actos (1 a N)** en lugar de uno solo. Una misma escritura suele
+formalizar varios actos (por ejemplo, dos compraventas), y v2 lo modela
+explícitamente con una lista `<Actos>` de elementos `<Acto>`.
+
+En cuanto a tipos de acto, la v2.0 sigue cubriendo **un solo tipo**:
 
 - **Compraventa** de inmuebles, escritura notarial.
 
-En versiones futuras se agregarán otros actos (hipoteca, donación, división de
-condominio, etc.) sin cambiar la estructura general del XML — solo se agregarán
-nuevos archivos XSD bajo `xsd/actos/`.
+La estructura ya admite actos de **tipos heterogéneos** dentro de un mismo
+testimonio: agregar otros actos (hipoteca, donación, división de condominio,
+etc.) es agregar archivos XSD bajo `xsd/v2/actos/` y una línea al `choice` de
+`Acto`, sin cambiar la estructura general del XML.
 
-A diferencia del borrador inicial, esta versión **sí** soporta:
+Esta versión soporta, igual que v1:
 
 - **Personas jurídicas** (sociedades, asociaciones) y **organismos públicos**
-  como adquirentes o transmitentes, además de personas humanas.
+  como partes del acto, además de personas humanas.
 - **Representantes** (tutor, apoderado, etc.) mediante un bloque opcional dentro
   de cada persona.
 
-Tampoco están soportadas en v1.0:
+Y agrega como novedad de v2:
+
+- **N actos por testimonio**, cada uno con sus propias partes, inmuebles, datos
+  económicos, certificaciones y visado. Los bloques que en v1 vivían a nivel
+  testimonio **bajan al nivel de cada acto**.
+- **Partes con rol genérico**: en lugar de los contenedores `Adquirentes` /
+  `Transmitentes` de v1, cada acto tiene una lista de `<Parte rol="...">`. Los
+  roles definidos hoy son `ADQUIRENTE`, `TRANSMITENTE`, `ACREEDOR` y `DEUDOR`.
+
+No están soportadas en v2.0:
 
 - **Asentimiento conyugal estructurado**: se modela como **texto libre** en el
   campo `AsentimientoConyugal`, no como bloque con cónyuge, fecha, etc.
-- **Múltiples actos** en un mismo testimonio (un testimonio = un acto).
 - **Otros tipos de actos** (hipoteca, donación, división de condominio, etc.):
-  se incorporarán en versiones futuras.
+  se incorporarán en versiones futuras (la estructura ya está preparada).
 - **Ampliatorios** o reingresos del mismo testimonio (cada envío genera un
   trámite nuevo).
+
+> v2 **coexiste** con v1: los XSD de v1 quedan intactos en `xsd/` y los de v2
+> viven en `xsd/v2/` con su propio namespace (`/v2`). Esta documentación
+> describe la v2.0.
 
 ## Roles en la integración
 

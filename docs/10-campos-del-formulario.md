@@ -4,8 +4,14 @@
 > del Colegio. Lista todos los campos que el escribano debe completar para
 > generar un testimonio digital válido.
 >
-> La autoridad técnica final es el XSD (`xsd/testimonio-digital.xsd`). Este
+> La autoridad técnica final es el XSD (`xsd/v2/testimonio-digital.xsd`). Este
 > documento sirve como referencia rápida pero ante discrepancia, el XSD manda.
+>
+> **v2.0**: un testimonio contiene **N actos**. La sección 4 y sus subsecciones
+> (4.1 a 4.8: compraventa, partes, inmuebles, datos económicos, certificaciones
+> y visado) se completan **una vez por cada acto** dentro de
+> `TestimonioDigital/Actos/Acto`. Las secciones 1 a 3 y 5 a 7 son a nivel
+> testimonio (una vez por envío).
 
 ## Cómo leer este documento
 
@@ -33,9 +39,9 @@ Camino base: `TestimonioDigital/MetadatosEnvio`
 | Identificador de envío | `IdentificadorEnvio` | Texto (UUID v4) | 36 | Sí | UUID v4 canónico, generado por el sistema del Colegio | `550e8400-e29b-41d4-a716-446655440000` |
 | Timestamp de envío | `TimestampEnvio` | Fecha-hora ISO 8601 | — | Sí | Con timezone | `2026-06-15T10:23:45-03:00` |
 | Hash del PDF | `HashPDF` | Texto (SHA-256 hex) | 64 | Sí | Hexadecimal lowercase | `3a7bd3e2...4dd4f1b` |
-| Versión del contrato | `VersionContrato` | Texto | — | Sí | `MAJOR.MINOR` | `1.0` |
+| Versión del contrato | `VersionContrato` | Texto | — | Sí | `MAJOR.MINOR` | `2.0` |
 
-> El atributo raíz `version` de `TestimonioDigital` es obligatorio y fijo en `1.0`.
+> El atributo raíz `version` de `TestimonioDigital` es obligatorio y fijo en `2.0`.
 
 ## 2. Escribano autorizante
 
@@ -59,75 +65,53 @@ Camino base: `TestimonioDigital/Otorgamiento`
 | Número de escritura | `NumeroEscritura` | Texto | 1-8 | Sí | Admite ceros a la izquierda | `00012345` |
 | Folio del protocolo | `FolioProtocolo` | Texto | 1-8 | Sí | Admite ceros a la izquierda | `00000123` |
 
-## 4. Certificación registral previa
+## 4. Actos
 
-Camino base: `TestimonioDigital/CertificacionRegistralPrevia`
+Camino base: `TestimonioDigital/Actos`
 
-| Campo del formulario | Camino XML | Tipo | Longitud | Obligatorio | Valores / Notas | Ejemplo |
-|---|---|---|---|---|---|---|
-| Número | `Numero` | Texto | 1-40 | Sí | | `2026-001234` |
-| Fecha emisión (primera) | `FechaEmisionPrimera` | Fecha | — | Sí | | `2026-06-01` |
-| Fecha emisión (segunda) | `FechaEmisionSegunda` | Fecha | — | Sí | | `2026-06-30` |
-
-## 5. Certificación catastral
-
-Camino base: `TestimonioDigital/CertificacionCatastral` (bloque obligatorio)
+El testimonio contiene **uno o más actos** (`<Acto>`, sin tope). Cada acto se
+completa entero con las secciones 4.1 a 4.9 de abajo. En v2.0 todos los actos
+son de tipo `Compraventa`, pero la estructura admite tipos heterogéneos.
 
 | Campo del formulario | Camino XML | Tipo | Longitud | Obligatorio | Valores / Notas | Ejemplo |
 |---|---|---|---|---|---|---|
-| ¿Emitida? | `Emitido` | Booleano | — | Sí | `true`/`false` | `true` |
-| Número | `Numero` | Texto | 40 | Sí si Emitido=true | | `CAT-2026-5678` |
-| Código de validación | `CodigoValidacion` | Texto | 40 | Sí si Emitido=true | | `VAL-ABCD-1234` |
-| ¿Tiene observaciones? | `TieneObservaciones` | Booleano | — | Solo si Emitido=true | `true`/`false` | `false` |
-| Observaciones | `Observaciones` | Texto | 4000 | Sí si TieneObservaciones=true | | `El plano registra...` |
+| Número de acto | `Acto/@numero` | Entero positivo | — | Sí | Atributo del `<Acto>`. Único entre actos (lo valida el servicio) | `1` |
 
-## 6. Nomenclatura catastral (opcional)
+> **Las secciones 4.1 a 4.9 se completan dentro de cada `<Acto>`.** Su camino
+> base es `TestimonioDigital/Actos/Acto/...`. En v1 muchos de estos bloques
+> vivían a nivel testimonio; en v2 bajan al acto.
+>
+> El orden dentro de `<Acto>` es fijo: `Compraventa`, `Partes`, `Inmuebles`,
+> `DatosEconomicos`, `CertificacionCatastral`, `NomenclaturaCatastral`
+> (opcional), `CertificacionRegistralPrevia`, `VisadoRentas`.
 
-Camino base: `TestimonioDigital/NomenclaturaCatastral` (bloque opcional; si se
-incluye, los 5 campos son obligatorios)
+### 4.1 Compraventa (discriminador del acto)
 
-| Campo del formulario | Camino XML | Tipo | Longitud | Obligatorio | Valores / Notas | Ejemplo |
-|---|---|---|---|---|---|---|
-| Campo 1 | `Campo1` | Texto | 2 (fijo) | Sí (si hay bloque) | | `09` |
-| Campo 2 | `Campo2` | Texto | 2 (fijo) | Sí (si hay bloque) | | `21` |
-| Campo 3 | `Campo3` | Texto | 3 (fijo) | Sí (si hay bloque) | | `045` |
-| Campo 4 | `Campo4` | Texto | 4 (fijo) | Sí (si hay bloque) | | `0123` |
-| Campo 5 | `Campo5` | Texto | 4 (fijo) | Sí (si hay bloque) | | `0008` |
+Camino base: `Actos/Acto/Compraventa`
 
-## 7. Datos económicos
-
-Camino base: `TestimonioDigital/DatosEconomicos`
-
-| Campo del formulario | Camino XML | Tipo | Longitud | Obligatorio | Valores / Notas | Ejemplo |
-|---|---|---|---|---|---|---|
-| Valuación fiscal | `ValuacionFiscal/valor` | Decimal | 18 díg., 2 dec. | Sí | En pesos. Punto decimal | `5000000.00` |
-| Monto | `Monto/valor` | Decimal | 18 díg., 2 dec. | Sí | | `50000000.00` |
-| Moneda | `Monto/moneda` | Enum | — | Sí | `$` / `USD` | `$` |
-| Cotización | `Monto/cotizacion` | Decimal | 18 díg., 2 dec. | Sí si moneda=USD | Pesos por unidad | `1100.50` |
-
-## 8. Visado de Rentas
-
-Camino base: `TestimonioDigital/VisadoRentas` (bloque obligatorio)
-
-| Campo del formulario | Camino XML | Tipo | Longitud | Obligatorio | Valores / Notas | Ejemplo |
-|---|---|---|---|---|---|---|
-| Tipo de visado | `Tipo` | Enum | — | Sí | `R` (con visado) / `A` (sin visado) | `R` |
-| Número de trámite | `NumeroTramite` | Texto | 10 | Sí si Tipo=R | | `RNT-987654` |
-
-## 9. Acto — Compraventa
-
-Camino base: `TestimonioDigital/Acto/Compraventa`
+Primer elemento del acto. Lleva solo los campos propios del tipo compraventa
+(todos opcionales). Las partes y los inmuebles **no** van acá: van en `Partes`
+e `Inmuebles` (4.2 y 4.3).
 
 | Campo del formulario | Camino XML | Tipo | Longitud | Obligatorio | Valores / Notas | Ejemplo |
 |---|---|---|---|---|---|---|
 | Descripción de acto incompleto | `DescripcionActoIncompleto` | Texto | 106 | No | Aclaración si no es compraventa estándar | `Venta del 50% indiviso` |
+| Reconocimiento de hipoteca / medidas cautelares | `ReconocimientoHipotecaMedidasCautelares` | Texto | 4000 | No | Texto libre |
+| Afectaciones al dominio | `AfectacionesAlDominio` | Texto | 4000 | No | Texto libre |
+| Asentimiento conyugal | `AsentimientoConyugal` | Texto | 4000 | No | Texto libre |
 
-### 9.1 Adquirentes (1 a 20 personas)
+### 4.2 Partes (1 a N por acto)
 
-Camino base: `Acto/Compraventa/Adquirentes/Persona`
+Camino base: `Actos/Acto/Partes/Parte`
+
+Lista de personas que intervienen en el acto. Reemplaza los contenedores
+`Adquirentes`/`Transmitentes` de v1: el rol se indica con el atributo `rol` de
+cada `<Parte>`. Cada `<Parte>` tiene el contenido de una persona más ese
+atributo.
 
 | Campo del formulario | Camino XML | Tipo | Longitud | Obligatorio | Valores / Notas | Ejemplo |
 |---|---|---|---|---|---|---|
+| Rol | `Parte/@rol` | Enum | — | Sí | Atributo. `ADQUIRENTE`/`TRANSMITENTE`/`ACREEDOR`/`DEUDOR` | `ADQUIRENTE` |
 | Tipo de persona | `Tipo` | Enum | 1 | Sí | `H` / `J` / `O` | `H` |
 | Apellido o denominación | `ApellidoODenominacion` | Texto | 1-180 | Sí | Razón social si J/O | `GONZÁLEZ` |
 | Nombres | `Nombres` | Texto | 1-80 | Sí si Tipo=H | No aplica si J/O | `MARÍA LAURA` |
@@ -140,15 +124,25 @@ Camino base: `Acto/Compraventa/Adquirentes/Persona`
 | Nacionalidad | `Nacionalidad` | Texto | 20 | Sí si adquirente humano | | `ARGENTINA` |
 | Fecha de nacimiento | `FechaNacimiento` | Fecha | — | Sí si adquirente humano | | `1981-03-15` |
 | PEP | `PEP` | Booleano | — | Sí | Persona Expuesta Políticamente | `false` |
-| Inscripción organismo/sede | `InscripcionOrganismoSede` | Texto | 80 | Sí si Tipo=J/O | | `IGJ - CABA` |
-| Proporción | `Proporcion` | Texto (fracción) | 20 | Sí | Formato `N/D` | `1/2` |
+| Inscripción organismo/sede | `InscripcionOrganismoSede` | Texto | 80 | Sí si Tipo=J/O | | `IGJ NEUQUÉN` |
+| Proporción | `Proporcion` | Texto (fracción) | 20 | Sí si rol=ADQUIRENTE | Formato `N/D` | `1/2` |
 
 **Valores de Estado civil**: `SOLTERO`, `SOLTERA`, `CASADO`, `CASADA`,
 `DIVORCIADO`, `DIVORCIADA`, `VIUDO`, `VIUDA`, `CONVIVIENTE`, `OTRO`.
 
+**Reglas según rol** (las valida el servicio, no el XSD):
+
+- Rol `ADQUIRENTE` humano: `EstadoCivil`, `Nacionalidad` y `FechaNacimiento`
+  son obligatorios; `Proporcion` aplica.
+- Rol `TRANSMITENTE` humano: esos tres campos son opcionales; `Proporcion` no
+  aplica.
+- El XSD acepta cualquier `rol` en cualquier acto; la correspondencia
+  rol/tipo-de-acto y que las proporciones de adquirentes **sumen 1 por acto**
+  las valida el servicio.
+
 #### Representante (opcional)
 
-Camino base: `Adquirentes/Persona/Representante` (bloque opcional)
+Camino base: `Actos/Acto/Partes/Parte/Representante` (bloque opcional)
 
 | Campo del formulario | Camino XML | Tipo | Longitud | Obligatorio | Valores / Notas | Ejemplo |
 |---|---|---|---|---|---|---|
@@ -159,22 +153,9 @@ Camino base: `Adquirentes/Persona/Representante` (bloque opcional)
 | Número de documento | `NumeroDocumento` | Texto | 1-20 | Sí (si hay bloque) | | `27890123` |
 | PEP | `PEP` | Booleano | — | Sí (si hay bloque) | | `false` |
 
-### 9.2 Transmitentes (1 a 20 personas)
+### 4.3 Inmuebles (1 a 50 por acto)
 
-Camino base: `Acto/Compraventa/Transmitentes/Persona`
-
-Misma estructura que adquirentes, con dos diferencias:
-
-- `EstadoCivil`, `Nacionalidad` y `FechaNacimiento` son **opcionales** para
-  transmitentes humanos (para adquirentes humanos son obligatorios).
-- `Proporcion` **no aplica** a transmitentes.
-
-El bloque `Representante` también está disponible para transmitentes, con los
-mismos 6 campos descritos en 9.1.
-
-### 9.3 Inmuebles (1 a 50)
-
-Camino base: `Acto/Compraventa/Inmuebles/Inmueble/IdentificacionInmueble`
+Camino base: `Actos/Acto/Inmuebles/Inmueble/IdentificacionInmueble`
 
 | Campo del formulario | Camino XML | Tipo | Longitud | Obligatorio | Valores / Notas | Ejemplo |
 |---|---|---|---|---|---|---|
@@ -201,19 +182,64 @@ Camino base: `Acto/Compraventa/Inmuebles/Inmueble/IdentificacionInmueble`
 | 7 | Huiliches | 15 | Picún Leufú |
 | 8 | Lácar | 16 | Zapala |
 
-### 9.4 Bloques de texto libre (opcionales)
+### 4.4 Datos económicos
 
-Camino base: `Acto/Compraventa`
+Camino base: `Actos/Acto/DatosEconomicos`
 
-| Campo del formulario | Camino XML | Tipo | Longitud | Obligatorio | Valores / Notas |
-|---|---|---|---|---|---|
-| Reconocimiento de hipoteca / medidas cautelares | `ReconocimientoHipotecaMedidasCautelares` | Texto | 4000 | No | Texto libre |
-| Afectaciones al dominio | `AfectacionesAlDominio` | Texto | 4000 | No | Texto libre |
-| Asentimiento conyugal | `AsentimientoConyugal` | Texto | 4000 | No | Texto libre |
+| Campo del formulario | Camino XML | Tipo | Longitud | Obligatorio | Valores / Notas | Ejemplo |
+|---|---|---|---|---|---|---|
+| Valuación fiscal | `ValuacionFiscal/valor` | Decimal | 18 díg., 2 dec. | Sí | En pesos. Punto decimal | `5000000.00` |
+| Monto | `Monto/valor` | Decimal | 18 díg., 2 dec. | Sí | | `50000000.00` |
+| Moneda | `Monto/moneda` | Enum | — | Sí | `$` / `USD` | `$` |
+| Cotización | `Monto/cotizacion` | Decimal | 18 díg., 2 dec. | Sí si moneda=USD | Pesos por unidad | `1100.50` |
 
-## 10. Rogante
+### 4.5 Certificación catastral
 
-Camino base: `TestimonioDigital/Rogante`
+Camino base: `Actos/Acto/CertificacionCatastral` (bloque obligatorio)
+
+| Campo del formulario | Camino XML | Tipo | Longitud | Obligatorio | Valores / Notas | Ejemplo |
+|---|---|---|---|---|---|---|
+| ¿Emitida? | `Emitido` | Booleano | — | Sí | `true`/`false` | `true` |
+| Número | `Numero` | Texto | 40 | Sí si Emitido=true | | `CAT-2026-5678` |
+| Código de validación | `CodigoValidacion` | Texto | 40 | Sí si Emitido=true | | `VAL-ABCD-1234` |
+| ¿Tiene observaciones? | `TieneObservaciones` | Booleano | — | Solo si Emitido=true | `true`/`false` | `false` |
+| Observaciones | `Observaciones` | Texto | 4000 | Sí si TieneObservaciones=true | | `El plano registra...` |
+
+### 4.6 Nomenclatura catastral (opcional)
+
+Camino base: `Actos/Acto/NomenclaturaCatastral` (bloque opcional; si se
+incluye, los 5 campos son obligatorios)
+
+| Campo del formulario | Camino XML | Tipo | Longitud | Obligatorio | Valores / Notas | Ejemplo |
+|---|---|---|---|---|---|---|
+| Campo 1 | `Campo1` | Texto | 2 (fijo) | Sí (si hay bloque) | | `09` |
+| Campo 2 | `Campo2` | Texto | 2 (fijo) | Sí (si hay bloque) | | `21` |
+| Campo 3 | `Campo3` | Texto | 3 (fijo) | Sí (si hay bloque) | | `045` |
+| Campo 4 | `Campo4` | Texto | 4 (fijo) | Sí (si hay bloque) | | `0123` |
+| Campo 5 | `Campo5` | Texto | 4 (fijo) | Sí (si hay bloque) | | `0008` |
+
+### 4.7 Certificación registral previa
+
+Camino base: `Actos/Acto/CertificacionRegistralPrevia`
+
+| Campo del formulario | Camino XML | Tipo | Longitud | Obligatorio | Valores / Notas | Ejemplo |
+|---|---|---|---|---|---|---|
+| Número | `Numero` | Texto | 1-40 | Sí | | `2026-001234` |
+| Fecha emisión (primera) | `FechaEmisionPrimera` | Fecha | — | Sí | | `2026-06-01` |
+| Fecha emisión (segunda) | `FechaEmisionSegunda` | Fecha | — | Sí | | `2026-06-30` |
+
+### 4.8 Visado de Rentas
+
+Camino base: `Actos/Acto/VisadoRentas` (bloque obligatorio)
+
+| Campo del formulario | Camino XML | Tipo | Longitud | Obligatorio | Valores / Notas | Ejemplo |
+|---|---|---|---|---|---|---|
+| Tipo de visado | `Tipo` | Enum | — | Sí | `R` (con visado) / `A` (sin visado) | `R` |
+| Número de trámite | `NumeroTramite` | Texto | 10 | Sí si Tipo=R | | `RNT-987654` |
+
+## 5. Rogante
+
+Camino base: `TestimonioDigital/Rogante` (nivel testimonio: uno por envío)
 
 | Campo del formulario | Camino XML | Tipo | Longitud | Obligatorio | Valores / Notas | Ejemplo |
 |---|---|---|---|---|---|---|
@@ -225,15 +251,17 @@ Camino base: `TestimonioDigital/Rogante`
 | Domicilio | `Domicilio` | Texto | 1-40 | Sí | | `CALLE FALSA 123` |
 | Teléfono | `Telefono` | Texto | 1-20 | Sí | | `0299-4567890` |
 
-## 11. Cuerpo del acto
+## 6. Cuerpo de la escritura
 
-Texto del cuerpo de la escritura que el escribano transcribe del PDF.
+Camino base: `TestimonioDigital/TextoCuerpo` (nivel testimonio: uno por envío,
+cubre todos los actos). Texto del cuerpo de la escritura que el escribano
+transcribe del PDF.
 
 | Campo del formulario | Camino XML | Tipo | Longitud | Obligatorio | Valores / Notas |
 |---|---|---|---|---|---|
-| Cuerpo del acto | `TextoCuerpo` | Texto plano | 1 - 500.000 | Sí | Transcripción fiel del cuerpo de la escritura del PDF. Saltos de línea naturales preservados. Sin HTML/Markdown. |
+| Cuerpo de la escritura | `TextoCuerpo` | Texto plano | 1 - 500.000 | Sí | Transcripción fiel del cuerpo de la escritura del PDF. Saltos de línea naturales preservados. Sin HTML/Markdown. |
 
-## 12. Observaciones (opcional)
+## 7. Observaciones (opcional)
 
-Camino XML: `TestimonioDigital/Observaciones`. Texto libre, hasta 4000
-caracteres. Opcional.
+Camino XML: `TestimonioDigital/Observaciones` (nivel testimonio). Texto libre,
+hasta 4000 caracteres. Opcional.

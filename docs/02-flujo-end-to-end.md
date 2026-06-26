@@ -48,10 +48,11 @@
 
 ### 1. El escribano confecciona el testimonio
 
-El escribano, logueado en el sistema del Colegio, completa los datos del acto
-(compraventa) que se realizará: partes, inmueble, monto, certificación
-registral previa, otorgamiento, etc. El sistema del Colegio asiste en el armado
-de la escritura y genera:
+El escribano, logueado en el sistema del Colegio, completa los datos de **uno o
+más actos** (compraventas) que se realizarán: por cada acto, sus partes,
+inmuebles, monto, certificaciones y visado; y a nivel testimonio, el
+otorgamiento, el rogante y el cuerpo de la escritura. El sistema del Colegio
+asiste en el armado de la escritura y genera:
 
 - Un **XML** estructurado con los datos del testimonio, validable contra el XSD
   del contrato.

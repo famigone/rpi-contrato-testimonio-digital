@@ -1,5 +1,10 @@
 # XSD — Contratos modulares
 
+> **El contrato vigente es la v2.0**, definida en [`v2/`](v2/) (namespace `/v2`,
+> N actos por testimonio, partes con rol genérico). Este documento describe la
+> **v1.0 (legacy)**, que se conserva intacta porque v2 coexiste con v1. Si vas a
+> integrar desde cero, usá `v2/testimonio-digital.xsd` y leé [`v2/README.md`](v2/README.md).
+
 Esta carpeta contiene los esquemas XSD que definen el contrato del testimonio
 digital. La organización es **modular**: hay componentes comunes reutilizables
 y específicos por tipo de acto.
@@ -61,15 +66,16 @@ Cualquier parser XSD estándar puede validar contra `testimonio-digital.xsd`.
 El parser resuelve los `xs:include` automáticamente, siempre que se respete
 la estructura de carpetas (`comunes/`, `actos/`).
 
-## Cómo agregar un nuevo acto en futuras versiones
+## Cómo agregar un nuevo acto (en v2)
 
-Para agregar, por ejemplo, hipoteca en v2.0:
+El alta de nuevos tipos de acto se hace sobre la **v2** (ver
+[`v2/README.md`](v2/README.md)). Para agregar, por ejemplo, hipoteca:
 
-1. Crear `actos/hipoteca.xsd` con el tipo `HipotecaType`.
-2. Agregar el include en `testimonio-digital.xsd`.
-3. Agregar la opción al `xs:choice` del elemento `Acto`.
-4. Los tipos comunes (`Persona`, `IdentificacionInmueble`, etc.) se
-   reutilizan sin cambios.
+1. Crear `v2/actos/hipoteca.xsd` con el tipo `HipotecaType` (solo los campos
+   propios del tipo; partes e inmuebles ya viven en `<Acto>`).
+2. Agregar el `xs:include` en `v2/testimonio-digital.xsd`.
+3. Agregar la opción al `xs:choice` de `ActoType`.
+4. Los roles `ACREEDOR`/`DEUDOR` ya existen en `RolParteEnum` (`v2/comunes/parte.xsd`).
 
 ## Convenciones
 

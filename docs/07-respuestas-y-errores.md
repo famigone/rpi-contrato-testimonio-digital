@@ -26,11 +26,11 @@ Todos los errores devuelven un cuerpo JSON con esta estructura:
 {
   "error": {
     "codigo": "XML_INVALIDO",
-    "mensaje": "El elemento 'Adquirentes' debe tener al menos un hijo.",
+    "mensaje": "El elemento 'Partes' debe tener al menos un hijo 'Parte'.",
     "detalle": {
       "linea": 42,
       "columna": 12,
-      "elemento": "/TestimonioDigital/Acto/Compraventa/Adquirentes"
+      "elemento": "/TestimonioDigital/Actos/Acto/Partes"
     },
     "identificadorEnvio": "550e8400-e29b-41d4-a716-446655440000",
     "timestamp": "2026-06-15T10:23:45Z"
@@ -80,7 +80,10 @@ El campo `detalle` es opcional y varía según el código de error.
 | `CERT_CATASTRAL_OBS_FALTANTE` | Si TieneObservaciones=true, Observaciones obligatorio. |
 | `VISADO_SIN_NUMERO_TRAMITE` | Si Tipo=R, NumeroTramite obligatorio. |
 | `INMUEBLE_SIN_IDENTIFICACION` | Inmueble debe tener Matricula o (Tomo+Folio+Finca). |
-| `PROPORCIONES_NO_SUMAN_UNO` | Suma de proporciones de Adquirentes debe ser 1. |
+| `PROPORCIONES_NO_SUMAN_UNO` | Suma de proporciones de partes ADQUIRENTE debe ser 1, **por acto**. |
+| `NUMERO_ACTO_DUPLICADO` | El atributo `numero` debe ser único entre los actos del testimonio. |
+| `ROL_NO_VALIDO_PARA_ACTO` | El `rol` de la parte no corresponde al tipo de acto (ej. ACREEDOR en una Compraventa). |
+| `ACTO_SIN_ADQUIRENTE` | El acto de compraventa debe tener al menos una parte con rol ADQUIRENTE. |
 | `CUIT_FIRMANTE_NO_COINCIDE` | El CUIT del certificado debe coincidir con el del XML. |
 
 ### Errores del servidor (5xx)
@@ -144,7 +147,7 @@ Content-Type: application/json
     "codigo": "XML_INVALIDO",
     "mensaje": "El elemento 'CertificacionRegistralPrevia' es obligatorio pero no se encontró.",
     "detalle": {
-      "elemento": "/TestimonioDigital/CertificacionRegistralPrevia"
+      "elemento": "/TestimonioDigital/Actos/Acto/CertificacionRegistralPrevia"
     },
     "identificadorEnvio": "550e8400-e29b-41d4-a716-446655440000",
     "timestamp": "2026-06-15T10:23:45Z"
