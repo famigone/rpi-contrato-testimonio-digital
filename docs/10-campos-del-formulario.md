@@ -8,10 +8,12 @@
 > documento sirve como referencia rápida pero ante discrepancia, el XSD manda.
 >
 > **v2.0**: un testimonio contiene **N actos**. La sección 4 y sus subsecciones
-> (4.1 a 4.8: compraventa, partes, inmuebles, datos económicos, certificaciones
-> y visado) se completan **una vez por cada acto** dentro de
-> `TestimonioDigital/Actos/Acto`. Las secciones 1 a 3 y 5 a 7 son a nivel
-> testimonio (una vez por envío).
+> (4.1 a 4.7: compraventa, partes, inmuebles —con su catastro—, datos
+> económicos, certificaciones registrales y visado) se completan **una vez por
+> cada acto** dentro de `TestimonioDigital/Actos/Acto`. El catastro
+> (certificación catastral y nomenclatura) va **por inmueble**, dentro de cada
+> `<Inmueble>` (sección 4.3). Las secciones 1 a 3 y 5 a 7 son a nivel testimonio
+> (una vez por envío).
 
 ## Cómo leer este documento
 
@@ -70,20 +72,21 @@ Camino base: `TestimonioDigital/Otorgamiento`
 Camino base: `TestimonioDigital/Actos`
 
 El testimonio contiene **uno o más actos** (`<Acto>`, sin tope). Cada acto se
-completa entero con las secciones 4.1 a 4.9 de abajo. En v2.0 todos los actos
+completa entero con las secciones 4.1 a 4.7 de abajo. En v2.0 todos los actos
 son de tipo `Compraventa`, pero la estructura admite tipos heterogéneos.
 
 | Campo del formulario | Camino XML | Tipo | Longitud | Obligatorio | Valores / Notas | Ejemplo |
 |---|---|---|---|---|---|---|
 | Número de acto | `Acto/@numero` | Entero positivo | — | Sí | Atributo del `<Acto>`. Único entre actos (lo valida el servicio) | `1` |
 
-> **Las secciones 4.1 a 4.9 se completan dentro de cada `<Acto>`.** Su camino
+> **Las secciones 4.1 a 4.7 se completan dentro de cada `<Acto>`.** Su camino
 > base es `TestimonioDigital/Actos/Acto/...`. En v1 muchos de estos bloques
 > vivían a nivel testimonio; en v2 bajan al acto.
 >
 > El orden dentro de `<Acto>` es fijo: `Compraventa`, `Partes`, `Inmuebles`,
-> `DatosEconomicos`, `CertificacionCatastral`, `NomenclaturaCatastral`
-> (opcional), `CertificacionRegistralPrevia`, `VisadoRentas`.
+> `DatosEconomicos`, `CertificacionDominio`, `CertificacionInhibicion`,
+> `VisadoRentas`. Dentro de cada `<Inmueble>` el orden es:
+> `IdentificacionInmueble`, `CertificacionCatastral`, `NomenclaturaCatastral`.
 
 ### 4.1 Compraventa (discriminador del acto)
 
@@ -155,6 +158,17 @@ Camino base: `Actos/Acto/Partes/Parte/Representante` (bloque opcional)
 
 ### 4.3 Inmuebles (1 a 50 por acto)
 
+Camino base: `Actos/Acto/Inmuebles/Inmueble`
+
+Cada acto tiene uno o más `<Inmueble>`. **Cada `<Inmueble>` lleva su propio
+catastro**: además de la identificación (4.3.1), incluye una certificación
+catastral (4.3.2) y una nomenclatura catastral (4.3.3), **ambas obligatorias por
+inmueble**. Si un acto tiene varios inmuebles, cada uno repite los tres bloques.
+El orden dentro del `<Inmueble>` es: `IdentificacionInmueble`,
+`CertificacionCatastral`, `NomenclaturaCatastral`.
+
+#### 4.3.1 Identificación del inmueble
+
 Camino base: `Actos/Acto/Inmuebles/Inmueble/IdentificacionInmueble`
 
 | Campo del formulario | Camino XML | Tipo | Longitud | Obligatorio | Valores / Notas | Ejemplo |
@@ -182,6 +196,32 @@ Camino base: `Actos/Acto/Inmuebles/Inmueble/IdentificacionInmueble`
 | 7 | Huiliches | 15 | Picún Leufú |
 | 8 | Lácar | 16 | Zapala |
 
+#### 4.3.2 Certificación catastral (por inmueble)
+
+Camino base: `Actos/Acto/Inmuebles/Inmueble/CertificacionCatastral` (obligatoria
+por inmueble)
+
+| Campo del formulario | Camino XML | Tipo | Longitud | Obligatorio | Valores / Notas | Ejemplo |
+|---|---|---|---|---|---|---|
+| ¿Emitida? | `Emitido` | Booleano | — | Sí | `true`/`false` | `true` |
+| Número | `Numero` | Texto | 40 | Sí si Emitido=true | | `CAT-2026-5678` |
+| Código de validación | `CodigoValidacion` | Texto | 40 | Sí si Emitido=true | | `VAL-ABCD-1234` |
+| ¿Tiene observaciones? | `TieneObservaciones` | Booleano | — | Solo si Emitido=true | `true`/`false` | `false` |
+| Observaciones | `Observaciones` | Texto | 4000 | Sí si TieneObservaciones=true | | `El plano registra...` |
+
+#### 4.3.3 Nomenclatura catastral (por inmueble)
+
+Camino base: `Actos/Acto/Inmuebles/Inmueble/NomenclaturaCatastral` (obligatoria
+por inmueble; los 5 campos son obligatorios)
+
+| Campo del formulario | Camino XML | Tipo | Longitud | Obligatorio | Valores / Notas | Ejemplo |
+|---|---|---|---|---|---|---|
+| Campo 1 | `Campo1` | Texto | 2 (fijo) | Sí | | `09` |
+| Campo 2 | `Campo2` | Texto | 2 (fijo) | Sí | | `21` |
+| Campo 3 | `Campo3` | Texto | 3 (fijo) | Sí | | `045` |
+| Campo 4 | `Campo4` | Texto | 4 (fijo) | Sí | | `0123` |
+| Campo 5 | `Campo5` | Texto | 4 (fijo) | Sí | | `0008` |
+
 ### 4.4 Datos económicos
 
 Camino base: `Actos/Acto/DatosEconomicos`
@@ -193,42 +233,40 @@ Camino base: `Actos/Acto/DatosEconomicos`
 | Moneda | `Monto/moneda` | Enum | — | Sí | `$` / `USD` | `$` |
 | Cotización | `Monto/cotizacion` | Decimal | 18 díg., 2 dec. | Sí si moneda=USD | Pesos por unidad | `1100.50` |
 
-### 4.5 Certificación catastral
+### 4.5 Certificación de dominio
 
-Camino base: `Actos/Acto/CertificacionCatastral` (bloque obligatorio)
+Camino base: `Actos/Acto/CertificacionDominio`
 
-| Campo del formulario | Camino XML | Tipo | Longitud | Obligatorio | Valores / Notas | Ejemplo |
-|---|---|---|---|---|---|---|
-| ¿Emitida? | `Emitido` | Booleano | — | Sí | `true`/`false` | `true` |
-| Número | `Numero` | Texto | 40 | Sí si Emitido=true | | `CAT-2026-5678` |
-| Código de validación | `CodigoValidacion` | Texto | 40 | Sí si Emitido=true | | `VAL-ABCD-1234` |
-| ¿Tiene observaciones? | `TieneObservaciones` | Booleano | — | Solo si Emitido=true | `true`/`false` | `false` |
-| Observaciones | `Observaciones` | Texto | 4000 | Sí si TieneObservaciones=true | | `El plano registra...` |
-
-### 4.6 Nomenclatura catastral (opcional)
-
-Camino base: `Actos/Acto/NomenclaturaCatastral` (bloque opcional; si se
-incluye, los 5 campos son obligatorios)
+Certificado registral de **dominio** (sobre el inmueble). Junto con la
+certificación de inhibición (4.6), reemplaza al antiguo bloque
+`CertificacionRegistralPrevia` (número + dos fechas). Estructuralmente opcional
+en el XSD, pero **obligatorio para compraventa** (lo exige el servicio del RPI).
 
 | Campo del formulario | Camino XML | Tipo | Longitud | Obligatorio | Valores / Notas | Ejemplo |
 |---|---|---|---|---|---|---|
-| Campo 1 | `Campo1` | Texto | 2 (fijo) | Sí (si hay bloque) | | `09` |
-| Campo 2 | `Campo2` | Texto | 2 (fijo) | Sí (si hay bloque) | | `21` |
-| Campo 3 | `Campo3` | Texto | 3 (fijo) | Sí (si hay bloque) | | `045` |
-| Campo 4 | `Campo4` | Texto | 4 (fijo) | Sí (si hay bloque) | | `0123` |
-| Campo 5 | `Campo5` | Texto | 4 (fijo) | Sí (si hay bloque) | | `0008` |
+| Número | `Numero` | Texto | 1-40 | Sí (compraventa) | | `2026-001234` |
+| Fecha de emisión | `FechaEmision` | Fecha | — | Sí (compraventa) | | `2026-06-01` |
 
-### 4.7 Certificación registral previa
+### 4.6 Certificación de inhibición
 
-Camino base: `Actos/Acto/CertificacionRegistralPrevia`
+Camino base: `Actos/Acto/CertificacionInhibicion`
+
+Certificado registral de **inhibición** (sobre la persona transmitente).
+Estructuralmente opcional en el XSD, pero **obligatorio para compraventa** (lo
+exige el servicio del RPI).
 
 | Campo del formulario | Camino XML | Tipo | Longitud | Obligatorio | Valores / Notas | Ejemplo |
 |---|---|---|---|---|---|---|
-| Número | `Numero` | Texto | 1-40 | Sí | | `2026-001234` |
-| Fecha emisión (primera) | `FechaEmisionPrimera` | Fecha | — | Sí | | `2026-06-01` |
-| Fecha emisión (segunda) | `FechaEmisionSegunda` | Fecha | — | Sí | | `2026-06-30` |
+| Número | `Numero` | Texto | 1-40 | Sí (compraventa) | | `INH-2026-000789` |
+| Fecha de emisión | `FechaEmision` | Fecha | — | Sí (compraventa) | | `2026-06-02` |
 
-### 4.8 Visado de Rentas
+> **Nota**: la certificación de dominio y la de inhibición son **dos certificados
+> distintos**. La de **dominio** informa el estado registral del **inmueble**
+> (titularidad, gravámenes); la de **inhibición** informa si la **persona** que
+> transmite está inhibida para disponer de sus bienes. Por eso se solicitan por
+> separado, cada una con su propio número y fecha de emisión.
+
+### 4.7 Visado de Rentas
 
 Camino base: `Actos/Acto/VisadoRentas` (bloque obligatorio)
 

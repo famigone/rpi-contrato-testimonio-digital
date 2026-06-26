@@ -1,5 +1,16 @@
 # Diseño de la expansión del contrato — alineamiento al Excel del RPI
 
+> ⚠️ **DOCUMENTO HISTÓRICO — describe el diseño v1, superado por el contrato v2
+> vigente.** Refleja la estructura **v1** (un acto por testimonio, contenedores
+> `Adquirentes`/`Transmitentes`, bloques de certificación a nivel testimonio,
+> `CertificacionRegistralPrevia` con dos fechas). El contrato vigente es **v2**:
+> N actos por testimonio, partes con rol genérico (`<Parte rol="...">`), catastro
+> **por inmueble** y certificaciones registrales separadas (`CertificacionDominio`
+> + `CertificacionInhibicion`). Se conserva solo como registro de las decisiones
+> de diseño de aquella etapa; **no usar como referencia de la estructura actual**.
+> Para la estructura vigente ver [04 — Formato XML](04-formato-xml.md),
+> [10 — Campos del formulario](10-campos-del-formulario.md) y los XSD en `xsd/v2/`.
+
 > **Propósito**: documentar las decisiones de modelado para expandir el contrato
 > del Testimonio Digital de manera que cubra todos los campos del Excel
 > "EstructuraMinuta" del RPI.

@@ -185,7 +185,7 @@ Cierra #[número del issue de propuesta].
 - Usar `xs:annotation/xs:documentation` para todo tipo o elemento principal.
 - Documentación en español.
 - Nombres de tipos: `PascalCase` terminados en `Type` (ej. `PersonaType`).
-- Nombres de elementos: `PascalCase` (ej. `Adquirentes`).
+- Nombres de elementos: `PascalCase` (ej. `EscribanoAutorizante`, `CertificacionDominio`).
 - Nombres de atributos: `camelCase` (ej. `version`).
 - Restricciones de longitud y patrón sobre todos los strings que viajen al
   RPI.

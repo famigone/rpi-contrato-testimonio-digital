@@ -72,7 +72,7 @@ El campo `detalle` es opcional y varía según el código de error.
 |--------|-------------|
 | `ESCRIBANO_NO_REGISTRADO` | El escribano declarado no figura en el catálogo del RPI. Requiere acción manual. |
 | `MATRICULA_NO_EXISTENTE` | La matrícula del inmueble no existe en el RPI. |
-| `CERTIFICACION_VENCIDA` | La certificación registral previa está vencida. |
+| `CERTIFICACION_VENCIDA` | La certificación registral previa (dominio o inhibición) está vencida. |
 | `VERSION_CONTRATO_NO_SOPORTADA` | El RPI no soporta la versión del contrato declarada. |
 | `MONEDA_SIN_COTIZACION` | Si moneda=USD, cotización es obligatoria. |
 | `PERSONA_HUMANA_SIN_NOMBRES` | Tipo=H requiere Nombres. |
@@ -145,9 +145,9 @@ Content-Type: application/json
 {
   "error": {
     "codigo": "XML_INVALIDO",
-    "mensaje": "El elemento 'CertificacionRegistralPrevia' es obligatorio pero no se encontró.",
+    "mensaje": "El elemento 'NomenclaturaCatastral' es obligatorio pero no se encontró.",
     "detalle": {
-      "elemento": "/TestimonioDigital/Actos/Acto/CertificacionRegistralPrevia"
+      "elemento": "/TestimonioDigital/Actos/Acto/Inmuebles/Inmueble/NomenclaturaCatastral"
     },
     "identificadorEnvio": "550e8400-e29b-41d4-a716-446655440000",
     "timestamp": "2026-06-15T10:23:45Z"

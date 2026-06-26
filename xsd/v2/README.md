@@ -19,14 +19,24 @@ Un testimonio pasa de **un acto** a **N actos (1..N)**:
 
 - Aparece `<Actos>` con `<Acto numero="N">` (`minOccurs=1`, sin tope). Actos de
   tipos heterogéneos permitidos (el `xs:choice` por acto lo habilita).
-- **Bajan del testimonio al acto**: `DatosEconomicos`, `CertificacionCatastral`,
-  `NomenclaturaCatastral` (opcional), `CertificacionRegistralPrevia`,
-  `VisadoRentas`, además de `Partes` e `Inmuebles`.
+- **Bajan del testimonio al acto**: `DatosEconomicos`, las certificaciones
+  registrales y `VisadoRentas`, además de `Partes` e `Inmuebles`.
 - **Quedan a nivel testimonio** (un trámite / un cuerpo de escritura, igual que
   v1): `MetadatosEnvio`, `EscribanoAutorizante`, `Otorgamiento`, `Rogante`,
   `TextoCuerpo`, `Observaciones`, `Signature`.
 - **Partes con rol genérico**: se reemplazan los contenedores `Adquirentes` /
   `Transmitentes` de v1 por una lista de `<Parte rol="...">`. Ver `comunes/parte.xsd`.
+- **Catastro por inmueble**: `CertificacionCatastral` y `NomenclaturaCatastral`
+  ya no están a nivel acto: viven dentro de cada `<Inmueble>` (junto a
+  `IdentificacionInmueble`) y son **obligatorias por inmueble**. Un acto con M
+  inmuebles tiene M certificaciones catastrales y M nomenclaturas.
+- **Certificación registral en dos bloques**: el viejo `CertificacionRegistralPrevia`
+  (número + dos fechas, heredado del legacy) se reemplaza por dos bloques
+  separados a nivel acto, `CertificacionDominio` (sobre el inmueble) y
+  `CertificacionInhibicion` (sobre la persona), cada uno con `Numero` +
+  `FechaEmision`. Opcionales en el XSD; obligatorios para compraventa por regla
+  de servicio. Ver `comunes/certificacion-dominio.xsd` y
+  `comunes/certificacion-inhibicion.xsd`.
 
 ## Estructura
 
@@ -39,11 +49,14 @@ TestimonioDigital (version="2.0")
 │   └── Acto (numero, 1..N)
 │       ├── (choice)  Compraventa | …futuros…
 │       ├── Partes → Parte (rol, 1..N)
-│       ├── Inmuebles → Inmueble (1..M)
+│       ├── Inmuebles
+│       │   └── Inmueble (1..M)
+│       │       ├── IdentificacionInmueble
+│       │       ├── CertificacionCatastral      (obligatoria por inmueble)
+│       │       └── NomenclaturaCatastral        (obligatoria por inmueble)
 │       ├── DatosEconomicos
-│       ├── CertificacionCatastral
-│       ├── NomenclaturaCatastral (opcional)
-│       ├── CertificacionRegistralPrevia
+│       ├── CertificacionDominio                 (opcional XSD; obligatoria compraventa)
+│       ├── CertificacionInhibicion              (opcional XSD; obligatoria compraventa)
 │       └── VisadoRentas
 ├── Rogante
 ├── TextoCuerpo
@@ -53,13 +66,18 @@ TestimonioDigital (version="2.0")
 
 ```
 xsd/v2/
-├── testimonio-digital.xsd      ← entry point (define ActoType, Actos, raíz)
+├── testimonio-digital.xsd          ← entry point (define ActoType, Actos, Inmueble, raíz)
 ├── comunes/
-│   ├── parte.xsd               ← NUEVO: ParteType (= PersonaType + rol) y RolParteEnum
-│   ├── persona.xsd             ← reutilizado de v1 (PersonaType con Proporcion/Representante)
-│   └── …                       ← resto de comunes, reutilizados de v1
+│   ├── parte.xsd                   ← NUEVO: ParteType (= PersonaType + rol) y RolParteEnum
+│   ├── persona.xsd                 ← reutilizado de v1 (PersonaType con Proporcion/Representante)
+│   ├── identificacion-inmueble.xsd ← IdentificacionInmuebleType (dentro de Inmueble)
+│   ├── certificacion-catastral.xsd ← CertificacionCatastralType (se referencia DENTRO de Inmueble)
+│   ├── nomenclatura-catastral.xsd  ← NomenclaturaCatastralType (se referencia DENTRO de Inmueble)
+│   ├── certificacion-dominio.xsd   ← NUEVO: CertificacionDominioType (Numero + FechaEmision)
+│   ├── certificacion-inhibicion.xsd← NUEVO: CertificacionInhibicionType (Numero + FechaEmision)
+│   └── …                           ← resto de comunes (datos-economicos, visado-rentas, …)
 └── actos/
-    └── compraventa.xsd         ← CompraventaType SIN partes/inmuebles (viven en Acto)
+    └── compraventa.xsd             ← CompraventaType SIN partes/inmuebles (viven en Acto)
 ```
 
 `xmldsig-core-schema.xsd` se reutiliza por `xs:import` desde la copia compartida

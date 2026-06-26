@@ -44,20 +44,28 @@ El XML del testimonio digital tiene esta estructura raíz:
         <!-- Una o varias <Parte rol="ADQUIRENTE|TRANSMITENTE|..."> -->
       </Partes>
       <Inmuebles>
-        <!-- Uno o varios IdentificacionInmueble -->
+        <Inmueble>
+          <IdentificacionInmueble>
+            <!-- Matrícula o terna Tomo/Folio/Finca + departamento -->
+          </IdentificacionInmueble>
+          <CertificacionCatastral>
+            <!-- Catastral del inmueble (obligatoria por inmueble) -->
+          </CertificacionCatastral>
+          <NomenclaturaCatastral>
+            <!-- Nomenclatura en 5 campos (obligatoria por inmueble) -->
+          </NomenclaturaCatastral>
+        </Inmueble>
+        <!-- Más <Inmueble> si el acto los tiene; cada uno con su catastro -->
       </Inmuebles>
       <DatosEconomicos>
         <!-- Valuación fiscal, monto, moneda, cotización -->
       </DatosEconomicos>
-      <CertificacionCatastral>
-        <!-- Certificación catastral del inmueble (obligatoria) -->
-      </CertificacionCatastral>
-      <NomenclaturaCatastral>
-        <!-- Nomenclatura catastral en 5 campos (bloque opcional) -->
-      </NomenclaturaCatastral>
-      <CertificacionRegistralPrevia>
-        <!-- Certificación de dominio previa al acto -->
-      </CertificacionRegistralPrevia>
+      <CertificacionDominio>
+        <!-- Certificado de dominio previo (sobre el inmueble): Numero + FechaEmision -->
+      </CertificacionDominio>
+      <CertificacionInhibicion>
+        <!-- Certificado de inhibición previo (sobre la persona): Numero + FechaEmision -->
+      </CertificacionInhibicion>
       <VisadoRentas>
         <!-- Visado de Rentas (obligatorio) -->
       </VisadoRentas>
@@ -88,8 +96,9 @@ El XML del testimonio digital tiene esta estructura raíz:
 
 > El orden de los elementos dentro de `<Acto>` es fijo: primero el discriminador
 > del tipo (`Compraventa`), luego `Partes`, `Inmuebles`, `DatosEconomicos`,
-> `CertificacionCatastral`, `NomenclaturaCatastral` (opcional),
-> `CertificacionRegistralPrevia` y `VisadoRentas`.
+> `CertificacionDominio`, `CertificacionInhibicion` y `VisadoRentas`. Dentro de
+> cada `<Inmueble>` el orden también es fijo: `IdentificacionInmueble`,
+> `CertificacionCatastral`, `NomenclaturaCatastral`.
 
 > El atributo `numero` de cada `<Acto>` es un entero positivo obligatorio. La
 > **unicidad** de `numero` entre los actos no la valida el XSD: la valida el
@@ -174,9 +183,11 @@ Cada `<Acto>` contiene, en este orden:
 
 1. El **discriminador del tipo de acto** (`Compraventa`).
 2. `Partes` — las personas que intervienen, con su rol por atributo.
-3. `Inmuebles` — uno o más `IdentificacionInmueble`.
-4. `DatosEconomicos`, `CertificacionCatastral`, `NomenclaturaCatastral`
-   (opcional), `CertificacionRegistralPrevia` y `VisadoRentas`.
+3. `Inmuebles` — uno o más `<Inmueble>`, cada uno con su `IdentificacionInmueble`,
+   su `CertificacionCatastral` y su `NomenclaturaCatastral` (el catastro es **por
+   inmueble**).
+4. `DatosEconomicos`, `CertificacionDominio`, `CertificacionInhibicion` y
+   `VisadoRentas`.
 
 Estos bloques en v1 vivían a nivel testimonio; en v2 **bajan al acto**, porque
 cada acto puede tener distintas partes, inmuebles, monto y certificaciones.
@@ -188,40 +199,61 @@ cada acto puede tener distintas partes, inmuebles, monto y certificaciones.
       <DescripcionActoIncompleto>Compraventa con saldo de precio</DescripcionActoIncompleto>
     </Compraventa>
     <Partes> ... </Partes>
-    <Inmuebles> ... </Inmuebles>
+    <Inmuebles>
+      <Inmueble>
+        <IdentificacionInmueble> ... </IdentificacionInmueble>
+        <CertificacionCatastral> ... </CertificacionCatastral>
+        <NomenclaturaCatastral> ... </NomenclaturaCatastral>
+      </Inmueble>
+    </Inmuebles>
     <DatosEconomicos> ... </DatosEconomicos>
-    <CertificacionCatastral> ... </CertificacionCatastral>
-    <NomenclaturaCatastral> ... </NomenclaturaCatastral>
-    <CertificacionRegistralPrevia> ... </CertificacionRegistralPrevia>
+    <CertificacionDominio> ... </CertificacionDominio>
+    <CertificacionInhibicion> ... </CertificacionInhibicion>
     <VisadoRentas> ... </VisadoRentas>
   </Acto>
 </Actos>
 ```
 
-Los bloques que siguen (`CertificacionRegistralPrevia`, `CertificacionCatastral`,
-`NomenclaturaCatastral`, `DatosEconomicos`, `VisadoRentas`, `Compraventa`,
+El catastro (`CertificacionCatastral` y `NomenclaturaCatastral`) vive **dentro de
+cada `<Inmueble>`**; el resto de los bloques (`CertificacionDominio`,
+`CertificacionInhibicion`, `DatosEconomicos`, `VisadoRentas`, `Compraventa`,
 `Partes` e `Inmuebles`) viven **dentro de cada `<Acto>`**.
 
-### CertificacionRegistralPrevia
+### CertificacionDominio y CertificacionInhibicion
 
-La certificación de dominio que el escribano solicitó al RPI antes de otorgar
-la escritura. Las dos fechas se llaman `FechaEmisionPrimera` y
-`FechaEmisionSegunda` (alineadas al Excel del RPI).
+Las certificaciones registrales previas que el escribano solicitó al RPI antes
+de otorgar la escritura. Son **dos certificados distintos**, modelados como dos
+bloques separados a nivel acto:
+
+- **`CertificacionDominio`**: recae sobre el **inmueble** (estado de dominio,
+  gravámenes, restricciones).
+- **`CertificacionInhibicion`**: recae sobre la **persona** (si el transmitente
+  está inhibido para disponer de sus bienes).
+
+Cada uno tiene la misma estructura simple: `Numero` + `FechaEmision`. Reemplazan
+al antiguo `CertificacionRegistralPrevia` (un número con dos fechas heredado del
+legacy). Estructuralmente son opcionales en el XSD, pero **para compraventa el
+servicio del RPI exige ambos**.
 
 ```xml
-<CertificacionRegistralPrevia>
+<CertificacionDominio>
   <Numero>2026-001234</Numero>
-  <FechaEmisionPrimera>2026-06-01</FechaEmisionPrimera>
-  <FechaEmisionSegunda>2026-06-30</FechaEmisionSegunda>
-</CertificacionRegistralPrevia>
+  <FechaEmision>2026-06-01</FechaEmision>
+</CertificacionDominio>
+<CertificacionInhibicion>
+  <Numero>INH-2026-000789</Numero>
+  <FechaEmision>2026-06-02</FechaEmision>
+</CertificacionInhibicion>
 ```
 
-### CertificacionCatastral
+### CertificacionCatastral (por inmueble)
 
-Certificación catastral del inmueble (distinta de la registral). Bloque
-**obligatorio**. Si `Emitido` es `false`, los demás campos pueden omitirse. Si
-es `true`, `Numero` y `CodigoValidacion` son obligatorios (lo valida el
-servicio). `Observaciones` es obligatorio solo si `TieneObservaciones=true`.
+Certificación catastral del inmueble (distinta de la registral). Vive **dentro
+de cada `<Inmueble>`** y es **obligatoria por inmueble**: si un acto tiene varios
+inmuebles, cada uno lleva la suya. Si `Emitido` es `false`, los demás campos
+pueden omitirse. Si es `true`, `Numero` y `CodigoValidacion` son obligatorios (lo
+valida el servicio). `Observaciones` es obligatorio solo si
+`TieneObservaciones=true`.
 
 ```xml
 <CertificacionCatastral>
@@ -240,10 +272,11 @@ Caso sin certificación emitida:
 </CertificacionCatastral>
 ```
 
-### NomenclaturaCatastral (opcional)
+### NomenclaturaCatastral (por inmueble)
 
-Identificación parcelaria del inmueble. Bloque **opcional**, pero si se incluye
-los 5 campos son obligatorios, con longitudes fijas (2, 2, 3, 4 y 4 caracteres).
+Identificación parcelaria del inmueble. Vive **dentro de cada `<Inmueble>`** y es
+**obligatoria por inmueble**. Los 5 campos son obligatorios, con longitudes fijas
+(2, 2, 3, 4 y 4 caracteres).
 
 ```xml
 <NomenclaturaCatastral>
@@ -336,8 +369,11 @@ acto lo valida el servicio del RPI.
 
 ### Inmuebles
 
-Uno o más `IdentificacionInmueble`, cada uno dentro de un `<Inmueble>` (hasta
-50 por acto). Ver [Identificación del inmueble](#identificación-del-inmueble).
+Uno o más `<Inmueble>` (hasta 50 por acto). Cada `<Inmueble>` contiene, en este
+orden: su `IdentificacionInmueble`, su `CertificacionCatastral` y su
+`NomenclaturaCatastral`. El catastro es **por inmueble** (obligatorio en cada
+uno): si el acto tiene varios inmuebles, cada uno lleva su propio catastro y su
+nomenclatura. Ver [Identificación del inmueble](#identificación-del-inmueble).
 
 ### Rogante
 
@@ -491,8 +527,10 @@ documento del representante admite solo `DNI`, `LE` o `LC` (no `PAS`).
 
 ## Identificación del inmueble
 
-`IdentificacionInmueble` soporta dos modos. El servicio exige que se complete
-**al menos uno**:
+`IdentificacionInmueble` es el primer hijo de cada `<Inmueble>`; le siguen, en el
+mismo `<Inmueble>`, la `CertificacionCatastral` y la `NomenclaturaCatastral` de
+ese inmueble (ver secciones anteriores). `IdentificacionInmueble` soporta dos
+modos. El servicio exige que se complete **al menos uno**:
 
 - **Por matrícula**: `Matricula` (entero, hasta 8 dígitos) + `Departamento`.
 - **Por tomo/folio/finca**: para inmuebles antiguos sin matrícula.
@@ -518,6 +556,31 @@ Inmueble antiguo sin matrícula:
 </IdentificacionInmueble>
 ```
 
+Un `<Inmueble>` completo incluye, además de la identificación, su catastro
+(certificación + nomenclatura), que son **obligatorios por inmueble**:
+
+```xml
+<Inmueble>
+  <IdentificacionInmueble>
+    <Matricula>3456</Matricula>
+    <Departamento>5</Departamento>
+  </IdentificacionInmueble>
+  <CertificacionCatastral>
+    <Emitido>true</Emitido>
+    <Numero>CAT-2026-5678</Numero>
+    <CodigoValidacion>VAL-ABCD-1234</CodigoValidacion>
+    <TieneObservaciones>false</TieneObservaciones>
+  </CertificacionCatastral>
+  <NomenclaturaCatastral>
+    <Campo1>05</Campo1>
+    <Campo2>20</Campo2>
+    <Campo3>001</Campo3>
+    <Campo4>0100</Campo4>
+    <Campo5>0001</Campo5>
+  </NomenclaturaCatastral>
+</Inmueble>
+```
+
 ### Códigos de departamento
 
 | Código | Nombre | Código | Nombre |
@@ -538,9 +601,10 @@ separados bajo `xsd/v2/comunes/`:
 
 - **Parte** (`parte.xsd`): `Persona` + atributo `rol`. Define el enum de roles.
 - **Persona**: contenido de cada `Parte` (reutilizado tal cual de v1).
-- **IdentificacionInmueble**: matrícula/terna, departamento, barra.
-- **CertificacionCatastral**, **NomenclaturaCatastral**, **VisadoRentas**,
-  **DatosEconomicos**, **CertificacionRegistral**: bloques comunes del acto.
+- **IdentificacionInmueble**, **CertificacionCatastral**, **NomenclaturaCatastral**:
+  bloques comunes del inmueble (los tres viven dentro de cada `<Inmueble>`).
+- **CertificacionDominio**, **CertificacionInhibicion**, **VisadoRentas**,
+  **DatosEconomicos**: bloques comunes del acto.
 
 Cuando agreguemos nuevos actos (hipoteca, donación), van a reutilizar estos
 mismos tipos sin redefinirlos: el acto nuevo solo define sus campos propios, ya
@@ -554,7 +618,8 @@ incluye:
 - Estructura (todos los elementos requeridos presentes).
 - Tipos de datos (fechas válidas, montos numéricos, `numero` entero positivo, etc.).
 - Cardinalidades (al menos un acto, al menos una parte por acto, al menos un
-  inmueble por acto, etc.).
+  inmueble por acto, una `CertificacionCatastral` y una `NomenclaturaCatastral`
+  por inmueble, etc.).
 - Restricciones de longitud y formato.
 
 Las validaciones cruzadas las hace el servicio del RPI **después** del XSD:

@@ -43,9 +43,13 @@ inscripto. Puede inscribir, observar (provisoriamente) o rechazar.
 
 ### Certificación registral
 
-Certificado emitido por el RPI antes del acto, que informa el estado dominial
-del inmueble. El escribano lo solicita antes de otorgar la escritura para
-asegurarse del estado del bien.
+Certificado emitido por el RPI antes del acto, que el escribano solicita antes
+de otorgar la escritura para asegurarse del estado del bien y de las personas.
+En el contrato v2 son **dos certificados distintos**, cada uno con su número y
+fecha de emisión: la **certificación de dominio** (`CertificacionDominio`),
+sobre el estado dominial del **inmueble**, y la **certificación de inhibición**
+(`CertificacionInhibicion`), sobre si la **persona** transmitente está inhibida
+para disponer de sus bienes.
 
 ### Compraventa
 
@@ -69,7 +73,8 @@ identificación del inmueble.
 
 Certificación del inmueble emitida por catastro, distinta de la certificación
 registral. Informa el estado catastral (nomenclatura, superficie, plano) y
-puede tener observaciones.
+puede tener observaciones. Se incluye **dentro de cada inmueble** (obligatoria
+por inmueble).
 
 ### EG / Entrada General
 
@@ -110,8 +115,8 @@ estructurados del XML.
 ### Nomenclatura catastral
 
 Identificación parcelaria del inmueble. En el contrato se modela como 5 campos
-de longitud fija (2, 2, 3, 4 y 4 caracteres) según la convención del RPI. Es un
-bloque opcional.
+de longitud fija (2, 2, 3, 4 y 4 caracteres) según la convención del RPI. Se
+incluye **dentro de cada inmueble** y es **obligatoria por inmueble**.
 
 ### Plataforma Digital (PD)
 
