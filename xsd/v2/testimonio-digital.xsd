@@ -19,7 +19,8 @@
   <xs:include schemaLocation="comunes/parte.xsd"/>
   <xs:include schemaLocation="comunes/identificacion-inmueble.xsd"/>
   <xs:include schemaLocation="comunes/datos-economicos.xsd"/>
-  <xs:include schemaLocation="comunes/certificacion-registral.xsd"/>
+  <xs:include schemaLocation="comunes/certificacion-dominio.xsd"/>
+  <xs:include schemaLocation="comunes/certificacion-inhibicion.xsd"/>
   <xs:include schemaLocation="comunes/certificacion-catastral.xsd"/>
   <xs:include schemaLocation="comunes/nomenclatura-catastral.xsd"/>
   <xs:include schemaLocation="comunes/visado-rentas.xsd"/>
@@ -32,11 +33,23 @@
       Contrato XSD del Testimonio Digital del RPI Neuquén — v2.0.
 
       Cambio central respecto de v1: un testimonio pasa de UN acto a N actos
-      (1..N). Los bloques sustantivos del acto (DatosEconomicos,
-      CertificacionCatastral, NomenclaturaCatastral, CertificacionRegistralPrevia,
-      VisadoRentas), las Partes y los Inmuebles BAJAN del nivel testimonio al
-      nivel de cada &lt;Acto&gt;. Las partes se modelan con rol genérico
+      (1..N). Los bloques sustantivos del acto (DatosEconomicos, las dos
+      certificaciones registrales —dominio e inhibición— y VisadoRentas), las
+      Partes y los Inmuebles BAJAN del nivel testimonio al nivel de cada
+      &lt;Acto&gt;. Las partes se modelan con rol genérico
       (&lt;Parte rol="..."&gt;) en vez de contenedores nombrados por acto.
+
+      El catastro es POR INMUEBLE: CertificacionCatastral y NomenclaturaCatastral
+      viven dentro de cada &lt;Inmueble&gt; (junto a IdentificacionInmueble), no
+      a nivel acto. Un acto con M inmuebles tiene M certificaciones catastrales
+      y M nomenclaturas, una por inmueble.
+
+      Las certificaciones registrales previas se modelan como DOS bloques
+      separados a nivel acto: CertificacionDominio (sobre el inmueble) y
+      CertificacionInhibicion (sobre la persona). Reemplazan al antiguo
+      CertificacionRegistralPrevia (número + dos fechas heredado del legacy).
+      Ambos son estructuralmente opcionales en el XSD (minOccurs=0); su
+      obligatoriedad según el tipo de acto se valida en código (ADR-002).
 
       A nivel testimonio quedan: MetadatosEnvio, EscribanoAutorizante,
       Otorgamiento, Rogante, TextoCuerpo, Observaciones y Signature (un trámite
@@ -82,7 +95,11 @@
         </xs:complexType>
       </xs:element>
 
-      <!-- Inmuebles del acto (1..M). Ya era lista en v1; baja al acto. -->
+      <!-- Inmuebles del acto (1..M). Ya era lista en v1; baja al acto.
+           El catastro es POR INMUEBLE: cada Inmueble lleva, junto a su
+           IdentificacionInmueble, su CertificacionCatastral y su
+           NomenclaturaCatastral (ambas obligatorias por inmueble). Un acto con
+           M inmuebles tiene M certificaciones catastrales y M nomenclaturas. -->
       <xs:element name="Inmuebles">
         <xs:complexType>
           <xs:sequence>
@@ -90,6 +107,11 @@
               <xs:complexType>
                 <xs:sequence>
                   <xs:element name="IdentificacionInmueble" type="IdentificacionInmuebleType"/>
+                  <!-- Catastro del inmueble (obligatorio por inmueble). Reutiliza
+                       los tipos comunes; solo cambia el lugar donde se referencian
+                       (antes a nivel acto, ahora por inmueble). -->
+                  <xs:element name="CertificacionCatastral" type="CertificacionCatastralType"/>
+                  <xs:element name="NomenclaturaCatastral" type="NomenclaturaCatastralType"/>
                 </xs:sequence>
               </xs:complexType>
             </xs:element>
@@ -99,9 +121,16 @@
 
       <!-- Bloques sustantivos que BAJAN del testimonio (v1) al acto (v2). -->
       <xs:element name="DatosEconomicos" type="DatosEconomicosType"/>
-      <xs:element name="CertificacionCatastral" type="CertificacionCatastralType"/>
-      <xs:element name="NomenclaturaCatastral" type="NomenclaturaCatastralType" minOccurs="0"/>
-      <xs:element name="CertificacionRegistralPrevia" type="CertificacionRegistralPreviaType"/>
+
+      <!-- Certificaciones registrales previas: DOS bloques separados.
+           CertificacionDominio recae sobre el INMUEBLE; CertificacionInhibicion
+           sobre la PERSONA. Reemplazan al antiguo CertificacionRegistralPrevia.
+           Estructuralmente opcionales (minOccurs=0): la obligatoriedad según el
+           tipo de acto (la compraventa las exige) se valida en código, no en
+           el XSD (coherente con ADR-002). -->
+      <xs:element name="CertificacionDominio" type="CertificacionDominioType" minOccurs="0"/>
+      <xs:element name="CertificacionInhibicion" type="CertificacionInhibicionType" minOccurs="0"/>
+
       <xs:element name="VisadoRentas" type="VisadoRentasType"/>
     </xs:sequence>
 

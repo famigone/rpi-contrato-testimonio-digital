@@ -72,12 +72,27 @@
         </Parte>
       </Partes>
 
+      <!-- Un solo inmueble. El catastro (certificación + nomenclatura) vive
+           dentro del Inmueble, junto a IdentificacionInmueble. -->
       <Inmuebles>
         <Inmueble>
           <IdentificacionInmueble>
             <Matricula>3456</Matricula>
             <Departamento>5</Departamento>
           </IdentificacionInmueble>
+          <CertificacionCatastral>
+            <Emitido>true</Emitido>
+            <Numero>CAT-2026-5678</Numero>
+            <CodigoValidacion>VAL-ABCD-1234</CodigoValidacion>
+            <TieneObservaciones>false</TieneObservaciones>
+          </CertificacionCatastral>
+          <NomenclaturaCatastral>
+            <Campo1>05</Campo1>
+            <Campo2>20</Campo2>
+            <Campo3>001</Campo3>
+            <Campo4>0123</Campo4>
+            <Campo5>0007</Campo5>
+          </NomenclaturaCatastral>
         </Inmueble>
       </Inmuebles>
 
@@ -91,26 +106,16 @@
         </Monto>
       </DatosEconomicos>
 
-      <CertificacionCatastral>
-        <Emitido>true</Emitido>
-        <Numero>CAT-2026-5678</Numero>
-        <CodigoValidacion>VAL-ABCD-1234</CodigoValidacion>
-        <TieneObservaciones>false</TieneObservaciones>
-      </CertificacionCatastral>
-
-      <NomenclaturaCatastral>
-        <Campo1>05</Campo1>
-        <Campo2>20</Campo2>
-        <Campo3>001</Campo3>
-        <Campo4>0123</Campo4>
-        <Campo5>0007</Campo5>
-      </NomenclaturaCatastral>
-
-      <CertificacionRegistralPrevia>
+      <!-- Dos certificados registrales separados: dominio (sobre el inmueble)
+           e inhibición (sobre la persona transmitente). -->
+      <CertificacionDominio>
         <Numero>2026-001234</Numero>
-        <FechaEmisionPrimera>2026-06-01</FechaEmisionPrimera>
-        <FechaEmisionSegunda>2026-06-30</FechaEmisionSegunda>
-      </CertificacionRegistralPrevia>
+        <FechaEmision>2026-06-01</FechaEmision>
+      </CertificacionDominio>
+      <CertificacionInhibicion>
+        <Numero>INH-2026-000789</Numero>
+        <FechaEmision>2026-06-02</FechaEmision>
+      </CertificacionInhibicion>
 
       <VisadoRentas>
         <Tipo>R</Tipo>
@@ -119,8 +124,8 @@
     </Acto>
 
     <!-- Acto 2: persona jurídica transmitente, dos adquirentes humanos con
-         proporciones complementarias. Sin NomenclaturaCatastral (es opcional)
-         y monto en USD con cotización. -->
+         proporciones complementarias. DOS inmuebles (catastro por inmueble) y
+         monto en USD con cotización. -->
     <Acto numero="2">
       <Compraventa/>
 
@@ -169,12 +174,29 @@
         </Parte>
       </Partes>
 
+      <!-- DOS inmuebles: cada uno con su propio catastro (certificación +
+           nomenclatura). Muestra que el catastro por inmueble se repite: este
+           acto tiene 2 inmuebles => 2 certificaciones catastrales y 2
+           nomenclaturas, una por inmueble. -->
       <Inmuebles>
         <Inmueble>
           <IdentificacionInmueble>
             <Matricula>78901</Matricula>
             <Departamento>5</Departamento>
           </IdentificacionInmueble>
+          <CertificacionCatastral>
+            <Emitido>true</Emitido>
+            <Numero>CAT-2026-9012</Numero>
+            <CodigoValidacion>VAL-WXYZ-9876</CodigoValidacion>
+            <TieneObservaciones>false</TieneObservaciones>
+          </CertificacionCatastral>
+          <NomenclaturaCatastral>
+            <Campo1>05</Campo1>
+            <Campo2>22</Campo2>
+            <Campo3>014</Campo3>
+            <Campo4>0456</Campo4>
+            <Campo5>0011</Campo5>
+          </NomenclaturaCatastral>
         </Inmueble>
         <Inmueble>
           <IdentificacionInmueble>
@@ -183,6 +205,20 @@
             <Folio>045</Folio>
             <Finca>9988</Finca>
           </IdentificacionInmueble>
+          <CertificacionCatastral>
+            <Emitido>true</Emitido>
+            <Numero>CAT-2026-9013</Numero>
+            <CodigoValidacion>VAL-WXYZ-9877</CodigoValidacion>
+            <TieneObservaciones>true</TieneObservaciones>
+            <Observaciones>Diferencia de superficie respecto del título anterior.</Observaciones>
+          </CertificacionCatastral>
+          <NomenclaturaCatastral>
+            <Campo1>16</Campo1>
+            <Campo2>03</Campo2>
+            <Campo3>008</Campo3>
+            <Campo4>0099</Campo4>
+            <Campo5>0002</Campo5>
+          </NomenclaturaCatastral>
         </Inmueble>
       </Inmuebles>
 
@@ -197,19 +233,15 @@
         </Monto>
       </DatosEconomicos>
 
-      <CertificacionCatastral>
-        <Emitido>true</Emitido>
-        <Numero>CAT-2026-9012</Numero>
-        <CodigoValidacion>VAL-WXYZ-9876</CodigoValidacion>
-        <TieneObservaciones>true</TieneObservaciones>
-        <Observaciones>Diferencia de superficie respecto del título anterior.</Observaciones>
-      </CertificacionCatastral>
-
-      <CertificacionRegistralPrevia>
+      <!-- Certificaciones registrales separadas (dominio + inhibición). -->
+      <CertificacionDominio>
         <Numero>2026-005678</Numero>
-        <FechaEmisionPrimera>2026-06-02</FechaEmisionPrimera>
-        <FechaEmisionSegunda>2026-06-29</FechaEmisionSegunda>
-      </CertificacionRegistralPrevia>
+        <FechaEmision>2026-06-02</FechaEmision>
+      </CertificacionDominio>
+      <CertificacionInhibicion>
+        <Numero>INH-2026-001456</Numero>
+        <FechaEmision>2026-06-03</FechaEmision>
+      </CertificacionInhibicion>
 
       <VisadoRentas>
         <Tipo>A</Tipo>

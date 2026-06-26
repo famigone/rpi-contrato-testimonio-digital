@@ -63,6 +63,19 @@
             <Matricula>3456</Matricula>
             <Departamento>5</Departamento>
           </IdentificacionInmueble>
+          <CertificacionCatastral>
+            <Emitido>true</Emitido>
+            <Numero>CAT-2026-5678</Numero>
+            <CodigoValidacion>VAL-ABCD-1234</CodigoValidacion>
+            <TieneObservaciones>false</TieneObservaciones>
+          </CertificacionCatastral>
+          <NomenclaturaCatastral>
+            <Campo1>05</Campo1>
+            <Campo2>20</Campo2>
+            <Campo3>001</Campo3>
+            <Campo4>0100</Campo4>
+            <Campo5>0001</Campo5>
+          </NomenclaturaCatastral>
         </Inmueble>
       </Inmuebles>
 
@@ -76,18 +89,14 @@
         </Monto>
       </DatosEconomicos>
 
-      <CertificacionCatastral>
-        <Emitido>true</Emitido>
-        <Numero>CAT-2026-5678</Numero>
-        <CodigoValidacion>VAL-ABCD-1234</CodigoValidacion>
-        <TieneObservaciones>false</TieneObservaciones>
-      </CertificacionCatastral>
-
-      <CertificacionRegistralPrevia>
+      <CertificacionDominio>
         <Numero>2026-001234</Numero>
-        <FechaEmisionPrimera>2026-06-01</FechaEmisionPrimera>
-        <FechaEmisionSegunda>2026-06-30</FechaEmisionSegunda>
-      </CertificacionRegistralPrevia>
+        <FechaEmision>2026-06-01</FechaEmision>
+      </CertificacionDominio>
+      <CertificacionInhibicion>
+        <Numero>INH-2026-001234</Numero>
+        <FechaEmision>2026-06-01</FechaEmision>
+      </CertificacionInhibicion>
 
       <VisadoRentas>
         <Tipo>R</Tipo>

@@ -64,6 +64,20 @@
             <Matricula>3460</Matricula>
             <Departamento>5</Departamento>
           </IdentificacionInmueble>
+          <CertificacionCatastral>
+            <Emitido>true</Emitido>
+            <Numero>CAT-2026-5701</Numero>
+            <CodigoValidacion>VAL-IJKL-9012</CodigoValidacion>
+            <TieneObservaciones>true</TieneObservaciones>
+            <Observaciones>El plano de mensura registra una diferencia de superficie no esencial.</Observaciones>
+          </CertificacionCatastral>
+          <NomenclaturaCatastral>
+            <Campo1>05</Campo1>
+            <Campo2>21</Campo2>
+            <Campo3>010</Campo3>
+            <Campo4>0200</Campo4>
+            <Campo5>0005</Campo5>
+          </NomenclaturaCatastral>
         </Inmueble>
       </Inmuebles>
 
@@ -77,19 +91,14 @@
         </Monto>
       </DatosEconomicos>
 
-      <CertificacionCatastral>
-        <Emitido>true</Emitido>
-        <Numero>CAT-2026-5701</Numero>
-        <CodigoValidacion>VAL-IJKL-9012</CodigoValidacion>
-        <TieneObservaciones>true</TieneObservaciones>
-        <Observaciones>El plano de mensura registra una diferencia de superficie no esencial.</Observaciones>
-      </CertificacionCatastral>
-
-      <CertificacionRegistralPrevia>
+      <CertificacionDominio>
         <Numero>2026-001240</Numero>
-        <FechaEmisionPrimera>2026-06-02</FechaEmisionPrimera>
-        <FechaEmisionSegunda>2026-07-02</FechaEmisionSegunda>
-      </CertificacionRegistralPrevia>
+        <FechaEmision>2026-06-02</FechaEmision>
+      </CertificacionDominio>
+      <CertificacionInhibicion>
+        <Numero>INH-2026-001240</Numero>
+        <FechaEmision>2026-06-02</FechaEmision>
+      </CertificacionInhibicion>
 
       <VisadoRentas>
         <Tipo>R</Tipo>

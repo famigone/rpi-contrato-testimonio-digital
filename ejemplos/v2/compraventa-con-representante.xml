@@ -73,6 +73,19 @@
             <Matricula>3480</Matricula>
             <Departamento>5</Departamento>
           </IdentificacionInmueble>
+          <CertificacionCatastral>
+            <Emitido>true</Emitido>
+            <Numero>CAT-2026-5710</Numero>
+            <CodigoValidacion>VAL-MNOP-3456</CodigoValidacion>
+            <TieneObservaciones>false</TieneObservaciones>
+          </CertificacionCatastral>
+          <NomenclaturaCatastral>
+            <Campo1>05</Campo1>
+            <Campo2>22</Campo2>
+            <Campo3>003</Campo3>
+            <Campo4>0080</Campo4>
+            <Campo5>0006</Campo5>
+          </NomenclaturaCatastral>
         </Inmueble>
       </Inmuebles>
 
@@ -86,18 +99,14 @@
         </Monto>
       </DatosEconomicos>
 
-      <CertificacionCatastral>
-        <Emitido>true</Emitido>
-        <Numero>CAT-2026-5710</Numero>
-        <CodigoValidacion>VAL-MNOP-3456</CodigoValidacion>
-        <TieneObservaciones>false</TieneObservaciones>
-      </CertificacionCatastral>
-
-      <CertificacionRegistralPrevia>
+      <CertificacionDominio>
         <Numero>2026-002010</Numero>
-        <FechaEmisionPrimera>2026-06-06</FechaEmisionPrimera>
-        <FechaEmisionSegunda>2026-07-06</FechaEmisionSegunda>
-      </CertificacionRegistralPrevia>
+        <FechaEmision>2026-06-06</FechaEmision>
+      </CertificacionDominio>
+      <CertificacionInhibicion>
+        <Numero>INH-2026-002010</Numero>
+        <FechaEmision>2026-06-06</FechaEmision>
+      </CertificacionInhibicion>
 
       <VisadoRentas>
         <Tipo>R</Tipo>

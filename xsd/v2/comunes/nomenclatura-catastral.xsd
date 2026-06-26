@@ -7,8 +7,11 @@
 
   <xs:annotation>
     <xs:documentation>
-      Nomenclatura catastral del inmueble. Bloque OPCIONAL.
-      Si se incluye, todos los 5 campos son obligatorios.
+      Nomenclatura catastral del inmueble. Los 5 campos son obligatorios.
+
+      La cardinalidad del bloque se define en el lugar donde se referencia el
+      tipo, no en el tipo en sí: en v2 cada Inmueble lleva una NomenclaturaCatastral
+      obligatoria (junto a IdentificacionInmueble y CertificacionCatastral).
     </xs:documentation>
   </xs:annotation>
 

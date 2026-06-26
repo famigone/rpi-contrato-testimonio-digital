@@ -90,6 +90,19 @@
             <Barra>A</Barra>
             <Departamento>5</Departamento>
           </IdentificacionInmueble>
+          <CertificacionCatastral>
+            <Emitido>true</Emitido>
+            <Numero>CAT-2026-5690</Numero>
+            <CodigoValidacion>VAL-EFGH-5678</CodigoValidacion>
+            <TieneObservaciones>false</TieneObservaciones>
+          </CertificacionCatastral>
+          <NomenclaturaCatastral>
+            <Campo1>09</Campo1>
+            <Campo2>21</Campo2>
+            <Campo3>045</Campo3>
+            <Campo4>0123</Campo4>
+            <Campo5>0008</Campo5>
+          </NomenclaturaCatastral>
         </Inmueble>
       </Inmuebles>
 
@@ -103,26 +116,14 @@
         </Monto>
       </DatosEconomicos>
 
-      <CertificacionCatastral>
-        <Emitido>true</Emitido>
-        <Numero>CAT-2026-5690</Numero>
-        <CodigoValidacion>VAL-EFGH-5678</CodigoValidacion>
-        <TieneObservaciones>false</TieneObservaciones>
-      </CertificacionCatastral>
-
-      <NomenclaturaCatastral>
-        <Campo1>09</Campo1>
-        <Campo2>21</Campo2>
-        <Campo3>045</Campo3>
-        <Campo4>0123</Campo4>
-        <Campo5>0008</Campo5>
-      </NomenclaturaCatastral>
-
-      <CertificacionRegistralPrevia>
+      <CertificacionDominio>
         <Numero>2026-001235</Numero>
-        <FechaEmisionPrimera>2026-06-01</FechaEmisionPrimera>
-        <FechaEmisionSegunda>2026-06-30</FechaEmisionSegunda>
-      </CertificacionRegistralPrevia>
+        <FechaEmision>2026-06-01</FechaEmision>
+      </CertificacionDominio>
+      <CertificacionInhibicion>
+        <Numero>INH-2026-001235</Numero>
+        <FechaEmision>2026-06-01</FechaEmision>
+      </CertificacionInhibicion>
 
       <VisadoRentas>
         <Tipo>R</Tipo>

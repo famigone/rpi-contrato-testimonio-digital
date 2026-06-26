@@ -59,7 +59,8 @@
 
       <Inmuebles>
         <!-- Inmueble previo a la matriculación (folio real). No tiene Matricula;
-             se identifica por la terna Tomo / Folio / Finca del sistema antiguo. -->
+             se identifica por la terna Tomo / Folio / Finca del sistema antiguo.
+             Aun así lleva su catastro (certificación + nomenclatura) por inmueble. -->
         <Inmueble>
           <IdentificacionInmueble>
             <Departamento>16</Departamento>
@@ -67,6 +68,19 @@
             <Folio>231</Folio>
             <Finca>8902</Finca>
           </IdentificacionInmueble>
+          <CertificacionCatastral>
+            <Emitido>true</Emitido>
+            <Numero>CAT-2026-5720</Numero>
+            <CodigoValidacion>VAL-QRST-7890</CodigoValidacion>
+            <TieneObservaciones>false</TieneObservaciones>
+          </CertificacionCatastral>
+          <NomenclaturaCatastral>
+            <Campo1>16</Campo1>
+            <Campo2>03</Campo2>
+            <Campo3>008</Campo3>
+            <Campo4>0145</Campo4>
+            <Campo5>0008</Campo5>
+          </NomenclaturaCatastral>
         </Inmueble>
       </Inmuebles>
 
@@ -80,18 +94,14 @@
         </Monto>
       </DatosEconomicos>
 
-      <CertificacionCatastral>
-        <Emitido>true</Emitido>
-        <Numero>CAT-2026-5720</Numero>
-        <CodigoValidacion>VAL-QRST-7890</CodigoValidacion>
-        <TieneObservaciones>false</TieneObservaciones>
-      </CertificacionCatastral>
-
-      <CertificacionRegistralPrevia>
+      <CertificacionDominio>
         <Numero>2026-001250</Numero>
-        <FechaEmisionPrimera>2026-06-03</FechaEmisionPrimera>
-        <FechaEmisionSegunda>2026-07-03</FechaEmisionSegunda>
-      </CertificacionRegistralPrevia>
+        <FechaEmision>2026-06-03</FechaEmision>
+      </CertificacionDominio>
+      <CertificacionInhibicion>
+        <Numero>INH-2026-001250</Numero>
+        <FechaEmision>2026-06-03</FechaEmision>
+      </CertificacionInhibicion>
 
       <VisadoRentas>
         <Tipo>R</Tipo>

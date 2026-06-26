@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v2"
+    targetNamespace="https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v2"
+    elementFormDefault="qualified">
+
+  <xs:annotation>
+    <xs:documentation>
+      Certificación de INHIBICIÓN previa al acto.
+
+      Es uno de los dos certificados registrales que el escribano solicita al
+      RPI antes de otorgar la escritura. La certificación de inhibición informa
+      si la PERSONA (transmitente) está inhibida para disponer de sus bienes.
+      Es distinta de la certificación de DOMINIO, que recae sobre el INMUEBLE
+      (ver certificacion-dominio.xsd). Por eso se modelan como dos bloques
+      separados, cada uno con su propio número y fecha de emisión.
+
+      Reemplaza, junto con CertificacionDominio, al antiguo bloque
+      CertificacionRegistralPrevia (que mezclaba un número con dos fechas
+      heredadas del legacy). Estructura simple: un número y una fecha de emisión.
+    </xs:documentation>
+  </xs:annotation>
+
+  <xs:complexType name="CertificacionInhibicionType">
+    <xs:sequence>
+      <xs:element name="Numero">
+        <xs:annotation>
+          <xs:documentation>Número del certificado de inhibición emitido por el RPI.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="40"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="FechaEmision" type="xs:date">
+        <xs:annotation>
+          <xs:documentation>Fecha de emisión del certificado de inhibición.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>
