@@ -33,23 +33,25 @@
       Contrato XSD del Testimonio Digital del RPI Neuquén — v2.0.
 
       Cambio central respecto de v1: un testimonio pasa de UN acto a N actos
-      (1..N). Los bloques sustantivos del acto (DatosEconomicos, las dos
-      certificaciones registrales —dominio e inhibición— y VisadoRentas), las
-      Partes y los Inmuebles BAJAN del nivel testimonio al nivel de cada
-      &lt;Acto&gt;. Las partes se modelan con rol genérico
-      (&lt;Parte rol="..."&gt;) en vez de contenedores nombrados por acto.
+      (1..N). Los bloques sustantivos del acto (DatosEconomicos, la certificación
+      registral de dominio y VisadoRentas), las Partes y los Inmuebles BAJAN del
+      nivel testimonio al nivel de cada &lt;Acto&gt;. Las partes se modelan con
+      rol genérico (&lt;Parte rol="..."&gt;) en vez de contenedores nombrados por
+      acto.
 
       El catastro es POR INMUEBLE: CertificacionCatastral y NomenclaturaCatastral
       viven dentro de cada &lt;Inmueble&gt; (junto a IdentificacionInmueble), no
       a nivel acto. Un acto con M inmuebles tiene M certificaciones catastrales
       y M nomenclaturas, una por inmueble.
 
-      Las certificaciones registrales previas se modelan como DOS bloques
-      separados a nivel acto: CertificacionDominio (sobre el inmueble) y
-      CertificacionInhibicion (sobre la persona). Reemplazan al antiguo
-      CertificacionRegistralPrevia (número + dos fechas heredado del legacy).
-      Ambos son estructuralmente opcionales en el XSD (minOccurs=0); su
-      obligatoriedad según el tipo de acto se valida en código (ADR-002).
+      Las certificaciones registrales previas reemplazan al antiguo
+      CertificacionRegistralPrevia (número + dos fechas heredado del legacy) y se
+      modelan como dos certificados distintos, ubicados según sobre qué recae
+      cada uno: CertificacionDominio (sobre el INMUEBLE) vive a nivel acto;
+      CertificacionInhibicion (sobre la PERSONA) vive dentro de cada &lt;Parte&gt;
+      transmitente (ver comunes/parte.xsd). Ambos son estructuralmente opcionales
+      en el XSD (minOccurs=0); su obligatoriedad (dominio para compraventa,
+      inhibición por cada transmitente) se valida en código (ADR-002).
 
       A nivel testimonio quedan: MetadatosEnvio, EscribanoAutorizante,
       Otorgamiento, Rogante, TextoCuerpo, Observaciones y Signature (un trámite
@@ -122,14 +124,12 @@
       <!-- Bloques sustantivos que BAJAN del testimonio (v1) al acto (v2). -->
       <xs:element name="DatosEconomicos" type="DatosEconomicosType"/>
 
-      <!-- Certificaciones registrales previas: DOS bloques separados.
-           CertificacionDominio recae sobre el INMUEBLE; CertificacionInhibicion
-           sobre la PERSONA. Reemplazan al antiguo CertificacionRegistralPrevia.
-           Estructuralmente opcionales (minOccurs=0): la obligatoriedad según el
-           tipo de acto (la compraventa las exige) se valida en código, no en
-           el XSD (coherente con ADR-002). -->
+      <!-- Certificación de DOMINIO previa: recae sobre el INMUEBLE, por eso vive
+           a nivel acto. La certificación de INHIBICIÓN ya NO está acá: recae
+           sobre la persona y vive dentro de cada <Parte> transmitente (ver
+           comunes/parte.xsd). Estructuralmente opcional (minOccurs=0): la
+           obligatoriedad para compraventa se valida en código (ADR-002). -->
       <xs:element name="CertificacionDominio" type="CertificacionDominioType" minOccurs="0"/>
-      <xs:element name="CertificacionInhibicion" type="CertificacionInhibicionType" minOccurs="0"/>
 
       <xs:element name="VisadoRentas" type="VisadoRentasType"/>
     </xs:sequence>

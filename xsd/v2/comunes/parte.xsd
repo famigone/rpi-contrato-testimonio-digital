@@ -8,6 +8,10 @@
   <!-- PersonaType (y ProporcionType, RepresentanteType, etc.) se reutiliza tal cual de v1. -->
   <xs:include schemaLocation="persona.xsd"/>
 
+  <!-- CertificacionInhibicionType se reutiliza tal cual: la inhibición recae
+       sobre la persona, por eso se referencia desde la Parte (no a nivel acto). -->
+  <xs:include schemaLocation="certificacion-inhibicion.xsd"/>
+
   <xs:annotation>
     <xs:documentation>
       Modelo de partes con ROL GENÉRICO (v2).
@@ -58,11 +62,26 @@
       <xs:documentation>
         Persona que interviene en un acto, con su rol expresado por atributo.
         Hereda todo el contenido de PersonaType (incluida Proporcion y
-        Representante) y agrega el atributo obligatorio "rol".
+        Representante), agrega CertificacionInhibicion (opcional en XSD;
+        obligatoria por cada TRANSMITENTE según el servicio) y el atributo
+        obligatorio "rol".
+
+        La CertificacionInhibicion es el último hijo de la Parte: por la
+        semántica de xs:extension, los elementos agregados van DESPUÉS del
+        contenido de PersonaType (Tipo ... PEP ... Proporcion, Representante).
       </xs:documentation>
     </xs:annotation>
     <xs:complexContent>
       <xs:extension base="PersonaType">
+        <xs:sequence>
+          <!-- Inhibición sobre ESTA persona. Recae sobre la persona, no sobre
+               el acto: por eso vive en la Parte. Opcional en el XSD (minOccurs=0)
+               porque el XSD no distingue por rol; la regla "obligatoria para cada
+               TRANSMITENTE, ausente para otros roles" se valida en el servicio
+               (coherente con ADR-002 / REGLAS_ROLES_POR_ACTO). Reutiliza
+               CertificacionInhibicionType (Numero + FechaEmision) sin cambios. -->
+          <xs:element name="CertificacionInhibicion" type="CertificacionInhibicionType" minOccurs="0"/>
+        </xs:sequence>
         <xs:attribute name="rol" type="RolParteEnum" use="required">
           <xs:annotation>
             <xs:documentation>

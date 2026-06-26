@@ -47,6 +47,10 @@
           <TipoDocumento>DNI</TipoDocumento>
           <NumeroDocumento>15234567</NumeroDocumento>
           <PEP>false</PEP>
+          <CertificacionInhibicion>
+            <Numero>INH-2026-000789</Numero>
+            <FechaEmision>2026-06-02</FechaEmision>
+          </CertificacionInhibicion>
         </Parte>
         <Parte rol="TRANSMITENTE">
           <Tipo>H</Tipo>
@@ -56,6 +60,10 @@
           <TipoDocumento>DNI</TipoDocumento>
           <NumeroDocumento>16998877</NumeroDocumento>
           <PEP>false</PEP>
+          <CertificacionInhibicion>
+            <Numero>INH-2026-000789</Numero>
+            <FechaEmision>2026-06-02</FechaEmision>
+          </CertificacionInhibicion>
         </Parte>
         <Parte rol="ADQUIRENTE">
           <Tipo>H</Tipo>
@@ -112,10 +120,6 @@
         <Numero>2026-001234</Numero>
         <FechaEmision>2026-06-01</FechaEmision>
       </CertificacionDominio>
-      <CertificacionInhibicion>
-        <Numero>INH-2026-000789</Numero>
-        <FechaEmision>2026-06-02</FechaEmision>
-      </CertificacionInhibicion>
 
       <VisadoRentas>
         <Tipo>R</Tipo>
@@ -145,6 +149,10 @@
             <NumeroDocumento>13888777</NumeroDocumento>
             <PEP>false</PEP>
           </Representante>
+          <CertificacionInhibicion>
+            <Numero>INH-2026-001456</Numero>
+            <FechaEmision>2026-06-03</FechaEmision>
+          </CertificacionInhibicion>
         </Parte>
         <Parte rol="ADQUIRENTE">
           <Tipo>H</Tipo>
@@ -238,10 +246,6 @@
         <Numero>2026-005678</Numero>
         <FechaEmision>2026-06-02</FechaEmision>
       </CertificacionDominio>
-      <CertificacionInhibicion>
-        <Numero>INH-2026-001456</Numero>
-        <FechaEmision>2026-06-03</FechaEmision>
-      </CertificacionInhibicion>
 
       <VisadoRentas>
         <Tipo>A</Tipo>

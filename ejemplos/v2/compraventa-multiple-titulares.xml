@@ -70,6 +70,10 @@
           <NumeroDocumento>12345678</NumeroDocumento>
           <EstadoCivil>CASADO</EstadoCivil>
           <PEP>false</PEP>
+          <CertificacionInhibicion>
+            <Numero>INH-2026-001235</Numero>
+            <FechaEmision>2026-06-01</FechaEmision>
+          </CertificacionInhibicion>
         </Parte>
         <Parte rol="TRANSMITENTE">
           <Tipo>H</Tipo>
@@ -80,6 +84,10 @@
           <NumeroDocumento>14567890</NumeroDocumento>
           <EstadoCivil>CASADA</EstadoCivil>
           <PEP>false</PEP>
+          <CertificacionInhibicion>
+            <Numero>INH-2026-001235</Numero>
+            <FechaEmision>2026-06-01</FechaEmision>
+          </CertificacionInhibicion>
         </Parte>
       </Partes>
 
@@ -120,10 +128,6 @@
         <Numero>2026-001235</Numero>
         <FechaEmision>2026-06-01</FechaEmision>
       </CertificacionDominio>
-      <CertificacionInhibicion>
-        <Numero>INH-2026-001235</Numero>
-        <FechaEmision>2026-06-01</FechaEmision>
-      </CertificacionInhibicion>
 
       <VisadoRentas>
         <Tipo>R</Tipo>

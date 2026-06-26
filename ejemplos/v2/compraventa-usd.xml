@@ -54,6 +54,10 @@
           <TipoDocumento>DNI</TipoDocumento>
           <NumeroDocumento>11223344</NumeroDocumento>
           <PEP>false</PEP>
+          <CertificacionInhibicion>
+            <Numero>INH-2026-002001</Numero>
+            <FechaEmision>2026-06-05</FechaEmision>
+          </CertificacionInhibicion>
         </Parte>
       </Partes>
 
@@ -91,10 +95,6 @@
         <Numero>2026-002001</Numero>
         <FechaEmision>2026-06-05</FechaEmision>
       </CertificacionDominio>
-      <CertificacionInhibicion>
-        <Numero>INH-2026-002001</Numero>
-        <FechaEmision>2026-06-05</FechaEmision>
-      </CertificacionInhibicion>
 
       <VisadoRentas>
         <Tipo>A</Tipo>
