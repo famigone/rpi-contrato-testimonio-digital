@@ -27,7 +27,7 @@ H/J/O, representante y proporción) más el atributo `rol`.
 
 Atributo obligatorio de cada `<Parte>` que indica su papel en el acto. Roles
 definidos: `ADQUIRENTE`, `TRANSMITENTE`, `ACREEDOR`, `DEUDOR`
-(`ACREEDOR`/`DEUDOR` quedan listos para hipoteca, aún no disponible). El XSD
+(`ACREEDOR`/`DEUDOR` se usan en el acto de hipoteca, disponible desde v2.1). El XSD
 acepta cualquier rol en cualquier acto; la correspondencia rol/tipo-de-acto la
 valida el servicio del RPI.
 

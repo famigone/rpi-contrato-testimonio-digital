@@ -7,6 +7,32 @@ y este contrato adhiere a [Semantic Versioning 2.0.0](https://semver.org/spec/v2
 
 ---
 
+## [2.1.0] — 2026-07-14
+
+Cambio **MINOR** (aditivo y retrocompatible): se incorpora el acto de **Hipoteca**.
+Mismo namespace y `version="2.0"`; los testimonios de compraventa existentes siguen
+validando sin cambios. Los roles `ACREEDOR`/`DEUDOR` (ya presentes desde 2.0.0) pasan
+a estar **disponibles** con este release.
+
+### Agregado
+- `xsd/v2/actos/hipoteca.xsd`: tipo `HipotecaType`. Es el discriminador del acto en el
+  `xs:choice`; el sustento (partes con rol `ACREEDOR`/`DEUDOR`, inmuebles, montos) vive a
+  nivel `<Acto>`, igual que en compraventa. Sin campos propios por ahora.
+- `<xs:element name="Hipoteca" type="HipotecaType"/>` **activado** en el `xs:choice` de
+  `ActoType` (`testimonio-digital.xsd`) + include del nuevo XSD.
+- `comunes/datos-economicos.xsd`: elemento `MontoHipoteca` (capital del gravamen:
+  `valor` + `moneda` + `cotizacion`), del mismo tipo que `Monto`.
+- Ejemplo `ejemplos/v2/hipoteca-ejemplo-valido.xml` (datos **ficticios**).
+
+### Cambiado
+- `comunes/datos-economicos.xsd`: `ValuacionFiscal` y `Monto` pasan a `minOccurs=0`
+  (opcionales a nivel XSD). Es una **relajación retrocompatible**: los testimonios de
+  compraventa que ya los incluyen siguen validando. Qué monto exige cada acto se valida por
+  **reglas de negocio del servicio**, no por el XSD: compraventa exige `ValuacionFiscal` +
+  `Monto` (precio); hipoteca exige `MontoHipoteca` y **no** lleva valuación ni precio de venta.
+
+---
+
 ## [2.0.0] — 2026-06-24
 
 Cambio **MAJOR**: un testimonio pasa de **un acto** a **N actos (1..N)**. Nuevo

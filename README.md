@@ -14,9 +14,9 @@ a lo definido acá.
 
 | Campo | Valor |
 |-------|-------|
-| Versión del contrato | 2.0.0 (borrador para revisión) |
+| Versión del contrato | 2.1.0 (borrador para revisión) |
 | Estado | En proceso de homologación |
-| Actos soportados | Compraventa (N actos por testimonio) |
+| Actos soportados | Compraventa · Hipoteca (N actos por testimonio) |
 | Última actualización | Ver [CHANGELOG.md](CHANGELOG.md) |
 
 v2 **coexiste** con v1: los XSD de v1 quedan intactos en `xsd/` (namespace `/v1`)
@@ -100,7 +100,8 @@ Orden recomendado para integraciones nuevas:
 │       │   ├── otorgamiento.xsd
 │       │   └── rogante.xsd
 │       └── actos/
-│           └── compraventa.xsd
+│           ├── compraventa.xsd
+│           └── hipoteca.xsd
 │
 └── ejemplos/                              ← XMLs válidos de ejemplo
     ├── README.md
@@ -112,7 +113,8 @@ Orden recomendado para integraciones nuevas:
         ├── compraventa-persona-juridica.xml
         ├── compraventa-con-representante.xml
         ├── compraventa-inmueble-antiguo.xml
-        └── compraventa-dos-actos.xml      ← testimonio con 2 actos
+        ├── compraventa-dos-actos.xml      ← testimonio con 2 actos
+        └── hipoteca-ejemplo-valido.xml    ← acto de hipoteca (ACREEDOR/DEUDOR, MontoHipoteca)
 ```
 
 ---

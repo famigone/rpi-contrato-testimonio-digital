@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v2"
+    targetNamespace="https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v2"
+    elementFormDefault="qualified">
+
+  <xs:annotation>
+    <xs:documentation>
+      Acto de hipoteca (v2, familia legacy grm=4, código de acto 1075).
+
+      Sigue el mismo patrón que CompraventaType: el sustento del acto (partes con
+      rol ACREEDOR/DEUDOR, inmuebles, montos) vive a nivel &lt;Acto&gt;, no acá.
+      HipotecaType solo actúa como discriminador del tipo de acto dentro del
+      choice de ActoType.
+
+      Mínimo viable: hoy no se modelan textos libres específicos de la hipoteca
+      (el monto del gravamen va en DatosEconomicos/MontoHipoteca; la inhibición
+      del deudor y el dominio del inmueble se validan en código). Si a futuro se
+      requieren campos propios (p. ej. plazo, tasa), se agregan a este tipo sin
+      tocar el resto del contrato.
+    </xs:documentation>
+  </xs:annotation>
+
+  <xs:complexType name="HipotecaType">
+    <xs:sequence/>
+  </xs:complexType>
+
+</xs:schema>

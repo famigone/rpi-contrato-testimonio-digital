@@ -27,6 +27,7 @@
   <xs:include schemaLocation="comunes/otorgamiento.xsd"/>
   <xs:include schemaLocation="comunes/rogante.xsd"/>
   <xs:include schemaLocation="actos/compraventa.xsd"/>
+  <xs:include schemaLocation="actos/hipoteca.xsd"/>
 
   <xs:annotation>
     <xs:documentation>
@@ -80,8 +81,8 @@
            futuro = una línea más aquí (p. ej. Hipoteca, Donacion). -->
       <xs:choice>
         <xs:element name="Compraventa" type="CompraventaType"/>
+        <xs:element name="Hipoteca" type="HipotecaType"/>
         <!-- Próximos actos en versiones futuras:
-             <xs:element name="Hipoteca" type="HipotecaType"/>
              <xs:element name="Donacion" type="DonacionType"/>
         -->
       </xs:choice>

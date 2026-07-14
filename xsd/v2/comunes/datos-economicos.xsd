@@ -75,9 +75,21 @@
 
   <!-- Tipo: DatosEconomicos -->
   <xs:complexType name="DatosEconomicosType">
+    <xs:annotation>
+      <xs:documentation>
+        Datos económicos del acto. Los tres bloques son estructuralmente
+        opcionales (minOccurs=0): qué monto exige cada tipo de acto se valida en
+        código (REGLAS_ROLES_POR_ACTO), no en el XSD. En compraventa se exigen
+        ValuacionFiscal + Monto (precio); en hipoteca se exige MontoHipoteca (el
+        capital del gravamen) y NO se llevan valuación ni precio de venta.
+      </xs:documentation>
+    </xs:annotation>
     <xs:sequence>
-      <xs:element name="ValuacionFiscal" type="ValuacionFiscalType"/>
-      <xs:element name="Monto" type="MontoActoType"/>
+      <xs:element name="ValuacionFiscal" type="ValuacionFiscalType" minOccurs="0"/>
+      <xs:element name="Monto" type="MontoActoType" minOccurs="0"/>
+      <!-- Capital de la hipoteca. Mismo tipo que Monto (valor/moneda/cotizacion).
+           Su obligatoriedad para hipoteca se fija en la regla condicional. -->
+      <xs:element name="MontoHipoteca" type="MontoActoType" minOccurs="0"/>
     </xs:sequence>
   </xs:complexType>
 

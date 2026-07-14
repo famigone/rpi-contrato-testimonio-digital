@@ -48,7 +48,7 @@ TestimonioDigital (version="2.0")
 ├── Otorgamiento
 ├── Actos
 │   └── Acto (numero, 1..N)
-│       ├── (choice)  Compraventa | …futuros…
+│       ├── (choice)  Compraventa | Hipoteca | …futuros…
 │       ├── Partes
 │       │   └── Parte (rol, 1..N)
 │       │       ├── …campos de PersonaType (Tipo … PEP … Proporcion, Representante)
@@ -80,7 +80,8 @@ xsd/v2/
 │   ├── certificacion-inhibicion.xsd← CertificacionInhibicionType (Numero + FechaEmision; DENTRO de cada <Parte> transmitente)
 │   └── …                           ← resto de comunes (datos-economicos, visado-rentas, …)
 └── actos/
-    └── compraventa.xsd             ← CompraventaType SIN partes/inmuebles (viven en Acto)
+    ├── compraventa.xsd             ← CompraventaType SIN partes/inmuebles (viven en Acto)
+    └── hipoteca.xsd                ← HipotecaType (discriminador; partes ACREEDOR/DEUDOR y montos en Acto)
 ```
 
 `xmldsig-core-schema.xsd` se reutiliza por `xs:import` desde la copia compartida
@@ -96,8 +97,8 @@ contenido de `PersonaType` (incluida `Proporcion` y `Representante`), más `rol`
 opcional en el XSD; la regla "obligatoria por cada TRANSMITENTE, ausente en otros
 roles" se valida en el servicio (coherente con ADR-002).
 
-Roles definidos hoy: `ADQUIRENTE`, `TRANSMITENTE`, `ACREEDOR`, `DEUDOR`
-(acreedor/deudor quedan listos aunque Hipoteca aún no esté en el choice).
+Roles definidos hoy: `ADQUIRENTE`, `TRANSMITENTE` (compraventa) y `ACREEDOR`,
+`DEUDOR` (hipoteca, ya incorporada al `xs:choice` de actos).
 Agregar un rol = una línea `<xs:enumeration>` en `parte.xsd`.
 
 ## Reglas que el XSD NO valida (van en código, coherente con ADR-002)
@@ -123,13 +124,21 @@ xmllint --schema xsd/v2/testimonio-digital.xsd \
 
 `ejemplos/v2/compraventa-dos-actos.xml` es un ejemplo válido con dos actos
 (personas humanas y jurídica con representante, monto en $ y en USD).
+`ejemplos/v2/hipoteca-ejemplo-valido.xml` es el ejemplo del acto de hipoteca
+(partes ACREEDOR/DEUDOR, `MontoHipoteca`, sin valuación ni precio de venta).
 
-## Agregar un acto nuevo (p. ej. Hipoteca)
+## Agregar un acto nuevo (p. ej. Donación)
 
-1. Crear `actos/hipoteca.xsd` con `HipotecaType` (solo los campos propios del
-   tipo; partes e inmuebles ya viven en `Acto`).
+Hipoteca (v2.1) es el acto de referencia ya implementado; seguí el mismo patrón.
+Para el siguiente:
+
+1. Crear `actos/<acto>.xsd` con su `…Type` (solo los campos propios del tipo;
+   partes e inmuebles ya viven en `Acto`).
 2. Agregar el `xs:include` en `testimonio-digital.xsd`.
-3. Agregar `<xs:element name="Hipoteca" type="HipotecaType"/>` al `xs:choice`
-   de `ActoType`.
-4. Los roles `ACREEDOR`/`DEUDOR` ya existen en `RolParteEnum`.
+3. Agregar `<xs:element name="<Acto>" type="…Type"/>` al `xs:choice` de `ActoType`.
+4. Sumar los roles que use al `RolParteEnum` de `parte.xsd` (si no existen ya;
+   `ACREEDOR`/`DEUDOR` ya están).
+5. Si tiene un monto propio, agregarlo a `comunes/datos-economicos.xsd` como
+   elemento opcional (como `MontoHipoteca`); qué monto exige cada acto lo valida
+   el servicio, no el XSD.
 ```

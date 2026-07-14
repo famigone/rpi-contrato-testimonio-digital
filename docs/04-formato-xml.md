@@ -372,7 +372,7 @@ rol se expresa con el atributo obligatorio `rol`. Una o más `Parte`.
 ```
 
 Roles definidos: `ADQUIRENTE`, `TRANSMITENTE`, `ACREEDOR`, `DEUDOR`
-(`ACREEDOR`/`DEUDOR` quedan listos para Hipoteca, aún no disponible). El XSD
+(`ACREEDOR`/`DEUDOR` se usan en el acto **Hipoteca**, disponible desde v2.1). El XSD
 acepta **cualquier** rol en cualquier acto; que el rol corresponda al tipo de
 acto lo valida el servicio del RPI.
 
