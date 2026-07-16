@@ -28,6 +28,7 @@
   <xs:include schemaLocation="comunes/rogante.xsd"/>
   <xs:include schemaLocation="actos/compraventa.xsd"/>
   <xs:include schemaLocation="actos/hipoteca.xsd"/>
+  <xs:include schemaLocation="actos/donacion.xsd"/>
 
   <xs:annotation>
     <xs:documentation>
@@ -82,9 +83,8 @@
       <xs:choice>
         <xs:element name="Compraventa" type="CompraventaType"/>
         <xs:element name="Hipoteca" type="HipotecaType"/>
-        <!-- Próximos actos en versiones futuras:
-             <xs:element name="Donacion" type="DonacionType"/>
-        -->
+        <xs:element name="Donacion" type="DonacionType"/>
+        <!-- Próximos actos en versiones futuras (una línea más acá). -->
       </xs:choice>
 
       <!-- Partes con rol genérico (1..N). El XSD acepta cualquier RolParte;

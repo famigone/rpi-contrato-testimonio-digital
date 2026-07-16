@@ -7,6 +7,29 @@ y este contrato adhiere a [Semantic Versioning 2.0.0](https://semver.org/spec/v2
 
 ---
 
+## [2.2.0] — 2026-07-16
+
+Cambio **MINOR** (aditivo y retrocompatible): se incorpora el acto de **Donación**.
+Mismo namespace y `version="2.0"`; compraventa e hipoteca existentes siguen validando
+sin cambios. Donación es **estructuralmente idéntica a compraventa** (partes DONANTE =
+`TRANSMITENTE`, DONATARIO/A = `ADQUIRENTE`; inmuebles y montos a nivel `<Acto>`) y
+**reutiliza el bloque económico** de compraventa (el valor del acto va en
+`DatosEconomicos/Monto`): no agrega estructura económica propia.
+
+### Agregado
+- `xsd/v2/actos/donacion.xsd`: tipo `DonacionType`. Mismo patrón que `CompraventaType`
+  (textos libres opcionales del acto, incluido `AsentimientoConyugal`); el sustento vive
+  a nivel `<Acto>`.
+- `<xs:element name="Donacion" type="DonacionType"/>` **activado** en el `xs:choice` de
+  `ActoType` (`testimonio-digital.xsd`) + include del nuevo XSD.
+- Ejemplo `ejemplos/v2/donacion-ejemplo-valido.xml` (datos **ficticios**).
+
+### Sin cambios
+- `comunes/datos-economicos.xsd` **no se toca**: donación usa `ValuacionFiscal`/`Monto`
+  tal como quedaron en 2.1.0 (opcionales). El `Monto` es el valor del acto de donación.
+
+---
+
 ## [2.1.0] — 2026-07-14
 
 Cambio **MINOR** (aditivo y retrocompatible): se incorpora el acto de **Hipoteca**.

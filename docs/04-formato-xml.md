@@ -633,8 +633,8 @@ separados bajo `xsd/v2/comunes/`:
 - **CertificacionDominio**, **VisadoRentas**, **DatosEconomicos**: bloques
   comunes del acto.
 
-Cuando agreguemos nuevos actos (hipoteca, donación), van a reutilizar estos
-mismos tipos sin redefinirlos: el acto nuevo solo define sus campos propios, ya
+Los actos nuevos (hipoteca y donación ya incorporados; permuta u otros a futuro)
+reutilizan estos mismos tipos sin redefinirlos: el acto nuevo solo define sus campos propios, ya
 que partes e inmuebles viven en `Acto`.
 
 ## Validación
