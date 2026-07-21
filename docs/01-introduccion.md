@@ -44,8 +44,8 @@ En cuanto a tipos de acto, la v2.0 sigue cubriendo **un solo tipo**:
 - **Compraventa** de inmuebles, escritura notarial.
 
 La estructura ya admite actos de **tipos heterogéneos** dentro de un mismo
-testimonio: agregar otros actos (permuta, división de condominio, etc. —
-compraventa, hipoteca y donación ya están) es agregar archivos XSD bajo
+testimonio: agregar otros actos (división de condominio, etc. —
+compraventa, hipoteca, donación y permuta ya están) es agregar archivos XSD bajo
 `xsd/v2/actos/` y una línea al `choice` de
 `Acto`, sin cambiar la estructura general del XML.
 
@@ -69,9 +69,9 @@ No están soportadas en v2.0:
 
 - **Asentimiento conyugal estructurado**: se modela como **texto libre** en el
   campo `AsentimientoConyugal`, no como bloque con cónyuge, fecha, etc.
-- **Otros tipos de actos** (permuta, división de condominio, etc.):
+- **Otros tipos de actos** (división de condominio, etc.):
   se incorporarán en versiones futuras (la estructura ya está preparada;
-  **compraventa**, **hipoteca** y **donación** ya están soportados).
+  **compraventa**, **hipoteca**, **donación** y **permuta** ya están soportados).
 - **Ampliatorios** o reingresos del mismo testimonio (cada envío genera un
   trámite nuevo).
 

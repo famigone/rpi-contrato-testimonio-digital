@@ -7,6 +7,41 @@ y este contrato adhiere a [Semantic Versioning 2.0.0](https://semver.org/spec/v2
 
 ---
 
+## [2.3.0] — 2026-07-21
+
+Cambio **MINOR** (aditivo y retrocompatible): se incorpora el acto de **Permuta**.
+Mismo namespace y `version="2.0"`; compraventa, hipoteca y donación existentes siguen
+validando sin cambios. Permuta es **estructuralmente idéntica a compraventa** (partes
+con rol `TRANSMITENTE` y `ADQUIRENTE`; inmuebles y montos a nivel `<Acto>`) y **reutiliza
+el bloque económico** de compraventa (`ValuacionFiscal` + `Monto`): no agrega estructura
+económica propia.
+
+Modelo de la permuta: una permuta de N inmuebles se representa como **UN testimonio con
+N `<Acto>` de permuta** (uno por matrícula), agrupados por el mismo trámite y un solo PDF
+firmado. Cada acto es **simple** —un transmitente y un adquirente—; el "cruce" característico
+(una persona transmite en un acto y adquiere en otro) ocurre **entre actos**, nunca dentro
+de uno. El **PRECIO** (`Monto`) se **repite igual en cada acto** —es el valor de la operación,
+no se reparte—; la **VALUACIÓN FISCAL** (`ValuacionFiscal`) es la del inmueble de cada acto y
+por eso difiere entre actos.
+
+### Agregado
+- `xsd/v2/actos/permuta.xsd`: tipo `PermutaType`. Mismo patrón que `CompraventaType`
+  (textos libres opcionales del acto, incluido `AsentimientoConyugal`); el sustento vive
+  a nivel `<Acto>`.
+- `<xs:element name="Permuta" type="PermutaType"/>` **activado** en el `xs:choice` de
+  `ActoType` (`testimonio-digital.xsd`) + include del nuevo XSD.
+- Ejemplo `ejemplos/v2/permuta-ejemplo-valido.xml` (datos **ficticios**) con **dos actos**
+  de permuta: el mismo `Monto` repetido en ambos y valuaciones fiscales distintas.
+
+### Sin cambios
+- `comunes/datos-economicos.xsd` **no se toca**: permuta usa `ValuacionFiscal`/`Monto`
+  tal como están (opcionales a nivel XSD). Qué monto exige cada acto lo validan las reglas
+  de negocio del servicio: permuta exige `ValuacionFiscal` + `Monto` (precio), igual que
+  compraventa.
+- Los roles `ADQUIRENTE`/`TRANSMITENTE` y su ruteo ya existían: permuta no agrega roles.
+
+---
+
 ## [2.2.0] — 2026-07-16
 
 Cambio **MINOR** (aditivo y retrocompatible): se incorpora el acto de **Donación**.

@@ -48,7 +48,7 @@ TestimonioDigital (version="2.0")
 ├── Otorgamiento
 ├── Actos
 │   └── Acto (numero, 1..N)
-│       ├── (choice)  Compraventa | Hipoteca | Donacion | …futuros…
+│       ├── (choice)  Compraventa | Hipoteca | Donacion | Permuta | …futuros…
 │       ├── Partes
 │       │   └── Parte (rol, 1..N)
 │       │       ├── …campos de PersonaType (Tipo … PEP … Proporcion, Representante)
@@ -82,7 +82,8 @@ xsd/v2/
 └── actos/
     ├── compraventa.xsd             ← CompraventaType SIN partes/inmuebles (viven en Acto)
     ├── hipoteca.xsd                ← HipotecaType (discriminador; partes ACREEDOR/DEUDOR y montos en Acto)
-    └── donacion.xsd                ← DonacionType (igual que compraventa; DONANTE/DONATARIA, reusa Monto)
+    ├── donacion.xsd                ← DonacionType (igual que compraventa; DONANTE/DONATARIA, reusa Monto)
+    └── permuta.xsd                 ← PermutaType (igual que compraventa; N actos, precio repetido, valuación por acto)
 ```
 
 `xmldsig-core-schema.xsd` se reutiliza por `xs:import` desde la copia compartida
@@ -129,13 +130,18 @@ xmllint --schema xsd/v2/testimonio-digital.xsd \
 (partes ACREEDOR/DEUDOR, `MontoHipoteca`, sin valuación ni precio de venta).
 `ejemplos/v2/donacion-ejemplo-valido.xml` es el ejemplo del acto de donación
 (DONANTE/DONATARIA, valor del acto en `Monto`, sin bloque económico propio).
+`ejemplos/v2/permuta-ejemplo-valido.xml` es el ejemplo del acto de permuta: un
+testimonio con **dos actos** de permuta (uno por matrícula), el mismo `Monto`
+(precio) repetido en ambos y valuaciones fiscales distintas; el "cruce" de partes
+(adquirente en un acto, transmitente en el otro) ocurre entre actos.
 
-## Agregar un acto nuevo (p. ej. Permuta)
+## Agregar un acto nuevo (p. ej. división de condominio)
 
-Hay dos actos de referencia ya implementados: **Hipoteca** (v2.1, agrega estructura
-económica propia — `MontoHipoteca` — y una tabla legacy nueva) y **Donación** (v2.2,
-el caso mínimo: idéntica a compraventa salvo el código de acto, reusa todo). Elegí el
-patrón según cuánto agregue el acto nuevo. Para el siguiente:
+Hay tres actos de referencia ya implementados: **Hipoteca** (v2.1, agrega estructura
+económica propia — `MontoHipoteca` — y una tabla legacy nueva), **Donación** (v2.2,
+el caso mínimo: idéntica a compraventa salvo el código de acto, reusa todo) y **Permuta**
+(v2.3, idéntica a compraventa pero N actos por testimonio con precio repetido y valuación
+por acto). Elegí el patrón según cuánto agregue el acto nuevo. Para el siguiente:
 
 1. Crear `actos/<acto>.xsd` con su `…Type` (solo los campos propios del tipo;
    partes e inmuebles ya viven en `Acto`).

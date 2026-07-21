@@ -29,6 +29,7 @@
   <xs:include schemaLocation="actos/compraventa.xsd"/>
   <xs:include schemaLocation="actos/hipoteca.xsd"/>
   <xs:include schemaLocation="actos/donacion.xsd"/>
+  <xs:include schemaLocation="actos/permuta.xsd"/>
 
   <xs:annotation>
     <xs:documentation>
@@ -84,6 +85,7 @@
         <xs:element name="Compraventa" type="CompraventaType"/>
         <xs:element name="Hipoteca" type="HipotecaType"/>
         <xs:element name="Donacion" type="DonacionType"/>
+        <xs:element name="Permuta" type="PermutaType"/>
         <!-- Próximos actos en versiones futuras (una línea más acá). -->
       </xs:choice>
 

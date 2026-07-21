@@ -14,9 +14,9 @@ a lo definido acá.
 
 | Campo | Valor |
 |-------|-------|
-| Versión del contrato | 2.2.0 (borrador para revisión) |
+| Versión del contrato | 2.3.0 (borrador para revisión) |
 | Estado | En proceso de homologación |
-| Actos soportados | Compraventa · Hipoteca · Donación (N actos por testimonio) |
+| Actos soportados | Compraventa · Hipoteca · Donación · Permuta (N actos por testimonio) |
 | Última actualización | Ver [CHANGELOG.md](CHANGELOG.md) |
 
 v2 **coexiste** con v1: los XSD de v1 quedan intactos en `xsd/` (namespace `/v1`)
@@ -116,7 +116,8 @@ Orden recomendado para integraciones nuevas:
         ├── compraventa-inmueble-antiguo.xml
         ├── compraventa-dos-actos.xml      ← testimonio con 2 actos
         ├── hipoteca-ejemplo-valido.xml    ← acto de hipoteca (ACREEDOR/DEUDOR, MontoHipoteca)
-        └── donacion-ejemplo-valido.xml    ← acto de donación (DONANTE/DONATARIA, mismo Monto que compraventa)
+        ├── donacion-ejemplo-valido.xml    ← acto de donación (DONANTE/DONATARIA, mismo Monto que compraventa)
+        └── permuta-ejemplo-valido.xml     ← permuta de 2 actos (mismo precio repetido, valuaciones distintas, cruce de partes)
 ```
 
 ---

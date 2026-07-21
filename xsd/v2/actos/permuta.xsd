@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v2"
+    targetNamespace="https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v2"
+    elementFormDefault="qualified">
+
+  <xs:annotation>
+    <xs:documentation>
+      Acto de permuta de inmueble (v2, familia legacy grm=2, código de acto 1102).
+
+      Estructuralmente idéntico a la compraventa: las PARTES (con rol
+      TRANSMITENTE y ADQUIRENTE), los INMUEBLES y los MONTOS viven a nivel
+      &lt;Acto&gt;, no acá. PermutaType contiene únicamente los campos PROPIOS del
+      acto (textos libres), igual que CompraventaType; el elemento &lt;Permuta&gt;
+      actúa como discriminador dentro del choice.
+
+      Modelo de la permuta: una permuta de N inmuebles se representa como UN
+      testimonio con N &lt;Acto&gt; de permuta (una fila por matrícula), agrupados
+      por el mismo trámite. Cada acto es SIMPLE —un transmitente y un adquirente,
+      sin roles duales—; el "cruce" característico de la permuta (una persona
+      transmite en un acto y adquiere en otro) ocurre ENTRE actos, nunca dentro
+      de uno. Las unidades complementarias (cochera, baulera) que acompañan a una
+      UF van DENTRO del acto de esa UF, con su nomenclatura y valuación en texto
+      libre (Observaciones), no como acto ni inmueble separado.
+
+      Económicamente reutiliza la estructura de compraventa: el PRECIO de la
+      operación va en DatosEconomicos/Monto (con su moneda/cotización) y se repite
+      igual en cada acto —es el valor de la operación, no se reparte—; la
+      VALUACIÓN FISCAL va en DatosEconomicos/ValuacionFiscal y es la del inmueble
+      de ESE acto (distinta por acto). No requiere un bloque económico propio. El
+      asentimiento conyugal se modela como texto libre, igual que en compraventa.
+    </xs:documentation>
+  </xs:annotation>
+
+  <xs:complexType name="PermutaType">
+    <xs:sequence>
+      <xs:element name="DescripcionActoIncompleto" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Aclaración del escribano sobre el acto si no es una permuta completa
+            estándar. Texto libre, opcional.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:maxLength value="106"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+
+      <xs:element name="ReconocimientoHipotecaMedidasCautelares" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Texto libre, opcional.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:maxLength value="4000"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+
+      <xs:element name="AfectacionesAlDominio" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Texto libre, opcional.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:maxLength value="4000"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+
+      <xs:element name="AsentimientoConyugal" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Asentimiento conyugal como texto libre. Si se requiere estructura
+            (cónyuge, fecha, etc.), evolución futura.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:maxLength value="4000"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>
