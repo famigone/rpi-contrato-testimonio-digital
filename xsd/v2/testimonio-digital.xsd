@@ -67,6 +67,33 @@
   </xs:annotation>
 
   <!--
+    Código del ACTO SECUNDARIO de una minuta (opcional).
+
+    El legacy modela "una minuta = acto principal + acto secundario" (columnas
+    wmmac1/wmmgr1 + wmmac2/wmmgr2). El caso frecuente es la COMPRAVENTA CON
+    HIPOTECA simultánea (comprar con crédito): un solo acto registral con dos
+    códigos. El acto principal se expresa con el choice de ActoType (por nombre
+    de elemento: Compraventa, Hipoteca, ...); el secundario se expresa acá con su
+    CÓDIGO del catálogo legacy `act`.
+
+    Es la PRIMERA vez que el contrato usa un CÓDIGO en vez de un nombre de
+    elemento. Está justificado: el acto secundario NO tiene estructura propia
+    (no aporta partes/inmuebles/montos distintos — todo vive en el mismo <Acto>),
+    es solo un MARCADOR del segundo código de acto de la minuta. Anticipa la
+    dirección del v3 (actos identificados por código de catálogo).
+
+    Restringido a los dos códigos que el legacy admite como secundario:
+      - 1075 = HIPOTECA
+      - 1157 = RECONOCIMIENTO DE HIPOTECA
+  -->
+  <xs:simpleType name="CodigoActoSecundarioEnum">
+    <xs:restriction base="xs:integer">
+      <xs:enumeration value="1075"/>
+      <xs:enumeration value="1157"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!--
     ActoType: un acto del testimonio.
 
     Estructura: primero el discriminador del tipo de acto (choice), luego los
@@ -88,6 +115,16 @@
         <xs:element name="Permuta" type="PermutaType"/>
         <!-- Próximos actos en versiones futuras (una línea más acá). -->
       </xs:choice>
+
+      <!-- Acto SECUNDARIO (opcional): segundo código de acto de la MISMA minuta.
+           Va inmediatamente después del principal porque, junto con el choice,
+           completa la identidad del acto (ac1 + ac2 del legacy). No agrega
+           estructura: las partes, inmuebles y montos del <Acto> son compartidos
+           por ambos actos. Restringido a {1075, 1157} (ver
+           CodigoActoSecundarioEnum). Qué principal admite secundario, y las
+           reglas que dispara (p. ej. 1075 exige MontoHipoteca y rol ACREEDOR),
+           se validan en código (coherente con ADR-002). -->
+      <xs:element name="ActoSecundario" type="CodigoActoSecundarioEnum" minOccurs="0"/>
 
       <!-- Partes con rol genérico (1..N). El XSD acepta cualquier RolParte;
            la validez rol/tipo-de-acto y "proporciones suman 1" se validan en

@@ -101,7 +101,8 @@ El XML del testimonio digital tiene esta estructura raíz:
 ```
 
 > El orden de los elementos dentro de `<Acto>` es fijo: primero el discriminador
-> del tipo (`Compraventa`), luego `Partes`, `Inmuebles`, `DatosEconomicos`,
+> del tipo (`Compraventa`), el `ActoSecundario` opcional (código 1075/1157) si la
+> minuta lleva acto secundario, luego `Partes`, `Inmuebles`, `DatosEconomicos`,
 > `CertificacionDominio` y `VisadoRentas`. Dentro de cada `<Inmueble>` el orden
 > también es fijo: `IdentificacionInmueble`, `CertificacionCatastral`,
 > `NomenclaturaCatastral`. Cada `<Parte rol="TRANSMITENTE">` lleva su

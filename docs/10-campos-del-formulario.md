@@ -84,7 +84,8 @@ son de tipo `Compraventa`, pero la estructura admite tipos heterogéneos.
 > base es `TestimonioDigital/Actos/Acto/...`. En v1 muchos de estos bloques
 > vivían a nivel testimonio; en v2 bajan al acto.
 >
-> El orden dentro de `<Acto>` es fijo: `Compraventa`, `Partes`, `Inmuebles`,
+> El orden dentro de `<Acto>` es fijo: el acto principal (`Compraventa` u otro del
+> choice), el `ActoSecundario` opcional (código 1075/1157), `Partes`, `Inmuebles`,
 > `DatosEconomicos`, `CertificacionDominio`, `VisadoRentas`. Dentro de cada
 > `<Inmueble>` el orden es: `IdentificacionInmueble`, `CertificacionCatastral`,
 > `NomenclaturaCatastral`. Cada `<Parte rol="TRANSMITENTE">` lleva además su

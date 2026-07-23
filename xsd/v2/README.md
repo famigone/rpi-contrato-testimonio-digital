@@ -48,7 +48,8 @@ TestimonioDigital (version="2.0")
 ├── Otorgamiento
 ├── Actos
 │   └── Acto (numero, 1..N)
-│       ├── (choice)  Compraventa | Hipoteca | Donacion | Permuta | …futuros…
+│       ├── (choice)  Compraventa | Hipoteca | Donacion | Permuta | …futuros…   ← acto PRINCIPAL
+│       ├── ActoSecundario? (código 1075|1157)                                  ← acto SECUNDARIO (opcional)
 │       ├── Partes
 │       │   └── Parte (rol, 1..N)
 │       │       ├── …campos de PersonaType (Tipo … PEP … Proporcion, Representante)
@@ -134,6 +135,21 @@ xmllint --schema xsd/v2/testimonio-digital.xsd \
 testimonio con **dos actos** de permuta (uno por matrícula), el mismo `Monto`
 (precio) repetido en ambos y valuaciones fiscales distintas; el "cruce" de partes
 (adquirente en un acto, transmitente en el otro) ocurre entre actos.
+`ejemplos/v2/compraventa-con-hipoteca-ejemplo-valido.xml` es el ejemplo del **acto
+secundario**: una compraventa (principal) con `<ActoSecundario>1075</ActoSecundario>`
+(HIPOTECA) — UNA minuta con dos actos (`ac1`+`ac2` del legacy), partes ADQUIRENTE +
+TRANSMITENTE + ACREEDOR y los tres montos (precio + valuación + `MontoHipoteca`) en
+el mismo `<Acto>`.
+
+## Acto secundario (`<ActoSecundario>`)
+
+Es la dimensión "acto principal + secundario" del legacy (`wmmac1`/`wmmac2`). El
+principal se elige por nombre en el `choice`; el secundario se declara por **código**
+(1075 o 1157) en el elemento opcional `<ActoSecundario>`, inmediatamente después del
+choice. No agrega estructura: partes, inmuebles y montos son compartidos por ambos
+actos del `<Acto>`. Es el único lugar del contrato donde un acto se identifica por
+código en vez de por nombre de elemento (marcador sin estructura propia; ver la
+anotación de `CodigoActoSecundarioEnum` en `testimonio-digital.xsd`).
 
 ## Agregar un acto nuevo (p. ej. división de condominio)
 

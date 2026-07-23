@@ -7,6 +7,42 @@ y este contrato adhiere a [Semantic Versioning 2.0.0](https://semver.org/spec/v2
 
 ---
 
+## [2.4.0] — 2026-07-23
+
+Cambio **MINOR** (aditivo y retrocompatible): se incorpora el **ACTO SECUNDARIO** de una
+minuta. Es una **dimensión del modelo** que faltaba, no un acto nuevo. Mismo namespace y
+`version="2.0"`; todos los testimonios existentes siguen validando (el elemento es opcional).
+
+El legacy modela "una minuta = acto principal + acto secundario" (columnas `wmmac1`/`wmmgr1` +
+`wmmac2`/`wmmgr2`). El caso frecuente es la **compraventa con hipoteca simultánea** (comprar con
+crédito): UN solo acto registral con DOS códigos. Hasta 2.3.0 el contrato no podía expresarlo (un
+`<Acto>` lleva un solo tipo por el `xs:choice`), así que ese caso —el más frecuente del registro—
+no tenía canal correcto.
+
+### Agregado
+- `testimonio-digital.xsd`: elemento **opcional** `<ActoSecundario>` dentro de `ActoType`
+  (inmediatamente después del choice del acto principal). Su tipo `CodigoActoSecundarioEnum` está
+  **restringido a los dos códigos** que el legacy admite como secundario: **1075** (HIPOTECA) y
+  **1157** (RECONOCIMIENTO DE HIPOTECA).
+- Es la **primera vez** que el contrato usa un **código** en vez de un nombre de elemento. Está
+  justificado: el acto secundario **no tiene estructura propia** (partes, inmuebles y montos son
+  compartidos por ambos actos del mismo `<Acto>`), es un **marcador** del segundo código. Anticipa
+  la dirección del v3 (actos por código de catálogo). Documentado así en el XSD.
+- Ejemplo `ejemplos/v2/compraventa-con-hipoteca-ejemplo-valido.xml` (datos **ficticios**):
+  compraventa (principal) + `ActoSecundario=1075`, con ADQUIRENTE + TRANSMITENTE + ACREEDOR y los
+  **tres montos** en el mismo acto (precio + valuación + `MontoHipoteca`). El vendedor y el
+  acreedor son la misma entidad (I.P.V.U.) con el mismo CUIT en dos roles.
+
+### Sin cambios
+- El `xs:choice` del acto **principal** no cambia (Compraventa/Hipoteca/Donacion/Permuta).
+- `comunes/datos-economicos.xsd` **no se toca**: los tres bloques económicos (`ValuacionFiscal`,
+  `Monto`, `MontoHipoteca`) ya coexistían; una compraventa-con-hipoteca los usa a los tres.
+- Qué acto principal admite secundario, y las reglas que el secundario dispara (1075 exige
+  `MontoHipoteca` y rol `ACREEDOR`), se validan por **reglas de negocio del servicio**, no por el
+  XSD.
+
+---
+
 ## [2.3.0] — 2026-07-21
 
 Cambio **MINOR** (aditivo y retrocompatible): se incorpora el acto de **Permuta**.
