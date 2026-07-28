@@ -6,10 +6,18 @@ Términos del dominio registral y notarial que aparecen en este contrato.
 
 ### Acto
 
-La operación jurídica que se inscribe en el RPI. En v2.0 del contrato, el único
-tipo soportado es la **compraventa**, pero un mismo testimonio puede contener
-**N actos** (elemento `<Acto>` dentro de `<Actos>`). Otros tipos de acto son
-hipoteca, donación, división de condominio, inhibición, etc.
+La operación jurídica que se inscribe en el RPI. Un testimonio puede contener
+**N actos** (elemento `<Acto>` dentro de `<Actos>`). En v3 del contrato, el tipo de
+acto se identifica por su **`<Codigo>`** (el código del catálogo legacy `act`: 1028
+compraventa, 1075 hipoteca, 1056 donación, 1102 permuta, 1020 cancelación, etc.), no
+por un elemento nombrado. Ver `catalogo-actos.json` y el ADR-004.
+
+### Código de acto
+
+El número del catálogo legacy `act` que identifica el tipo de acto (campo `actact`).
+En v3 es el elemento `<Codigo>` del `<Acto>`. El XSD no lleva un enum de códigos: qué
+códigos existen se publica en `catalogo-actos.json`; qué códigos están *habilitados*
+lo decide el servicio.
 
 ### Adquirente
 

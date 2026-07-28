@@ -39,15 +39,19 @@ contener N actos (1 a N)** en lugar de uno solo. Una misma escritura suele
 formalizar varios actos (por ejemplo, dos compraventas), y v2 lo modela
 explícitamente con una lista `<Actos>` de elementos `<Acto>`.
 
-En cuanto a tipos de acto, la v2.0 sigue cubriendo **un solo tipo**:
+> **v3 (vigente): el tipo de acto es un CÓDIGO, no un elemento.** Un acto se
+> identifica con `<Codigo>NNNN</Codigo>` (el código del catálogo legacy `act`), no
+> con un elemento nombrado por tipo (`<Compraventa/>` ya no existe). El XSD no lleva
+> un enum de códigos: la lista de códigos existentes se publica en
+> `catalogo-actos.json` y qué códigos están *habilitados* lo decide el servicio.
+> Ver ADR-004. Lo de abajo describe el modelo de tipos de acto; en v3 la variabilidad
+> por acto (roles, montos, certificaciones) se valida en el servicio por
+> combinación código→familia, no en el XSD.
 
-- **Compraventa** de inmuebles, escritura notarial.
-
-La estructura ya admite actos de **tipos heterogéneos** dentro de un mismo
-testimonio: agregar otros actos (división de condominio, etc. —
-compraventa, hipoteca, donación y permuta ya están) es agregar archivos XSD bajo
-`xsd/v2/actos/` y una línea al `choice` de
-`Acto`, sin cambiar la estructura general del XML.
+En v3, **agregar un acto ya NO toca el contrato**: es habilitar un código más en el
+servicio (con su familia estructural), no agregar un XSD ni una rama del esquema.
+Actos con evidencia hasta ahora: compraventa (1028), hipoteca (1075), donación
+(1056), permuta (1102), y la familia de cancelaciones/liberaciones (1020, 1088, …).
 
 Esta versión soporta, igual que v1:
 

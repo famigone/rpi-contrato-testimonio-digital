@@ -84,24 +84,28 @@ son de tipo `Compraventa`, pero la estructura admite tipos heterogéneos.
 > base es `TestimonioDigital/Actos/Acto/...`. En v1 muchos de estos bloques
 > vivían a nivel testimonio; en v2 bajan al acto.
 >
-> El orden dentro de `<Acto>` es fijo: el acto principal (`Compraventa` u otro del
-> choice), el `ActoSecundario` opcional (código 1075/1157), `Partes`, `Inmuebles`,
-> `DatosEconomicos`, `CertificacionDominio`, `VisadoRentas`. Dentro de cada
-> `<Inmueble>` el orden es: `IdentificacionInmueble`, `CertificacionCatastral`,
-> `NomenclaturaCatastral`. Cada `<Parte rol="TRANSMITENTE">` lleva además su
-> `CertificacionInhibicion` como último hijo (ver 4.2).
+> El orden dentro de `<Acto>` es fijo (v3): el `Codigo` (código del acto), el
+> `ActoSecundario` opcional (código 1075/1157), `Partes`, `Inmuebles`,
+> `DatosEconomicos`, `CertificacionDominio` (opcional), `VisadoRentas`, y al final los
+> textos libres opcionales. Dentro de cada `<Inmueble>`: `IdentificacionInmueble` y
+> —**opcionales en v3**— `CertificacionCatastral`, `NomenclaturaCatastral`. Cada
+> `<Parte rol="TRANSMITENTE">` puede llevar su `CertificacionInhibicion` como último
+> hijo (ver 4.2).
 
-### 4.1 Compraventa (discriminador del acto)
+### 4.1 Codigo (tipo del acto)
 
-Camino base: `Actos/Acto/Compraventa`
+Camino base: `Actos/Acto/Codigo`
 
-Primer elemento del acto. Lleva solo los campos propios del tipo compraventa
-(todos opcionales). Las partes y los inmuebles **no** van acá: van en `Partes`
-e `Inmuebles` (4.2 y 4.3).
+Primer elemento del acto (v3). Es el **código del catálogo `act`** (`xs:integer`), p.
+ej. `1028` compraventa. Reemplaza al elemento nombrado por tipo de v2. Los textos
+libres del acto (antes dentro del elemento de tipo) son ahora hijos opcionales de
+`<Acto>`, al final (después de `VisadoRentas`). Las partes y los inmuebles van en
+`Partes` e `Inmuebles` (4.2 y 4.3).
 
 | Campo del formulario | Camino XML | Tipo | Longitud | Obligatorio | Valores / Notas | Ejemplo |
 |---|---|---|---|---|---|---|
-| Descripción de acto incompleto | `DescripcionActoIncompleto` | Texto | 106 | No | Aclaración si no es compraventa estándar | `Venta del 50% indiviso` |
+| Código del acto | `Codigo` | Entero | — | **Sí** | Código del catálogo `act` (p. ej. 1028) | `1028` |
+| Descripción de acto incompleto | `DescripcionActoIncompleto` | Texto | 106 | No | Aclaración si no es acto estándar | `Venta del 50% indiviso` |
 | Reconocimiento de hipoteca / medidas cautelares | `ReconocimientoHipotecaMedidasCautelares` | Texto | 4000 | No | Texto libre |
 | Afectaciones al dominio | `AfectacionesAlDominio` | Texto | 4000 | No | Texto libre |
 | Asentimiento conyugal | `AsentimientoConyugal` | Texto | 4000 | No | Texto libre |

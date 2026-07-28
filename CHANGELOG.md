@@ -7,6 +7,63 @@ y este contrato adhiere a [Semantic Versioning 2.0.0](https://semver.org/spec/v2
 
 ---
 
+## [3.0.0] — 2026-07-24
+
+Cambio **MAJOR (incompatible)**: el **tipo de acto pasa de ser un elemento del esquema a ser un
+DATO**. En v2 cada tipo era un elemento del `xs:choice` de `ActoType` (`<Compraventa/>`,
+`<Hipoteca/>`, `<Donacion/>`, `<Permuta/>`) con un `xs:complexType` propio; esos tipos estaban
+**vacíos** (solo textos libres). v3 los elimina y modela el acto con **`<Codigo>`** (el código del
+catálogo legacy `act`). Namespace nuevo `.../testimonio-digital/v3`, `version="3.0"`. Ver
+[ADR-004](https://github.com/) (repo del servicio, `docs/adr/004-contrato-v3-codigo-como-dato.md`).
+
+**Por qué ahora:** hay 4 actos y **cero emisores en producción real** (las compraventas
+sincronizadas fueron en *staging*). El breaking change es barato hoy; en seis meses, con emisores
+integrados, sería caro.
+
+### ⚠️ Cómo migrar (para sistemas notariales que consumen el contrato)
+
+- **El elemento de acto se reemplaza por `<Codigo>`**, primer hijo del `<Acto>`:
+  - `<Compraventa/>` → `<Codigo>1028</Codigo>`
+  - `<Hipoteca/>` → `<Codigo>1075</Codigo>`
+  - `<Donacion/>` → `<Codigo>1056</Codigo>`
+  - `<Permuta/>` → `<Codigo>1102</Codigo>`
+- **Los textos libres** que vivían dentro del elemento de acto (`DescripcionActoIncompleto`,
+  `ReconocimientoHipotecaMedidasCautelares`, `AfectacionesAlDominio`, `AsentimientoConyugal`)
+  ahora son **hijos opcionales de `<Acto>`**, al final (después de `VisadoRentas`).
+- **`<ActoSecundario>`** (código, desde v2.4.0) **no cambia**: va después de `<Codigo>`.
+- **Namespace y versión**: `xmlns=".../v3"`, `version="3.0"`, `<VersionContrato>3.0</VersionContrato>`,
+  `schemaLocation` → `xsd/v3/testimonio-digital.xsd`.
+
+### Agregado
+- **`xsd/v3/`**: el contrato v3 completo. `ActoType` con `<Codigo>` (`CodigoActoType`, `xs:integer`
+  ≤ 9999 — **NO** un enum de los ~200 códigos, ver abajo) + los textos libres opcionales.
+- **`catalogo-actos.json`** (raíz del repo): lista **informativa** de códigos existentes (código +
+  nombre). Es **dato, no esquema**: NO valida nada. Compensa la ausencia del enum. Qué códigos están
+  *habilitados* lo decide el servicio, no este archivo.
+- **`ejemplos/v3/`**: los 11 ejemplos de v2 migrados + **`cancelacion-hipoteca-ejemplo-valido.xml`**
+  (código 1020) — un caso que **v2 NO podía expresar** (el catastro era obligatorio) y v3 habilita.
+
+### Cambiado (incompatible)
+- **`<Codigo>` es `xs:integer`, no un enum.** Razón: el catálogo legacy cambia (5 altas en 7 meses:
+  1326/1327 dic-2025, 1330 mar-2026, 1334/1335 jun-2026). Con enum, cada alta del catálogo sería un
+  release del contrato aunque el servicio no habilite ese acto. El contrato no debe versionarse por
+  cambios del catálogo. La existencia de códigos se documenta en `catalogo-actos.json`.
+- **`CertificacionCatastral` y `NomenclaturaCatastral` pasan a `minOccurs=0`** (eran obligatorias por
+  inmueble). La familia HIPOTECARIA-LIBERA (cancelación, liberación) no las lleva; su obligatoriedad
+  para las familias que sí las requieren se valida en el servicio (regla `exigeCatastral`). Es la
+  **única** obligatoriedad estructural que v3 relaja.
+
+### Eliminado
+- **`xsd/v3/actos/`** no existe: los 4 XSD de acto de v2 (`compraventa.xsd`, `hipoteca.xsd`,
+  `donacion.xsd`, `permuta.xsd`) no tienen equivalente — el acto ya no tiene tipo XSD propio.
+
+### Sin cambios
+- Todo lo demás de v2: modelo de partes con rol, N actos, Inmuebles/DatosEconomicos/VisadoRentas
+  obligatorios, acto secundario, componentes comunes (`comunes/`), firma XML-DSig.
+- **v2 queda congelado en `xsd/v2/`** (coexiste, como v1 en su momento).
+
+---
+
 ## [2.4.0] — 2026-07-23
 
 Cambio **MINOR** (aditivo y retrocompatible): se incorpora el **ACTO SECUNDARIO** de una

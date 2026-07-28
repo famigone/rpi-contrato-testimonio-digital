@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestimonioDigital
+    xmlns="https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v3"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+    xsi:schemaLocation="https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v3 ../../xsd/v3/testimonio-digital.xsd"
+    version="3.0">
+
+  <!-- CANCELACIÓN DE HIPOTECA (código 1020, familia HIPOTECARIA-LIBERA). Datos FICTICIOS.
+
+       Este ejemplo es la razón de ser de v3: en v2 NO se podía expresar, porque el
+       catastro (CertificacionCatastral/NomenclaturaCatastral) era OBLIGATORIO por
+       inmueble, y una cancelación no lo lleva. v3 lo relaja a opcional y la
+       obligatoriedad pasa a la regla exigeCatastral por familia (ADR-004).
+
+       La familia LIBERA: ACREEDOR (el banco que cancela) → wmi, DEUDOR → wmt, sin
+       vendedor (wmc vacío). Solo MontoHipoteca (el capital que se libera). NO lleva
+       CertificacionDominio, NO lleva inhibiciones, NO lleva catastro. -->
+
+  <MetadatosEnvio>
+    <IdentificadorEnvio>b2c3d4e5-1020-4ccc-9ddd-000000000020</IdentificadorEnvio>
+    <TimestampEnvio>2026-07-22T11:00:00-03:00</TimestampEnvio>
+    <HashPDF>e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855</HashPDF>
+    <VersionContrato>3.0</VersionContrato>
+  </MetadatosEnvio>
+
+  <EscribanoAutorizante>
+    <Nombre>JUAN CARLOS PÉREZ</Nombre>
+    <CUIT>20-12345678-9</CUIT>
+    <RegistroNumero>123</RegistroNumero>
+    <Sede>NEUQUÉN</Sede>
+  </EscribanoAutorizante>
+
+  <Otorgamiento>
+    <Lugar>NEUQUÉN</Lugar>
+    <Fecha>2026-07-20</Fecha>
+    <NumeroEscritura>00012370</NumeroEscritura>
+    <FolioProtocolo>00000150</FolioProtocolo>
+  </Otorgamiento>
+
+  <Actos>
+
+    <Acto numero="1">
+      <Codigo>1020</Codigo>
+
+      <Partes>
+        <!-- El banco que cancela el gravamen → rol ACREEDOR (va a wmi). -->
+        <Parte rol="ACREEDOR">
+          <Tipo>J</Tipo>
+          <ApellidoODenominacion>BANCO DE LA PROVINCIA DEL NEUQUÉN S.A.</ApellidoODenominacion>
+          <CUIT>30-53625919-4</CUIT>
+          <NumeroDocumento>30536259194</NumeroDocumento>
+          <PEP>false</PEP>
+          <InscripcionOrganismoSede>Ley Provincial 2246 - NEUQUÉN</InscripcionOrganismoSede>
+          <Proporcion>1/1</Proporcion>
+        </Parte>
+        <!-- El deudor liberado → rol DEUDOR (va a wmt). SIN CertificacionInhibicion:
+             la familia LIBERA no la exige (no grava nada nuevo). -->
+        <Parte rol="DEUDOR">
+          <Tipo>H</Tipo>
+          <ApellidoODenominacion>ROMERO</ApellidoODenominacion>
+          <Nombres>CARLA VANESA</Nombres>
+          <CUIT>27-29888777-4</CUIT>
+          <TipoDocumento>DNI</TipoDocumento>
+          <NumeroDocumento>29888777</NumeroDocumento>
+          <EstadoCivil>SOLTERA</EstadoCivil>
+          <Nacionalidad>ARGENTINA</Nacionalidad>
+          <FechaNacimiento>1982-05-18</FechaNacimiento>
+          <PEP>false</PEP>
+        </Parte>
+      </Partes>
+
+      <Inmuebles>
+        <Inmueble>
+          <!-- SIN CertificacionCatastral ni NomenclaturaCatastral: la cancelación
+               no las lleva. Esto es lo que v2 rechazaba y v3 habilita. -->
+          <IdentificacionInmueble>
+            <Matricula>22106</Matricula>
+            <Departamento>5</Departamento>
+          </IdentificacionInmueble>
+        </Inmueble>
+      </Inmuebles>
+
+      <DatosEconomicos>
+        <!-- Solo el capital que se libera. Sin precio, sin valuación. -->
+        <MontoHipoteca>
+          <valor>60000000.00</valor>
+          <moneda>$</moneda>
+        </MontoHipoteca>
+      </DatosEconomicos>
+
+      <!-- SIN CertificacionDominio: la familia LIBERA no la exige. -->
+
+      <VisadoRentas>
+        <Tipo>A</Tipo>
+      </VisadoRentas>
+    </Acto>
+
+  </Actos>
+
+  <Rogante>
+    <CUIT>20-12345678-9</CUIT>
+    <Nombre>JUAN CARLOS PÉREZ</Nombre>
+    <NumeroRegistro>123</NumeroRegistro>
+    <Localidad>NEUQUÉN</Localidad>
+    <Provincia>NEUQUÉN</Provincia>
+    <Domicilio>CALLE FALSA 123</Domicilio>
+    <Telefono>0299-4567890</Telefono>
+  </Rogante>
+
+  <TextoCuerpo>CANCELACIÓN DE HIPOTECA. En la ciudad de Neuquén, capital de la Provincia del Neuquén, República Argentina, a los veinte días del mes de julio del año dos mil veintiséis, ante mí, JUAN CARLOS PÉREZ, escribano titular del Registro Notarial Número 123 con sede en Neuquén, comparece el BANCO DE LA PROVINCIA DEL NEUQUÉN S.A., y declara que, habiendo sido íntegramente cancelado el crédito garantizado, otorga la cancelación total del derecho real de hipoteca que gravaba el inmueble matrícula 22.106 del Departamento Confluencia, a favor de CARLA VANESA ROMERO, por el capital de pesos sesenta millones ($ 60.000.000,00). Doy fe.</TextoCuerpo>
+
+  <Observaciones>Ejemplo de cancelación de hipoteca (código 1020, familia HIPOTECARIA-LIBERA). Datos ficticios. No lleva certificación catastral, dominio ni inhibiciones: por eso NO valida contra el contrato v2 (donde el catastro era obligatorio) y sí contra v3.</Observaciones>
+
+  <ds:Signature>
+    <ds:SignedInfo>
+      <ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+      <ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>
+      <ds:Reference URI="">
+        <ds:Transforms>
+          <ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+          <ds:Transform Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+        </ds:Transforms>
+        <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+        <ds:DigestValue>UExBQ0VIT0xERVJfTk9fVVNBUl9WQUxJREFSX1NPTE9fRVNUUlVDVFVSQV9f</ds:DigestValue>
+      </ds:Reference>
+    </ds:SignedInfo>
+    <ds:SignatureValue>WFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWA==</ds:SignatureValue>
+    <ds:KeyInfo>
+      <ds:X509Data>
+        <ds:X509Certificate>UExBQ0VIT0xERVJfQ0VSVElGSUNBVEVfWDUwOV9ERUxfRVNDUklCQU5PX05PX1VTQVJfRVNfU09MT19QQVJBX1ZBTElEQVJfTEFfRVNUUlVDVFVSQV9ERUxfWE1MX0NPTlRSQV9FTF9YU0Q=</ds:X509Certificate>
+      </ds:X509Data>
+    </ds:KeyInfo>
+  </ds:Signature>
+
+</TestimonioDigital>

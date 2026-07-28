@@ -14,14 +14,21 @@ a lo definido acá.
 
 | Campo | Valor |
 |-------|-------|
-| Versión del contrato | 2.4.0 (borrador para revisión) |
+| Versión del contrato | 3.0.0 (borrador para revisión) |
 | Estado | En proceso de homologación |
-| Actos soportados | Compraventa · Hipoteca · Donación · Permuta (N actos por testimonio) · Acto secundario opcional (1075/1157) |
+| Modelo de acto | **El tipo de acto es un DATO** (`<Codigo>`), no un elemento del esquema (MAJOR respecto de v2) |
+| Actos | Cualquier código del catálogo `act`; qué códigos están **habilitados** lo decide el servicio. Ver [catalogo-actos.json](catalogo-actos.json) |
 | Última actualización | Ver [CHANGELOG.md](CHANGELOG.md) |
 
-v2 **coexiste** con v1: los XSD de v1 quedan intactos en `xsd/` (namespace `/v1`)
-y los de v2 viven en `xsd/v2/` (namespace `/v2`). Esta documentación describe la
-v2.0. Para versiones anteriores, consultar los [tags del repositorio](#versionado).
+**El código de acto es un dato.** En v3 un acto se identifica con `<Codigo>NNNN</Codigo>` (el
+código del catálogo legacy `act`), no con un elemento nombrado por tipo. El XSD **no** lleva un
+enum de códigos (el catálogo cambia y no debe versionar el contrato): la lista de códigos
+existentes se publica como dato en [`catalogo-actos.json`](catalogo-actos.json), y qué códigos
+están *habilitados* lo valida el servicio. Ver el ADR-004 del repo del servicio.
+
+v3 **coexiste** con las versiones anteriores en disco: v1 en `xsd/` (namespace `/v1`), v2 en
+`xsd/v2/` (`/v2`, **congelado**) y v3 en `xsd/v3/` (`/v3`, **vigente**). Esta documentación
+describe la v3.0. Para versiones anteriores, consultar los [tags del repositorio](#versionado).
 
 ---
 
@@ -78,12 +85,12 @@ Orden recomendado para integraciones nuevas:
 │
 ├── xsd/                                   ← contratos XSD modulares
 │   ├── README.md
-│   ├── xmldsig-core-schema.xsd            ← W3C XML-DSig local (compartido v1/v2)
+│   ├── xmldsig-core-schema.xsd            ← W3C XML-DSig local (compartido v1/v2/v3)
 │   ├── testimonio-digital.xsd             ← entry point v1 (legacy, coexiste)
 │   ├── comunes/                           ← tipos comunes v1
 │   ├── actos/
 │   │   └── compraventa.xsd
-│   └── v2/                                ← ★ contrato vigente (v2.0)
+│   ├── v2/                                ← contrato v2 (CONGELADO)
 │       ├── README.md
 │       ├── testimonio-digital.xsd         ← entry point del XSD v2
 │       ├── comunes/
@@ -99,26 +106,25 @@ Orden recomendado para integraciones nuevas:
 │       │   ├── visado-rentas.xsd
 │       │   ├── otorgamiento.xsd
 │       │   └── rogante.xsd
-│       └── actos/
-│           ├── compraventa.xsd
-│           ├── hipoteca.xsd
-│           └── donacion.xsd
+│       └── actos/                         ← (v2) 4 tipos de acto vacíos
+│   └── v3/                                ← ★ contrato VIGENTE (v3.0)
+│       ├── README.md
+│       ├── testimonio-digital.xsd         ← entry point v3 (Acto con <Codigo>, sin choice)
+│       └── comunes/                       ← tipos comunes (SIN actos/: el acto es un dato)
 │
+├── catalogo-actos.json                    ← ★ lista informativa de códigos (dato, no esquema)
 └── ejemplos/                              ← XMLs válidos de ejemplo
     ├── README.md
     ├── *.xml                              ← ejemplos v1 (legacy, validan contra xsd/)
-    └── v2/                                ← ★ ejemplos v2 (validan contra xsd/v2/)
-        ├── compraventa-minima.xml
-        ├── compraventa-multiple-titulares.xml
-        ├── compraventa-usd.xml
-        ├── compraventa-persona-juridica.xml
-        ├── compraventa-con-representante.xml
-        ├── compraventa-inmueble-antiguo.xml
+    ├── v2/                                ← ejemplos v2 (congelado)
+    └── v3/                                ← ★ ejemplos v3 (validan contra xsd/v3/)
+        ├── compraventa-*.xml              ← compraventas (mínima, usd, jurídica, representante, etc.)
         ├── compraventa-dos-actos.xml      ← testimonio con 2 actos
-        ├── hipoteca-ejemplo-valido.xml    ← acto de hipoteca (ACREEDOR/DEUDOR, MontoHipoteca)
-        ├── donacion-ejemplo-valido.xml    ← acto de donación (DONANTE/DONATARIA, mismo Monto que compraventa)
-        ├── permuta-ejemplo-valido.xml     ← permuta de 2 actos (mismo precio repetido, valuaciones distintas, cruce de partes)
-        └── compraventa-con-hipoteca-ejemplo-valido.xml  ← compraventa + ActoSecundario 1075 (una minuta, dos actos; precio + valuación + MontoHipoteca)
+        ├── hipoteca-ejemplo-valido.xml    ← <Codigo>1075</> (ACREEDOR/DEUDOR, MontoHipoteca)
+        ├── donacion-ejemplo-valido.xml    ← <Codigo>1056</>
+        ├── permuta-ejemplo-valido.xml     ← <Codigo>1102</>, permuta de 2 actos con cruce de partes
+        ├── compraventa-con-hipoteca-ejemplo-valido.xml  ← <Codigo>1028</> + ActoSecundario 1075
+        └── cancelacion-hipoteca-ejemplo-valido.xml      ← <Codigo>1020</> (familia LIBERA; SIN catastro — imposible en v2)
 ```
 
 ---
@@ -129,7 +135,7 @@ Para quien tiene urgencia y quiere ir directo:
 
 - **Endpoint**: `POST` a la URL del RPI (ver [docs/03-endpoint-api.md](docs/03-endpoint-api.md)).
 - **Formato**: `multipart/form-data` con dos partes — `xml` (el testimonio firmado) y `pdf` (el documento PDF firmado).
-- **Validación**: el XML debe validar contra `xsd/v2/testimonio-digital.xsd`.
+- **Validación**: el XML debe validar contra `xsd/v3/testimonio-digital.xsd`.
 - **Firma**: el XML debe estar firmado con XML-DSig por el certificado del escribano autorizante.
 - **Respuesta**: HTTP 202 con un `identificadorEnvio` (UUID) para trazabilidad.
 - **Notificaciones**: el RPI te notifica los cambios de estado del testimonio vía callback HTTP.
@@ -141,11 +147,11 @@ Para quien tiene urgencia y quiere ir directo:
 Para validar un XML de testimonio contra el contrato:
 
 ```bash
-xmllint --schema xsd/v2/testimonio-digital.xsd ejemplos/v2/compraventa-minima.xml --noout
+xmllint --schema xsd/v3/testimonio-digital.xsd ejemplos/v3/compraventa-minima.xml --noout
 ```
 
-Los siete ejemplos en `ejemplos/v2/` validan correctamente contra el XSD v2. Los
-ejemplos v1 en `ejemplos/` siguen validando contra `xsd/testimonio-digital.xsd`.
+Los 12 ejemplos en `ejemplos/v3/` validan contra el XSD v3. Los de `ejemplos/v2/` y
+`ejemplos/` (v1) siguen validando contra sus respectivos XSD congelados.
 
 ---
 

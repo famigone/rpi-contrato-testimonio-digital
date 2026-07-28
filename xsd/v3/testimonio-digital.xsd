@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v3"
+    xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+    targetNamespace="https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v3"
+    elementFormDefault="qualified">
+
+  <!-- XML-DSig local para validación offline. Se reutiliza la copia compartida
+       del paquete (un nivel arriba); es estándar W3C, dominio público. -->
+  <xs:import
+      namespace="http://www.w3.org/2000/09/xmldsig#"
+      schemaLocation="../xmldsig-core-schema.xsd"/>
+
+  <!-- Includes de tipos comunes (todos en namespace .../v3) -->
+  <xs:include schemaLocation="comunes/metadatos-envio.xsd"/>
+  <xs:include schemaLocation="comunes/escribano-autorizante.xsd"/>
+  <xs:include schemaLocation="comunes/persona.xsd"/>
+  <xs:include schemaLocation="comunes/parte.xsd"/>
+  <xs:include schemaLocation="comunes/identificacion-inmueble.xsd"/>
+  <xs:include schemaLocation="comunes/datos-economicos.xsd"/>
+  <xs:include schemaLocation="comunes/certificacion-dominio.xsd"/>
+  <xs:include schemaLocation="comunes/certificacion-inhibicion.xsd"/>
+  <xs:include schemaLocation="comunes/certificacion-catastral.xsd"/>
+  <xs:include schemaLocation="comunes/nomenclatura-catastral.xsd"/>
+  <xs:include schemaLocation="comunes/visado-rentas.xsd"/>
+  <xs:include schemaLocation="comunes/otorgamiento.xsd"/>
+  <xs:include schemaLocation="comunes/rogante.xsd"/>
+  <!-- v3: NO hay includes de actos/. El tipo de acto es un DATO (<Codigo>), no un
+       elemento del esquema. Los actos ya no tienen tipo XSD propio (ver ADR-004). -->
+
+  <xs:annotation>
+    <xs:documentation>
+      Contrato XSD del Testimonio Digital del RPI Neuquén — v3.0 (version="3.0").
+
+      Cambio central respecto de v2 (MAJOR, incompatible): el tipo de acto es un
+      DATO, no un elemento del esquema. En v2 cada tipo era un elemento del
+      xs:choice de ActoType (&lt;Compraventa/&gt;, &lt;Hipoteca/&gt;, ...) con un
+      xs:complexType propio. Esos tipos estaban VACÍOS (solo textos libres): la
+      sustancia del acto (Partes, Inmuebles, DatosEconomicos) ya vivía genérica a
+      nivel &lt;Acto&gt;. v3 elimina el choice y modela el acto con
+      &lt;Codigo&gt; (el código del catálogo legacy `act`, un xs:integer). Ver
+      ADR-004.
+
+      Por qué &lt;Codigo&gt; es xs:integer y NO un enum de los ~200 códigos: el
+      catálogo legacy cambia (altas periódicas) y el contrato no debe versionarse
+      por eso. La lista de códigos existentes se publica como DATO informativo en
+      catalogo-actos.json (no valida nada). Qué códigos están HABILITADOS lo
+      decide el servicio, no el XSD.
+
+      El XSD queda deliberadamente permisivo: la validez por acto (qué roles, qué
+      montos, qué certificaciones exige cada familia de acto) se valida en el
+      servicio, por combinación código→familia+override (ADR-004, ADR-002).
+
+      Estructura del &lt;Acto&gt; (única y genérica): &lt;Codigo&gt;, el
+      &lt;ActoSecundario&gt; opcional (2º código de la minuta, desde v2.4.0),
+      Partes (rol genérico), Inmuebles, DatosEconomicos, CertificacionDominio
+      (opcional), VisadoRentas, y los textos libres opcionales que en v2 vivían
+      en los XxxType (DescripcionActoIncompleto, ReconocimientoHipotecaMedidasCautelares,
+      AfectacionesAlDominio, AsentimientoConyugal).
+
+      El catastro (CertificacionCatastral / NomenclaturaCatastral) pasa a
+      minOccurs=0: la familia HIPOTECARIA-LIBERA (cancelación, liberación) no lo
+      lleva. Su obligatoriedad para las familias que sí lo requieren se valida en
+      el servicio (regla exigeCatastral). Es la única obligatoriedad estructural
+      que v3 relaja respecto de v2.
+
+      A nivel testimonio quedan (igual que v2): MetadatosEnvio,
+      EscribanoAutorizante, Otorgamiento, Rogante, TextoCuerpo, Observaciones y
+      Signature.
+    </xs:documentation>
+  </xs:annotation>
+
+  <!--
+    Código del ACTO PRINCIPAL. Es el código del catálogo legacy `act`.
+
+    v3: xs:integer, NO un enum de los ~200 códigos (ADR-004, decisión 2). El
+    catálogo cambia (altas periódicas) y el contrato no debe versionarse por eso;
+    la lista de códigos existentes vive en catalogo-actos.json (dato informativo).
+    Qué códigos están HABILITADOS lo valida el servicio (CODIGO_ACTO_NO_HABILITADO
+    si no lo está); el XSD solo chequea que sea un entero de código plausible.
+  -->
+  <xs:simpleType name="CodigoActoType">
+    <xs:restriction base="xs:positiveInteger">
+      <xs:maxInclusive value="9999"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!--
+    Código del ACTO SECUNDARIO de una minuta (opcional).
+
+    El legacy modela "una minuta = acto principal + acto secundario" (columnas
+    wmmac1/wmmgr1 + wmmac2/wmmgr2). El caso frecuente es la COMPRAVENTA CON
+    HIPOTECA simultánea (comprar con crédito): un solo acto registral con dos
+    códigos. Ambos —principal (Codigo) y secundario— se expresan por CÓDIGO del
+    catálogo legacy `act`: en v3 el modelo es simétrico.
+
+    El acto secundario NO aporta estructura propia (partes/inmuebles/montos son
+    compartidos por ambos actos del mismo <Acto>): es un MARCADOR del segundo
+    código de la minuta. A diferencia del principal, SÍ está restringido a los dos
+    códigos que el legacy admite como secundario (heredado de v2.4.0):
+      - 1075 = HIPOTECA
+      - 1157 = RECONOCIMIENTO DE HIPOTECA
+  -->
+  <xs:simpleType name="CodigoActoSecundarioEnum">
+    <xs:restriction base="xs:integer">
+      <xs:enumeration value="1075"/>
+      <xs:enumeration value="1157"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!--
+    ActoType: un acto del testimonio.
+
+    Estructura: primero el discriminador del tipo de acto (choice), luego los
+    bloques que en v1 estaban a nivel raíz y ahora viven por acto.
+
+    El atributo "numero" es obligatorio (entero positivo). La UNICIDAD de
+    "numero" entre los actos NO se fuerza en XSD: se valida en código
+    (coherente con ADR-002, reglas cross-componente en TypeScript).
+  -->
+  <xs:complexType name="ActoType">
+    <xs:sequence>
+      <!-- Código del acto PRINCIPAL (dato del catálogo `act`). Reemplaza al
+           xs:choice de tipos nombrados de v2. Habilitar un acto nuevo NO toca el
+           XSD: es sumarlo a los habilitados del servicio (ADR-004). -->
+      <xs:element name="Codigo" type="CodigoActoType"/>
+
+      <!-- Acto SECUNDARIO (opcional): segundo código de acto de la MISMA minuta.
+           Junto con Codigo completa la identidad del acto (ac1 + ac2 del legacy).
+           No agrega estructura: partes, inmuebles y montos son compartidos.
+           Restringido a {1075, 1157} (ver CodigoActoSecundarioEnum). Qué principal
+           admite secundario, y las reglas que dispara (p. ej. 1075 exige
+           MontoHipoteca y rol ACREEDOR), se validan en código (ADR-002/ADR-004). -->
+      <xs:element name="ActoSecundario" type="CodigoActoSecundarioEnum" minOccurs="0"/>
+
+      <!-- Partes con rol genérico (1..N). El XSD acepta cualquier RolParte;
+           la validez rol/tipo-de-acto y "proporciones suman 1" se validan en
+           código, por acto. -->
+      <xs:element name="Partes">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Parte" type="ParteType" minOccurs="1" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+
+      <!-- Inmuebles del acto (1..M). El catastro es POR INMUEBLE. v3: catastro
+           OPCIONAL (minOccurs=0) — la familia HIPOTECARIA-LIBERA (cancelación,
+           liberación) no lo lleva. Su obligatoriedad para las familias que sí lo
+           requieren (TRANSMISIÓN, HIPOTECARIA-CONSTITUYE) se valida en el
+           servicio (regla exigeCatastral, ADR-004). Un acto con M inmuebles que
+           lo lleva tiene M certificaciones catastrales y M nomenclaturas. -->
+      <xs:element name="Inmuebles">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Inmueble" minOccurs="1" maxOccurs="50">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="IdentificacionInmueble" type="IdentificacionInmuebleType"/>
+                  <!-- Catastro del inmueble. v3: OPCIONAL (ver arriba). -->
+                  <xs:element name="CertificacionCatastral" type="CertificacionCatastralType" minOccurs="0"/>
+                  <xs:element name="NomenclaturaCatastral" type="NomenclaturaCatastralType" minOccurs="0"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+
+      <!-- Bloques sustantivos que BAJAN del testimonio (v1) al acto (v2). -->
+      <xs:element name="DatosEconomicos" type="DatosEconomicosType"/>
+
+      <!-- Certificación de DOMINIO previa: recae sobre el INMUEBLE, por eso vive
+           a nivel acto. La certificación de INHIBICIÓN ya NO está acá: recae
+           sobre la persona y vive dentro de cada <Parte> transmitente (ver
+           comunes/parte.xsd). Estructuralmente opcional (minOccurs=0): la
+           obligatoriedad para compraventa se valida en código (ADR-002). -->
+      <xs:element name="CertificacionDominio" type="CertificacionDominioType" minOccurs="0"/>
+
+      <xs:element name="VisadoRentas" type="VisadoRentasType"/>
+
+      <!-- Textos libres del acto (opcionales). En v2 vivían dentro de los tipos
+           por acto (CompraventaType, etc.); en v3 suben a <Acto> porque el acto
+           ya no tiene tipo XSD propio. Su aplicabilidad por acto (p. ej. el
+           asentimiento conyugal no aplica a una cancelación) se decide en el
+           servicio; el XSD los deja opcionales. Mapean a wmmesp/wmmmrh/wmmado/wmmase. -->
+      <xs:element name="DescripcionActoIncompleto" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Aclaración del escribano si el acto no es una operación completa
+            estándar. Texto libre, opcional. → wmmesp.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:maxLength value="106"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+
+      <xs:element name="ReconocimientoHipotecaMedidasCautelares" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Texto libre, opcional. → wmmmrh (rubro 15).</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:maxLength value="4000"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+
+      <xs:element name="AfectacionesAlDominio" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Texto libre, opcional. → wmmado.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:maxLength value="4000"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+
+      <xs:element name="AsentimientoConyugal" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Asentimiento conyugal como texto libre (no estructurado). Opcional. → wmmase.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:maxLength value="4000"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+    </xs:sequence>
+
+    <xs:attribute name="numero" type="xs:positiveInteger" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          Número de orden del acto dentro del testimonio. Entero positivo,
+          obligatorio. La unicidad entre actos NO se valida en XSD; se valida
+          en código.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:element name="TestimonioDigital">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="MetadatosEnvio" type="MetadatosEnvioType"/>
+        <xs:element name="EscribanoAutorizante" type="EscribanoAutorizanteType"/>
+        <xs:element name="Otorgamiento" type="OtorgamientoType"/>
+
+        <!-- Lista de actos: 1..N, sin tope. Tipos heterogéneos permitidos. -->
+        <xs:element name="Actos">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Acto" type="ActoType" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <xs:element name="Rogante" type="RoganteType"/>
+        <xs:element name="TextoCuerpo">
+          <xs:annotation>
+            <xs:documentation>
+              Transcripción del cuerpo de la escritura (texto plano).
+
+              Es a nivel testimonio: una escritura puede contener varios actos
+              pero es un único documento, y este es su cuerpo transcripto.
+
+              Debe ser una transcripción fiel del cuerpo de la escritura que
+              figura en el PDF firmado adjunto. La responsabilidad de la fidelidad
+              del texto es del escribano autorizante.
+
+              Formato: texto plano. NO se espera HTML, Markdown ni otros marcados.
+              Los saltos de línea naturales del texto se preservan.
+
+              Uso del servicio del RPI: análisis NLP, visualización en interfaces
+              del RPI, búsqueda full-text. No se valida coincidencia textual con
+              el PDF; la integridad legal está dada por las firmas digitales.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:minLength value="1"/>
+              <xs:maxLength value="500000"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+        <xs:element name="Observaciones" minOccurs="0">
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:maxLength value="4000"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+        <xs:element ref="ds:Signature"/>
+      </xs:sequence>
+      <xs:attribute name="version" type="xs:string" use="required" fixed="3.0"/>
+      <xs:attribute name="Id" type="xs:ID" use="optional">
+        <xs:annotation>
+          <xs:documentation>
+            Atributo opcional usado por librerías de firma XML-DSig
+            (xml-crypto, Apache Santuario, etc.) para identificar el elemento
+            firmado. El RPI lo ignora a nivel de contenido, solo lo acepta para
+            compatibilidad con firmadores que lo agregan automáticamente.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

@@ -36,10 +36,9 @@ El XML del testimonio digital tiene esta estructura raíz:
   <!-- ── Lista de actos: 1..N, de tipos heterogéneos ── -->
   <Actos>
     <Acto numero="1">
-      <!-- Discriminador del tipo de acto. v2.0: solo Compraventa -->
-      <Compraventa>
-        <!-- Bloques de texto libre opcionales del acto -->
-      </Compraventa>
+      <!-- v3: el tipo de acto es el CÓDIGO del catálogo `act` (no un elemento nombrado). -->
+      <Codigo>1028</Codigo>
+      <!-- <ActoSecundario>1075</ActoSecundario>  ← opcional (2º código de la minuta) -->
       <Partes>
         <Parte rol="TRANSMITENTE">
           <!-- ...campos de la persona...
@@ -100,12 +99,14 @@ El XML del testimonio digital tiene esta estructura raíz:
 </TestimonioDigital>
 ```
 
-> El orden de los elementos dentro de `<Acto>` es fijo: primero el discriminador
-> del tipo (`Compraventa`), el `ActoSecundario` opcional (código 1075/1157) si la
-> minuta lleva acto secundario, luego `Partes`, `Inmuebles`, `DatosEconomicos`,
-> `CertificacionDominio` y `VisadoRentas`. Dentro de cada `<Inmueble>` el orden
-> también es fijo: `IdentificacionInmueble`, `CertificacionCatastral`,
-> `NomenclaturaCatastral`. Cada `<Parte rol="TRANSMITENTE">` lleva su
+> El orden de los elementos dentro de `<Acto>` es fijo: primero el `Codigo` (código
+> del acto), el `ActoSecundario` opcional (código 1075/1157) si la minuta lleva acto
+> secundario, luego `Partes`, `Inmuebles`, `DatosEconomicos`, `CertificacionDominio`
+> (opcional), `VisadoRentas` y, al final, los textos libres opcionales
+> (`DescripcionActoIncompleto`, `ReconocimientoHipotecaMedidasCautelares`,
+> `AfectacionesAlDominio`, `AsentimientoConyugal`). Dentro de cada `<Inmueble>`:
+> `IdentificacionInmueble` y —**opcionales en v3**— `CertificacionCatastral` y
+> `NomenclaturaCatastral`. Cada `<Parte rol="TRANSMITENTE">` puede llevar su
 > `CertificacionInhibicion` como último hijo de la parte.
 
 > El atributo `numero` de cada `<Acto>` es un entero positivo obligatorio. La
@@ -184,12 +185,12 @@ Datos del acto notarial en sí:
 ### Actos / Acto
 
 `Actos` es el contenedor de los **N actos** del testimonio. Tiene uno o más
-elementos `<Acto numero="...">`. Los actos pueden ser de tipos distintos entre
-sí (en v2.0 el único tipo disponible es `Compraventa`).
+elementos `<Acto numero="...">`. Los actos pueden ser de tipos distintos entre sí:
+cada uno declara su tipo por **código** (`<Codigo>`).
 
 Cada `<Acto>` contiene, en este orden:
 
-1. El **discriminador del tipo de acto** (`Compraventa`).
+1. El **`Codigo`** del acto (código del catálogo `act`).
 2. `Partes` — las personas que intervienen, con su rol por atributo. Cada
    `<Parte rol="TRANSMITENTE">` lleva su `CertificacionInhibicion` (ver
    [La Parte](#la-parte-persona--rol)).
@@ -337,20 +338,21 @@ Visado de la Dirección Provincial de Rentas. Bloque **obligatorio**.
 </VisadoRentas>
 ```
 
-### Compraventa (discriminador del acto)
+### Codigo (tipo del acto)
 
-Primer elemento de cada `<Acto>`. Identifica el tipo de acto (en v2.0, único
-tipo) y lleva solo los datos **propios del tipo compraventa**. Las partes y los
-inmuebles ya **no** viven dentro de `Compraventa`: viven en `Acto/Partes` y
-`Acto/Inmuebles`. Subelementos de `Compraventa` (todos opcionales):
+Primer elemento de cada `<Acto>`. Es el **código del catálogo `act`** (`xs:integer`),
+p. ej. `1028` compraventa, `1075` hipoteca, `1056` donación, `1102` permuta, `1020`
+cancelación. Reemplaza al elemento nombrado por tipo de v2 (`<Compraventa/>` ya no
+existe). El XSD solo valida que sea un entero; qué código está **habilitado** y qué
+exige (roles, montos, certificaciones) lo valida el servicio por familia (ADR-004).
 
-- `DescripcionActoIncompleto`: aclaración del escribano si no es una compraventa
-  estándar completa.
+Los **textos libres** del acto (antes dentro del elemento de tipo) son ahora hijos
+opcionales de `<Acto>`, **al final** (después de `VisadoRentas`):
+
+- `DescripcionActoIncompleto`: aclaración del escribano si el acto no es estándar/completo.
 - `ReconocimientoHipotecaMedidasCautelares` (texto libre).
 - `AfectacionesAlDominio` (texto libre).
 - `AsentimientoConyugal` (texto libre).
-
-Una compraventa estándar y completa puede llevar `<Compraventa/>` vacío.
 
 Ver `xsd/v2/actos/compraventa.xsd` para el detalle.
 

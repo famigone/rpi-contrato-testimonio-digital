@@ -1,0 +1,937 @@
+{
+  "_comentario": [
+    "Catálogo informativo de códigos de acto admitidos en la minuta notarial del Registro de la Propiedad Inmueble de Neuquén.",
+    "ESTO ES UN DATO, NO UN ESQUEMA: este archivo no valida nada. El XSD declara <Codigo> como xs:integer (ver ADR-004).",
+    "Que un código figure acá significa que EXISTE en el catálogo del registro, no que el canal digital lo tenga HABILITADO.",
+    "La habilitación se valida en el servicio; un código existente pero no habilitado se rechaza con CODIGO_ACTO_NO_HABILITADO.",
+    "Fuente: desplegable de acto de la minuta notarial del sistema registral (equivale a act.actfow='M', área 51, serie 1000+)."
+  ],
+  "version": "2026-07-24",
+  "cantidad": 231,
+  "actos": [
+    {
+      "codigo": 1001,
+      "nombre": "ACEPTACION DE GESTION"
+    },
+    {
+      "codigo": 1002,
+      "nombre": "ACRECENTAMIENTO USUFRUCTO"
+    },
+    {
+      "codigo": 1003,
+      "nombre": "ACCESION ALUVIONAL"
+    },
+    {
+      "codigo": 1005,
+      "nombre": "ADJUDICACION EXTRAJUDICIAL POR DISOLUCION DE SOCIEDAD CONYUGAL"
+    },
+    {
+      "codigo": 1006,
+      "nombre": "ADJUDICACION POR DISOLUCION SOCIEDAD COMERCIAL"
+    },
+    {
+      "codigo": 1007,
+      "nombre": "ADJUDICACION POR HERENCIA VACANTE"
+    },
+    {
+      "codigo": 1009,
+      "nombre": "AFECTACION REGIMEN LEY 24.374"
+    },
+    {
+      "codigo": 1010,
+      "nombre": "ALTA UNIDADES FUNCIONALES"
+    },
+    {
+      "codigo": 1011,
+      "nombre": "AMPLIACION MONTO HIPOTECA"
+    },
+    {
+      "codigo": 1012,
+      "nombre": "ANOTACION HIPOTECARIA"
+    },
+    {
+      "codigo": 1013,
+      "nombre": "ANOTACION PREVENTIVA SERVIDUMBRE ADMINISTRATIVA"
+    },
+    {
+      "codigo": 1014,
+      "nombre": "ANTICRESIS"
+    },
+    {
+      "codigo": 1015,
+      "nombre": "APORTE SOCIAL ANOTACION PREV.ART.38 - LEY 19550"
+    },
+    {
+      "codigo": 1016,
+      "nombre": "AFECTACION A VIVIENDA"
+    },
+    {
+      "codigo": 1018,
+      "nombre": "CAMBIO DE DENOMINACION"
+    },
+    {
+      "codigo": 1019,
+      "nombre": "CAMBIO DE DENOMINACION ACREEDOR HIPOTECARIO"
+    },
+    {
+      "codigo": 1020,
+      "nombre": "CANCELACION DE HIPOTECA"
+    },
+    {
+      "codigo": 1021,
+      "nombre": "CANCELACION DE ANOTACION HIPOTECARIA"
+    },
+    {
+      "codigo": 1026,
+      "nombre": "CESION CREDITO HIPOTECARIO"
+    },
+    {
+      "codigo": 1027,
+      "nombre": "CESION PROPIEDAD FIDUCIARIA CREDITO HIPOTECARIO"
+    },
+    {
+      "codigo": 1028,
+      "nombre": "COMPRAVENTA"
+    },
+    {
+      "codigo": 1029,
+      "nombre": "COMPRAVENTA PARTE INDIVISA"
+    },
+    {
+      "codigo": 1030,
+      "nombre": "COMPRAVENTA NUDA PROPIEDAD"
+    },
+    {
+      "codigo": 1031,
+      "nombre": "COMPRAVENTA POR TRACTO ABREVIADO"
+    },
+    {
+      "codigo": 1032,
+      "nombre": "COMPRAVENTA POR GESTION DE NEGOCIOS"
+    },
+    {
+      "codigo": 1033,
+      "nombre": "COMPRAVENTA POR LICITACION PUBLICA"
+    },
+    {
+      "codigo": 1034,
+      "nombre": "COMPRAVENTA COMO FIDUCIARIO Art.1684 CCyCN"
+    },
+    {
+      "codigo": 1035,
+      "nombre": "COMPRAVENTA DE USUFRUCTO"
+    },
+    {
+      "codigo": 1037,
+      "nombre": "DACION EN PAGO"
+    },
+    {
+      "codigo": 1038,
+      "nombre": "DACION EN PAGO PARTE INDIVISA"
+    },
+    {
+      "codigo": 1039,
+      "nombre": "DACION EN PAGO NUDA PROPIEDAD"
+    },
+    {
+      "codigo": 1040,
+      "nombre": "DACION EN PAGO POR TRACTO ABREVIADO"
+    },
+    {
+      "codigo": 1041,
+      "nombre": "DACION EN PAGO POR GESTION DE NEGOCIOS"
+    },
+    {
+      "codigo": 1047,
+      "nombre": "DERECHO DE ACRECER"
+    },
+    {
+      "codigo": 1048,
+      "nombre": "DESAFECTACION BIEN DE FAMILIA"
+    },
+    {
+      "codigo": 1049,
+      "nombre": "DESAFECTACION DOMINIO PUBLICO"
+    },
+    {
+      "codigo": 1050,
+      "nombre": "DESAFECTACION PROPIEDAD HORIZONTAL"
+    },
+    {
+      "codigo": 1051,
+      "nombre": "DESAFECTACION REGIMEN LEY 24374"
+    },
+    {
+      "codigo": 1053,
+      "nombre": "DISTRACTO DE COMPRAVENTA"
+    },
+    {
+      "codigo": 1054,
+      "nombre": "DISTRACTO DE DONACION"
+    },
+    {
+      "codigo": 1055,
+      "nombre": "DIVISION DE CONDOMINIO"
+    },
+    {
+      "codigo": 1056,
+      "nombre": "DONACION"
+    },
+    {
+      "codigo": 1057,
+      "nombre": "DONACION CON CARGO"
+    },
+    {
+      "codigo": 1058,
+      "nombre": "DONACION PARTE INDIVISA"
+    },
+    {
+      "codigo": 1059,
+      "nombre": "DONACION NUDA PROPIEDAD"
+    },
+    {
+      "codigo": 1060,
+      "nombre": "DONACION MITAD NUDA Y MITAD PLENA PROPIEDAD"
+    },
+    {
+      "codigo": 1061,
+      "nombre": "DONACION con cláusula de reversión"
+    },
+    {
+      "codigo": 1062,
+      "nombre": "DONACION POR TRACTO ABREVIADO"
+    },
+    {
+      "codigo": 1063,
+      "nombre": "DONACION RESERVA FISCAL"
+    },
+    {
+      "codigo": 1067,
+      "nombre": "ENGLOBAMIENTO"
+    },
+    {
+      "codigo": 1068,
+      "nombre": "ENGLOBAMIENTO Y CONSTITUCION DE CONDOMINIO"
+    },
+    {
+      "codigo": 1069,
+      "nombre": "PROTOCOLIZACION ESCISION"
+    },
+    {
+      "codigo": 1073,
+      "nombre": "EXTINCION DE USUFRUCTO"
+    },
+    {
+      "codigo": 1074,
+      "nombre": "FUSION POR ABSORCION"
+    },
+    {
+      "codigo": 1075,
+      "nombre": "HIPOTECA"
+    },
+    {
+      "codigo": 1080,
+      "nombre": "LEASING"
+    },
+    {
+      "codigo": 1088,
+      "nombre": "LIBERACION DE HIPOTECA"
+    },
+    {
+      "codigo": 1093,
+      "nombre": "MODIFICACION VENCIMIENTO FIDEICOMISO"
+    },
+    {
+      "codigo": 1101,
+      "nombre": "PARTICION EXTRAJUDICIAL"
+    },
+    {
+      "codigo": 1102,
+      "nombre": "PERMUTA"
+    },
+    {
+      "codigo": 1103,
+      "nombre": "PERMUTA PARTE INDIVISA"
+    },
+    {
+      "codigo": 1104,
+      "nombre": "PERMUTA NUDA PROPIEDAD"
+    },
+    {
+      "codigo": 1105,
+      "nombre": "PERMUTA POR GESTION DE NEGOCIOS"
+    },
+    {
+      "codigo": 1106,
+      "nombre": "PERMUTA POR TRACTO ABREVIADO"
+    },
+    {
+      "codigo": 1109,
+      "nombre": "PROTOCOLIZACION ADJUDICACION POR DISOLUCION DE SOCIEDAD CONYUGAL"
+    },
+    {
+      "codigo": 1110,
+      "nombre": "PROTOCOLIZACION DECLARATORIA DE HEREDEROS"
+    },
+    {
+      "codigo": 1111,
+      "nombre": "PROTOCOLIZACION DE SUBASTA"
+    },
+    {
+      "codigo": 1112,
+      "nombre": "READJUDICACION UNIDAD COMPLEMENTARIA"
+    },
+    {
+      "codigo": 1113,
+      "nombre": "REDUCCION MONTO HIPOTECA"
+    },
+    {
+      "codigo": 1115,
+      "nombre": "RECTIFICACION POR CAMBIO DE OBJETO"
+    },
+    {
+      "codigo": 1117,
+      "nombre": "REINSCRIPCION ANOTACION HIPOTECARIA"
+    },
+    {
+      "codigo": 1118,
+      "nombre": "RETROCESION DE DOMINIO"
+    },
+    {
+      "codigo": 1120,
+      "nombre": "SERVIDUMBRE"
+    },
+    {
+      "codigo": 1121,
+      "nombre": "SERVIDUMBRE ADMINISTRATIVA"
+    },
+    {
+      "codigo": 1124,
+      "nombre": "SUBDIVISION"
+    },
+    {
+      "codigo": 1125,
+      "nombre": "SUBSISTENCIA BIEN DE FAMILIA"
+    },
+    {
+      "codigo": 1126,
+      "nombre": "TRANSFERENCIA POR AUMENTO DE CAPITAL"
+    },
+    {
+      "codigo": 1127,
+      "nombre": "TRANSFERENCIA PROPIEDAD FIDUCIARIA"
+    },
+    {
+      "codigo": 1128,
+      "nombre": "TRANSFERENCIA POR CUMPLIMIENTO FIDEICOMISO"
+    },
+    {
+      "codigo": 1129,
+      "nombre": "TRANSFERENCIA POR EXTINCION FIDEICOMISO"
+    },
+    {
+      "codigo": 1130,
+      "nombre": "TRANSFERENCIA DE DOMINIO ART.14 LEY 24145"
+    },
+    {
+      "codigo": 1131,
+      "nombre": "TRANSFORMACION SOCIAL"
+    },
+    {
+      "codigo": 1132,
+      "nombre": "TRANSMISION DE DOMINIO(entre organismos públicos)"
+    },
+    {
+      "codigo": 1133,
+      "nombre": "USO Y HABITACION"
+    },
+    {
+      "codigo": 1135,
+      "nombre": "USUCAPION ADMINISTRATIVA"
+    },
+    {
+      "codigo": 1136,
+      "nombre": "USUFRUCTO"
+    },
+    {
+      "codigo": 1138,
+      "nombre": "USUFRUCTO MITAD INDIVISA"
+    },
+    {
+      "codigo": 1144,
+      "nombre": "ADJUDICACION POR DISOLUCION DE SOCIEDAD DE HECHO"
+    },
+    {
+      "codigo": 1146,
+      "nombre": "COMPRAVENTA EN PARTE POR TRACTO ABREVIADO"
+    },
+    {
+      "codigo": 1147,
+      "nombre": "RECONOCIMIENTO DE EMBARGO"
+    },
+    {
+      "codigo": 1149,
+      "nombre": "REINSCRIPCION HIPOTECA"
+    },
+    {
+      "codigo": 1157,
+      "nombre": "RECONOCIMIENTO DE HIPOTECA"
+    },
+    {
+      "codigo": 1159,
+      "nombre": "COMPRAVENTA PARTE INDIVISA EN PTE POR TRACTO ABREV"
+    },
+    {
+      "codigo": 1160,
+      "nombre": "COMPRAVENTA SIMULTANEA"
+    },
+    {
+      "codigo": 1161,
+      "nombre": "DONACION SIMULTANEA"
+    },
+    {
+      "codigo": 1165,
+      "nombre": "PROTOCOLIZACION PARTICION"
+    },
+    {
+      "codigo": 1167,
+      "nombre": "UNION y REDISTRIBUCION"
+    },
+    {
+      "codigo": 1168,
+      "nombre": "COMPENSACION POR PARTICION"
+    },
+    {
+      "codigo": 1170,
+      "nombre": "CONSOLIDACION DE DOMINIO LEY 24374"
+    },
+    {
+      "codigo": 1171,
+      "nombre": "PROTOCOLIZACION EXPROPIACION"
+    },
+    {
+      "codigo": 1172,
+      "nombre": "ADJUDICACION POR DISOLUCION SOCIEDAD CIVIL"
+    },
+    {
+      "codigo": 1173,
+      "nombre": "DISTRACTO DE COMPRAVENTA"
+    },
+    {
+      "codigo": 1174,
+      "nombre": "DISTRACTO DE DONACION"
+    },
+    {
+      "codigo": 1175,
+      "nombre": "DACION EN PAGO NUDA PROPIEDAD PARTE INDIVISA"
+    },
+    {
+      "codigo": 1176,
+      "nombre": "DONACION NUDA PROPIEDAD con derecho de acrecer"
+    },
+    {
+      "codigo": 1177,
+      "nombre": "DONACION NUDA PROPIEDAD-dcho.acrecer-cl.reversión"
+    },
+    {
+      "codigo": 1178,
+      "nombre": "DONACION MITAD NUDA Y MITAD PLENA-c/cl.reversión"
+    },
+    {
+      "codigo": 1179,
+      "nombre": "DONACION NUDA PROPIEDAD-con clausula de reversión"
+    },
+    {
+      "codigo": 1180,
+      "nombre": "USUFRUCTO con derecho de acrecer"
+    },
+    {
+      "codigo": 1181,
+      "nombre": "DONACION EN PARTE POR TRACTO ABREVIADO"
+    },
+    {
+      "codigo": 1182,
+      "nombre": "DONACION PARTE INDIVISA POR TRACTO ABREVIADO"
+    },
+    {
+      "codigo": 1183,
+      "nombre": "PROTOCOLIZACION DECLARATORIA DE HEREDEROS Y CESION"
+    },
+    {
+      "codigo": 1184,
+      "nombre": "DONACION CON RESERVA DE USO"
+    },
+    {
+      "codigo": 1185,
+      "nombre": "DONACION CON RESERVA DE HABITACION"
+    },
+    {
+      "codigo": 1187,
+      "nombre": "USO"
+    },
+    {
+      "codigo": 1188,
+      "nombre": "HABITACION"
+    },
+    {
+      "codigo": 1189,
+      "nombre": "PROTOCOLIZACION DE USUCAPION"
+    },
+    {
+      "codigo": 1190,
+      "nombre": "ADJUDICACION EXTRAJUDICIAL POR COMPENSACION POR DISOLUCIÓN DE SOCIEDAD CONYUGAL"
+    },
+    {
+      "codigo": 1193,
+      "nombre": "DESAFECTACION A VIVIENDA"
+    },
+    {
+      "codigo": 1194,
+      "nombre": "SUBSISTENCIA AFECTACION A VIVIENDA"
+    },
+    {
+      "codigo": 1195,
+      "nombre": "PROTOCOLIZACION COMUNIDAD HEREDITARIA"
+    },
+    {
+      "codigo": 1196,
+      "nombre": "TERCER TESTIMONIO"
+    },
+    {
+      "codigo": 1197,
+      "nombre": "CUARTO TESTIMONIO"
+    },
+    {
+      "codigo": 1198,
+      "nombre": "QUINTO TESTIMONIO"
+    },
+    {
+      "codigo": 1199,
+      "nombre": "RECONOCIMIENTO DE LITIS"
+    },
+    {
+      "codigo": 1200,
+      "nombre": "SEGUNDO TESTIMONIO"
+    },
+    {
+      "codigo": 1201,
+      "nombre": "DESAFECTACION VIVIENDA POR SUBROGACION REAL"
+    },
+    {
+      "codigo": 1202,
+      "nombre": "DESAFECTACION BIEN DE FAMILIA POR SUBROGACION REAL"
+    },
+    {
+      "codigo": 1203,
+      "nombre": "RESERVA POR SUBROGACION REAL (Art.248 CCyCN)"
+    },
+    {
+      "codigo": 1204,
+      "nombre": "AFECTACION A VIVIENDA POR SUBROGACION REAL"
+    },
+    {
+      "codigo": 1205,
+      "nombre": "AFECTACION A BIEN DE FAMILIA POR SUBROGACION REAL"
+    },
+    {
+      "codigo": 1208,
+      "nombre": "RECTIFICACION NOMBRE DE TITULAR"
+    },
+    {
+      "codigo": 1209,
+      "nombre": "RECTIFICACION NOMBRE CONYUGE"
+    },
+    {
+      "codigo": 1210,
+      "nombre": "RECTIFICACION DNI"
+    },
+    {
+      "codigo": 1211,
+      "nombre": "RECTIFICACION NACIONALIDAD"
+    },
+    {
+      "codigo": 1212,
+      "nombre": "RECTIFICACION ESTADO CIVIL"
+    },
+    {
+      "codigo": 1213,
+      "nombre": "RECTIFICACION APELLIDO DE TITULAR"
+    },
+    {
+      "codigo": 1214,
+      "nombre": "EXTINCION DE USUFRUCTO POR RENUNCIA"
+    },
+    {
+      "codigo": 1215,
+      "nombre": "EXTINCION DE USUFRUCTO POR FALLECIMIENTO"
+    },
+    {
+      "codigo": 1217,
+      "nombre": "PRIMERA INSCRIPCION EXCEDENTE"
+    },
+    {
+      "codigo": 1218,
+      "nombre": "RECTIFICACION DE CUIT/L"
+    },
+    {
+      "codigo": 1220,
+      "nombre": "INSCRIPCION DE EXCEDENTE Ley 14159"
+    },
+    {
+      "codigo": 1221,
+      "nombre": "PRIMERA INSCRIPCION DECRETO 5008/66"
+    },
+    {
+      "codigo": 1223,
+      "nombre": "TRANSACCION"
+    },
+    {
+      "codigo": 1224,
+      "nombre": "UNION, REDISTRIBUCION Y CONST.DE CONDOMINIO"
+    },
+    {
+      "codigo": 1225,
+      "nombre": "SUBDIVISION POR TRACTO ABREVIADO"
+    },
+    {
+      "codigo": 1226,
+      "nombre": "PROTOCOLIZACION DIVISION DE CONDOMINIO"
+    },
+    {
+      "codigo": 1227,
+      "nombre": "AMPLIACION BENEFICIARIOS BIEN DE FAMILIA"
+    },
+    {
+      "codigo": 1228,
+      "nombre": "AMPLIACION BENEFICIARIOS AFECTACION A VIVIENDA"
+    },
+    {
+      "codigo": 1229,
+      "nombre": "MODIFICACION DE ESTADO CONSTRUCTIVO DEC.479/11"
+    },
+    {
+      "codigo": 1230,
+      "nombre": "RECTIFICACION NOMENCLATURA CATASTRAL"
+    },
+    {
+      "codigo": 1231,
+      "nombre": "ADJUDICACION POR DISTRIBUCION DE DIVIDENDOS"
+    },
+    {
+      "codigo": 1232,
+      "nombre": "RENUNCIA DE CONDOMINIO ART.1989"
+    },
+    {
+      "codigo": 1233,
+      "nombre": "PROTOCOLIZACION PARTICION UNION CONVIVENCIAL"
+    },
+    {
+      "codigo": 1234,
+      "nombre": "HIPOTECA POR SUSTITUCION DE OBJETO"
+    },
+    {
+      "codigo": 1236,
+      "nombre": "DONACION POR PARTICION EXTRAJUDICIAL"
+    },
+    {
+      "codigo": 1237,
+      "nombre": "USUFRUCTO POR PARTICION EXTRAJUDICIAL"
+    },
+    {
+      "codigo": 1238,
+      "nombre": "RECTIFICACION DE MEDIDAS POR DESLINDE"
+    },
+    {
+      "codigo": 1242,
+      "nombre": "PERMUTA COMO FIDUCIARIO ART.1684 CCYCN."
+    },
+    {
+      "codigo": 1243,
+      "nombre": "RECTIFICACION PROPORCIONES"
+    },
+    {
+      "codigo": 1244,
+      "nombre": "ADJUDICACION POR DISOLUCION DE UNION CONVIVENCIAL"
+    },
+    {
+      "codigo": 1245,
+      "nombre": "SUSTITUCION DE FIDUCIARIO"
+    },
+    {
+      "codigo": 1246,
+      "nombre": "EXTINCION DE CLAUSULA DE RETRANSMISION"
+    },
+    {
+      "codigo": 1247,
+      "nombre": "PARTICION EXTRAJUDICIAL NUDA PROPIEDAD"
+    },
+    {
+      "codigo": 1249,
+      "nombre": "ADJUD.EXTRAJ.P/COMPENSACION POR CESE DE UNION CONV"
+    },
+    {
+      "codigo": 1250,
+      "nombre": "DONACION SOLIDARIA Art.1547 CCyC."
+    },
+    {
+      "codigo": 1251,
+      "nombre": "COMPRAVENTA COMO FIDUC. ART.1684 CCYC X TRACTO ABR"
+    },
+    {
+      "codigo": 1252,
+      "nombre": "PROTOCOLIZACION LEVANTAMIENTO MEDIDA DE NO INNOVAR"
+    },
+    {
+      "codigo": 1253,
+      "nombre": "PROTOCOLIZACION LEVANTAMIENTO DE INHIBICION"
+    },
+    {
+      "codigo": 1254,
+      "nombre": "PROTOCOLIZACION LEVANTAMIENTO DE EMBARGO"
+    },
+    {
+      "codigo": 1255,
+      "nombre": "PROTOCOLIZACION LEVANTAMIENTO DE LITIS"
+    },
+    {
+      "codigo": 1256,
+      "nombre": "PROTOCOLIZACION LEVANTAMIENTO AUTOS DE SUBASTA"
+    },
+    {
+      "codigo": 1257,
+      "nombre": "ADJUDICACION POR DISOLUCION DE SOC. CONYUGAL POR MODIFICACION DE REGIMEN MAT/PAT"
+    },
+    {
+      "codigo": 1260,
+      "nombre": "CONSTITUCION DEFINITIVA DE SOCIEDAD ART.38 L.19550"
+    },
+    {
+      "codigo": 1261,
+      "nombre": "RENUNCIA DERECHO DE REVERSION"
+    },
+    {
+      "codigo": 1262,
+      "nombre": "LEVANTAMIENTO CLAUSULA DE REVERSION"
+    },
+    {
+      "codigo": 1263,
+      "nombre": "DESAFECTACION RESERVA FISCAL POR CAMBIO DE DESTINO"
+    },
+    {
+      "codigo": 1266,
+      "nombre": "PROTOCOLIZACION RECTIFICACION POR CAMBIO DE OBJETO"
+    },
+    {
+      "codigo": 1267,
+      "nombre": "RECTIFICACION APELLIDO CONYUGE"
+    },
+    {
+      "codigo": 1270,
+      "nombre": "COMPRAVENTA POR GESTION DE NEGOCIOS PARTE INDIVISA"
+    },
+    {
+      "codigo": 1271,
+      "nombre": "ACEPTACION DE GESTION PARTE INDIVISA"
+    },
+    {
+      "codigo": 1272,
+      "nombre": "CLAUSULA DE REVERSION"
+    },
+    {
+      "codigo": 1273,
+      "nombre": "DISTRACTO DE PERMUTA"
+    },
+    {
+      "codigo": 1274,
+      "nombre": "CANCELACION DE HIPOTECA POR CONFUSION"
+    },
+    {
+      "codigo": 1275,
+      "nombre": "RECT.POR CAMBIO DE OBJETO Y SUST. DE OBJETO HIPOTE"
+    },
+    {
+      "codigo": 1276,
+      "nombre": "SERVIDUMBRE ADMINISTRATIVA DE ELECTRODUCTO"
+    },
+    {
+      "codigo": 1277,
+      "nombre": "DONACION NUDA PROPIEDAD CON CARGO"
+    },
+    {
+      "codigo": 1278,
+      "nombre": "PROTOCOLIZACION NULIDAD DE COMPRAVENTA"
+    },
+    {
+      "codigo": 1279,
+      "nombre": "PROTOCOLIZACION DE USUCAPION PARTE INDIVISA"
+    },
+    {
+      "codigo": 1280,
+      "nombre": "DONACION NUDA PROPIEDAD MITAD INDIVISA"
+    },
+    {
+      "codigo": 1283,
+      "nombre": "DONACION SOLIDARIA Art.1547 CCyC NUDA PROPIEDAD"
+    },
+    {
+      "codigo": 1284,
+      "nombre": "DONACION SOLIDARIA Art.1547 CCyC NUDA PROPIEDAD PARTE INDIVISA"
+    },
+    {
+      "codigo": 1285,
+      "nombre": "LEVANTAMIENTO DE CARGO"
+    },
+    {
+      "codigo": 1286,
+      "nombre": "TRANSMISION DE DOMINIO LEY 27260"
+    },
+    {
+      "codigo": 1287,
+      "nombre": "REVERSION DE DONACION"
+    },
+    {
+      "codigo": 1288,
+      "nombre": "DONACION NUDA PROPIEDAD PARTE INDIVISA"
+    },
+    {
+      "codigo": 1289,
+      "nombre": "PROTOCOLIZACION USUFRUCTO POR PARTICION"
+    },
+    {
+      "codigo": 1290,
+      "nombre": "EXTINCION CLAUSULA DE REVERSION POR FALLECIMIENTO"
+    },
+    {
+      "codigo": 1293,
+      "nombre": "MATRICULACION POR DESAFECTACION DE PH Y CONSTITUCION DE CONDOMINIO"
+    },
+    {
+      "codigo": 1294,
+      "nombre": "COMPRAVENTA MITAD NUDA MITAD PLENA PROPIEDAD"
+    },
+    {
+      "codigo": 1295,
+      "nombre": "TRANSACCION PARTE INDIVISA NUDA PROPIEDAD"
+    },
+    {
+      "codigo": 1296,
+      "nombre": "TRANSACCION NUDA PROPIEDAD"
+    },
+    {
+      "codigo": 1297,
+      "nombre": "TRANSACCION PARTE INDIVISA"
+    },
+    {
+      "codigo": 1298,
+      "nombre": "EXTINCION DE SERVIDUMBRE"
+    },
+    {
+      "codigo": 1299,
+      "nombre": "DONACION NUDA PROPIEDAD POR TRACTO ABREVIADO"
+    },
+    {
+      "codigo": 1300,
+      "nombre": "ACEPTACION DE DONACION SOLIDARIA ART.1547 C.C.Y C."
+    },
+    {
+      "codigo": 1301,
+      "nombre": "ACEPTACION DE DONACION SOLIDARIA PARTE INDIVISA ART.1547 C.C.Y C."
+    },
+    {
+      "codigo": 1302,
+      "nombre": "ACEPTACION DE DONACION SOLIDARIA MITAD INDIVISA ART.1547 C.C. Y C.."
+    },
+    {
+      "codigo": 1303,
+      "nombre": "PROTOCOLIZACION INSTITUCION DE HEREDEROS"
+    },
+    {
+      "codigo": 1306,
+      "nombre": "EXTINCION DE USO POR RENUNCIA"
+    },
+    {
+      "codigo": 1307,
+      "nombre": "EXTINCION DE USO POR FALLECIMIENTO"
+    },
+    {
+      "codigo": 1309,
+      "nombre": "RECTIFICACION DATOS DE INSTRUMENTACION"
+    },
+    {
+      "codigo": 1310,
+      "nombre": "RECTIFICACION DE MONTO"
+    },
+    {
+      "codigo": 1313,
+      "nombre": "MODIFICACION DE BENEFICIARIOS AFECTACION A VIVIENDA"
+    },
+    {
+      "codigo": 1314,
+      "nombre": "MODIFICACION DE BENEFICIARIOS BIEN DE FAMILIA"
+    },
+    {
+      "codigo": 1316,
+      "nombre": "MATRICULACION"
+    },
+    {
+      "codigo": 1317,
+      "nombre": "EXTINCION DE HABITACIÓN"
+    },
+    {
+      "codigo": 1318,
+      "nombre": "TRANSFERENCIA DE DOMINIO POR CUMPLIMIENTO DE CONTRATO DE OBRA"
+    },
+    {
+      "codigo": 1322,
+      "nombre": "DISTRIBUCION DE DIVIDENDOS"
+    },
+    {
+      "codigo": 1323,
+      "nombre": "CANCELACION DE HIPOTECA POR CAMBIO DE OBJETO"
+    },
+    {
+      "codigo": 1324,
+      "nombre": "RECTIFICACION MAYOR FRACCION"
+    },
+    {
+      "codigo": 1325,
+      "nombre": "RECTIFICACION INSCRIPCION"
+    },
+    {
+      "codigo": 1326,
+      "nombre": "DERECHO REAL DE SUPERFICIE TOTAL"
+    },
+    {
+      "codigo": 1327,
+      "nombre": "DERECHO REAL DE SUPERFICIE PARCIAL"
+    },
+    {
+      "codigo": 1328,
+      "nombre": "EXTINCION CLAUSULA DE REVERSION POR RENUNCIA"
+    },
+    {
+      "codigo": 1329,
+      "nombre": "LEVANTAMIENTO RESTRICCION AL DOMINIO"
+    },
+    {
+      "codigo": 1330,
+      "nombre": "COMPRAVENTA PARTE INDIVISA POR TRACTO ABREVIADO"
+    },
+    {
+      "codigo": 1331,
+      "nombre": "EXTINCION DE LEASING POR"
+    },
+    {
+      "codigo": 1332,
+      "nombre": "RECTIFICACION DE DESIGNACION DE LOTE"
+    },
+    {
+      "codigo": 1335,
+      "nombre": "COMPRAVENTA POR OPCION EN LEASING"
+    },
+    {
+      "codigo": 1336,
+      "nombre": "USUFRUCTO POR PERMUTA"
+    }
+  ]
+}
