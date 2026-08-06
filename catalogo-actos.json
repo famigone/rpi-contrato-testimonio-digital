@@ -6,7 +6,7 @@
     "La habilitación se valida en el servicio; un código existente pero no habilitado se rechaza con CODIGO_ACTO_NO_HABILITADO.",
     "Fuente: desplegable de acto de la minuta notarial del sistema registral (equivale a act.actfow='M', área 51, serie 1000+)."
   ],
-  "version": "2026-07-24",
+  "version": "2026-08-06",
   "cantidad": 231,
   "actos": [
     {
@@ -107,11 +107,11 @@
     },
     {
       "codigo": 1032,
-      "nombre": "COMPRAVENTA POR GESTION DE NEGOCIOS"
+      "nombre": "COMPRAVENTA  POR GESTION DE NEGOCIOS"
     },
     {
       "codigo": 1033,
-      "nombre": "COMPRAVENTA POR LICITACION PUBLICA"
+      "nombre": "COMPRAVENTA  POR LICITACION PUBLICA"
     },
     {
       "codigo": 1034,

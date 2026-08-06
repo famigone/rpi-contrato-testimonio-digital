@@ -1,0 +1,4441 @@
+{
+  "versionEsquema": "1.0.0",
+  "versionContenido": "1.0.0",
+  "generado": {
+    "totalActos": 59
+  },
+  "esquema": {
+    "tiposDePersona": {
+      "H": {
+        "label": "Persona humana",
+        "campos": [
+          "Tipo",
+          "ApellidoODenominacion",
+          "Nombres",
+          "CUIT",
+          "TipoDocumento",
+          "NumeroDocumento",
+          "PEP"
+        ]
+      },
+      "J": {
+        "label": "Persona jurídica",
+        "campos": [
+          "Tipo",
+          "ApellidoODenominacion",
+          "CUIT",
+          "NumeroDocumento",
+          "PEP",
+          "InscripcionOrganismoSede"
+        ]
+      },
+      "O": {
+        "label": "Organismo",
+        "campos": [
+          "Tipo",
+          "ApellidoODenominacion",
+          "CUIT",
+          "NumeroDocumento",
+          "PEP",
+          "InscripcionOrganismoSede"
+        ]
+      }
+    },
+    "camposCondicionalesPersona": {
+      "datosHumanosCompletos": [
+        "EstadoCivil",
+        "Nacionalidad",
+        "FechaNacimiento"
+      ],
+      "asentimientoConyugal": [
+        "Conyuge",
+        "Nupcias"
+      ]
+    },
+    "tiposDeCampo": {
+      "monto": {
+        "campos": [
+          "valor",
+          "moneda",
+          "cotizacion?"
+        ]
+      },
+      "certificado": {
+        "campos": [
+          "numero",
+          "fechaEmision"
+        ]
+      },
+      "inmueble": {
+        "campos": [
+          "identificacion",
+          "nomenclaturaCatastral?",
+          "certCatastral?"
+        ]
+      }
+    },
+    "roles": {
+      "wmt": {
+        "label": "Adquirente / Titular"
+      },
+      "wmc": {
+        "label": "Transmitente"
+      },
+      "wmi": {
+        "label": "Acreedor"
+      }
+    },
+    "labelsCampo": {
+      "precioOperacion": "Precio o Monto de la Operación",
+      "valuacionFiscal": "Valuación Fiscal",
+      "montoHipoteca": "Monto Hipoteca",
+      "certDominio": "Número de Certificado",
+      "certCatastral": "Certificado Catastral",
+      "asentimiento": "Asentimiento Conyugal",
+      "reconHipoteca": "Reconocimiento de Hipotecas y/o Medidas Cautelares",
+      "afectaciones": "Afectaciones al Dominio y Otros Derechos Reales"
+    },
+    "enums": {
+      "tipoPersona": [
+        "H",
+        "J",
+        "O"
+      ],
+      "tipoDocumento": [
+        "DNI",
+        "LE",
+        "LC",
+        "PAS"
+      ],
+      "estadoCivil": [
+        "SOLTERO",
+        "SOLTERA",
+        "CASADO",
+        "CASADA",
+        "DIVORCIADO",
+        "DIVORCIADA",
+        "VIUDO",
+        "VIUDA",
+        "CONVIVIENTE",
+        "OTRO"
+      ],
+      "moneda": [
+        "$",
+        "USD"
+      ],
+      "tipoVisado": [
+        "R",
+        "A"
+      ]
+    }
+  },
+  "actos": {
+    "1011": {
+      "nombre": "AMPLIACION MONTO HIPOTECA",
+      "familia": "HIPOTECARIA_CONSTITUYE",
+      "partes": [
+        {
+          "rol": "wmi",
+          "label": "Acreedor",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": true
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmt",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1020": {
+      "nombre": "CANCELACION DE HIPOTECA",
+      "familia": "HIPOTECARIA_LIBERA",
+      "partes": [
+        {
+          "rol": "wmi",
+          "label": "Acreedor",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": true
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certDominio": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certCatastral": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "asentimiento": {
+          "aplica": false,
+          "rol": null,
+          "condicional": null
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1021": {
+      "nombre": "CANCELACION DE ANOTACION HIPOTECARIA",
+      "familia": "HIPOTECARIA_LIBERA",
+      "partes": [
+        {
+          "rol": "wmi",
+          "label": "Acreedor",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": true
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": false
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "asentimiento": {
+          "aplica": false,
+          "rol": null,
+          "condicional": null
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1028": {
+      "nombre": "COMPRAVENTA",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": true
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1029": {
+      "nombre": "COMPRAVENTA PARTE INDIVISA",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": true
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1030": {
+      "nombre": "COMPRAVENTA NUDA PROPIEDAD",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": true
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1031": {
+      "nombre": "COMPRAVENTA POR TRACTO ABREVIADO",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": true
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1032": {
+      "nombre": "COMPRAVENTA POR GESTION DE NEGOCIOS",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": true
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1034": {
+      "nombre": "COMPRAVENTA COMO FIDUCIARIO",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": true
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1035": {
+      "nombre": "COMPRAVENTA DE USUFRUCTO",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": true
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1037": {
+      "nombre": "DACION EN PAGO",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1038": {
+      "nombre": "DACION EN PAGO PARTE INDIVISA",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1039": {
+      "nombre": "DACION EN PAGO NUDA PROPIEDAD",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1040": {
+      "nombre": "DACION EN PAGO POR TRACTO ABREVIADO",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1053": {
+      "nombre": "DISTRACTO DE COMPRAVENTA",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1054": {
+      "nombre": "DISTRACTO DE DONACION",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1056": {
+      "nombre": "DONACION",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1057": {
+      "nombre": "DONACION CON CARGO",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1058": {
+      "nombre": "DONACION PARTE INDIVISA",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1059": {
+      "nombre": "DONACION NUDA PROPIEDAD",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1060": {
+      "nombre": "DONACION MITAD NUDA MITAD PLENA PROPIEDAD",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1061": {
+      "nombre": "DONACION CON CLAUSULA DE REVERSION",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1062": {
+      "nombre": "DONACION POR TRACTO ABREVIADO",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1075": {
+      "nombre": "HIPOTECA",
+      "familia": "HIPOTECARIA_CONSTITUYE",
+      "partes": [
+        {
+          "rol": "wmi",
+          "label": "Acreedor",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": true
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmt",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1088": {
+      "nombre": "LIBERACION DE HIPOTECA",
+      "familia": "HIPOTECARIA_LIBERA",
+      "partes": [
+        {
+          "rol": "wmi",
+          "label": "Acreedor",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": true
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certDominio": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certCatastral": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "asentimiento": {
+          "aplica": false,
+          "rol": null,
+          "condicional": null
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1102": {
+      "nombre": "PERMUTA",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": true
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1103": {
+      "nombre": "PERMUTA DE PARTE INDIVISA",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": true
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1104": {
+      "nombre": "PERMUTA DE NUDA PROPIEDAD",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": true
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1106": {
+      "nombre": "PERMUTA POR TRACTO ABREVIADO",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": true
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1113": {
+      "nombre": "REDUCCION MONTO HIPOTECA",
+      "familia": "HIPOTECARIA_LIBERA",
+      "partes": [
+        {
+          "rol": "wmi",
+          "label": "Acreedor",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": true
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certDominio": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certCatastral": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "asentimiento": {
+          "aplica": false,
+          "rol": null,
+          "condicional": null
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1146": {
+      "nombre": "COMPRAVENTA EN PARTE POR TRACTO ABREVIADO",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": true
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1149": {
+      "nombre": "REINSCRIPCION HIPOTECA",
+      "familia": "HIPOTECARIA_LIBERA",
+      "partes": [
+        {
+          "rol": "wmi",
+          "label": "Acreedor",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": true
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certDominio": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certCatastral": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "asentimiento": {
+          "aplica": false,
+          "rol": null,
+          "condicional": null
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1159": {
+      "nombre": "COMPRAVENTA PARTE INDIVISA EN PARTE POR TRACTO ABREVIADO",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": true
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1160": {
+      "nombre": "COMPRAVENTA SIMULTANEA",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": true
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1161": {
+      "nombre": "DONACION SIMULTANEA",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1173": {
+      "nombre": "DISTRACTO DE COMPRAVENTA",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1174": {
+      "nombre": "DISTRACTO DE DONACION",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1176": {
+      "nombre": "DONACION NUDA PROPIEDAD CON DERECHO DE ACRECER",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1177": {
+      "nombre": "DONACION NUDA PROPIEDAD CON DERECHO DE ACRECER Y REVERSION",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1178": {
+      "nombre": "DONACION MITAD NUDA MITAD PLENA CON CLAUSULA DE REVERSION",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1179": {
+      "nombre": "DONACION NUDA PROPIEDAD CON DERECHO DE ACRECER Y CLAUSULA DE REVERSION",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1181": {
+      "nombre": "DONACION EN PARTE POR TRACTO ABREVIADO",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1182": {
+      "nombre": "DONACION PARTE INDIVISA POR TRACTO ABREVIADO",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1185": {
+      "nombre": "DONACION CON RESERVA DE HABITACION",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1242": {
+      "nombre": "PERMUTA COMO FIDUCIARIO",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": true
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1250": {
+      "nombre": "DONACION SOLIDARIA ART.1547 CCYC",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1251": {
+      "nombre": "COMPRAVENTA COMO FIDUCIARIO POR TRACTO ABREVIADO",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": true
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1270": {
+      "nombre": "COMPRAVENTA POR GESTION DE NEGOCIOS PARTE INDIVISA",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": true
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1273": {
+      "nombre": "DISTRACTO DE PERMUTA",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1274": {
+      "nombre": "CANCELACION DE HIPOTECA POR CONFUSION",
+      "familia": "HIPOTECARIA_LIBERA",
+      "partes": [
+        {
+          "rol": "wmi",
+          "label": "Acreedor",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": true
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certDominio": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certCatastral": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "asentimiento": {
+          "aplica": false,
+          "rol": null,
+          "condicional": null
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1277": {
+      "nombre": "DONACION NUDA PROPIEDAD CON CARGO",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1280": {
+      "nombre": "DONACION NUDA PROPIEDAD MITAD INDIVISA",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1283": {
+      "nombre": "DONACION SOLIDARIA ART.1547 CCYC NUDA PROPIEDAD",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1284": {
+      "nombre": "DONACION SOLIDARIA NUDA PROPIEDAD PARTE INDIVISA",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1288": {
+      "nombre": "DONACION NUDA PROPIEDAD PARTE INDIVISA",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1294": {
+      "nombre": "COMPRAVENTA MITAD NUDA MITAD PLENA PROPIEDAD",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": true
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1299": {
+      "nombre": "DONACION NUDA PROPIEDAD POR TRACTO ABREVIADO",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1323": {
+      "nombre": "CANCELACION DE HIPOTECA POR CAMBIO DE OBJETO",
+      "familia": "HIPOTECARIA_LIBERA",
+      "partes": [
+        {
+          "rol": "wmi",
+          "label": "Acreedor",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": true
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certDominio": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certCatastral": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "asentimiento": {
+          "aplica": false,
+          "rol": null,
+          "condicional": null
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1330": {
+      "nombre": "COMPRAVENTA PARTE INDIVISA POR TRACTO ABREVIADO",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": true
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    }
+  }
+}
