@@ -33,6 +33,11 @@ Las restricciones de longitud y formato las valida el XSD. Las reglas
 "proporciones suman 1") las valida el servicio del RPI, no el XSD; ver
 [07 — Respuestas y errores](07-respuestas-y-errores.md).
 
+Este documento lista los campos **campo por campo**. Si en vez de un formulario
+fijo querés **generarlo dinámicamente por acto** (qué partes y qué campos exige
+cada acto habilitado), usá el artefacto de campos: ver
+[11 — Artefacto de campos por acto](11-artefacto-campos-por-acto.md).
+
 ## 1. Datos del envío
 
 Camino base: `TestimonioDigital/MetadatosEnvio`

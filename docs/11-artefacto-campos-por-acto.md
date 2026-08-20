@@ -1,9 +1,16 @@
-# Guía de integración — Artefacto de campos ↔ Editor del escribano
+# 11 — Artefacto de campos por acto (formulario dinámico)
 
 > **Para:** programadores del editor del Colegio de Escribanos.
-> **Qué es esto:** cómo consumir `artefacto-campos-por-acto.json` para armar dinámicamente el
-> formulario de carga de un testimonio digital, validarlo, y enviarlo al RPI.
+> **Qué es esto:** cómo consumir [`artefacto-campos-por-acto.json`](../artefacto-campos-por-acto.json)
+> para armar dinámicamente el formulario de carga de un testimonio digital, validarlo, y enviarlo
+> al RPI.
 > **Versión del artefacto que documenta:** esquema `1.0.0` / contenido `1.0.0`.
+>
+> **Relación con el capítulo 10.** [10 — Campos del formulario](10-campos-del-formulario.md)
+> describe los campos del testimonio **campo por campo**, con su camino XML: es la referencia
+> estática para implementar un formulario a mano. Este capítulo describe el artefacto JSON que
+> permite **generar** ese formulario dinámicamente, sin hardcodear un formulario por acto. Ante
+> discrepancia sobre estructura del XML, manda el XSD.
 
 ---
 
@@ -13,9 +20,9 @@ El editor consume tres archivos, con roles distintos. **Ninguno reemplaza a los 
 
 | Archivo | Qué es | Para qué lo usa el editor |
 |---------|--------|---------------------------|
-| `catalogo-actos.json` | Los 231 actos con su nombre | Armar el **selector de actos** |
-| `artefacto-campos-por-acto.json` | Reglas de campos de los actos habilitados | Armar el **formulario** de cada acto |
-| XSD del contrato (v3) | Estructura del XML del testimonio | **Validar** el XML antes de enviarlo |
+| [`catalogo-actos.json`](../catalogo-actos.json) | Los 231 actos con su nombre | Armar el **selector de actos** |
+| [`artefacto-campos-por-acto.json`](../artefacto-campos-por-acto.json) | Reglas de campos de los actos habilitados | Armar el **formulario** de cada acto |
+| XSD del contrato v3 (`xsd/v3/testimonio-digital.xsd`) | Estructura del XML del testimonio | **Validar** el XML antes de enviarlo |
 
 Flujo mental: el **catálogo** dice qué actos ofrecer, el **artefacto** dice qué campos pedir por
 acto, el **XSD** dice si el XML resultante es válido.
@@ -295,10 +302,16 @@ El artefacto te ayuda a **armar y pre-validar** el formulario. Pero el testimoni
    estructura (tipos exactos, patrones, anidamiento, cardinalidad). El artefacto es una vista
    simplificada para UI; **no reemplaza la validación XSD**. Validá el XML contra el XSD **antes de
    enviar** — el backend lo va a re-validar igual, así que atrapar errores acá te ahorra rechazos.
+   La estructura del XML está descrita en [04 — Formato XML](04-formato-xml.md) y el detalle
+   campo por campo en [10 — Campos del formulario](10-campos-del-formulario.md).
 
-2. **Firmar (PAdES) y enviar.** El protocolo de envío (endpoint, formato, autenticación, respuesta,
-   códigos de error) es un tema aparte de este documento. → *(referenciar el documento de integración
-   del protocolo cuando esté; hoy pendiente de documentar)*.
+2. **Firmar y enviar.** El protocolo de envío es un tema aparte de este documento, y está cubierto
+   por los capítulos anteriores:
+   - [03 — Endpoint API](03-endpoint-api.md): URL, método, autenticación, `multipart/form-data`.
+   - [05 — Firma digital](05-firma-digital.md): firma XML-DSig del testimonio.
+   - [06 — Adjunto PDF](06-adjunto-pdf.md): cómo viaja el PDF firmado junto al XML.
+   - [07 — Respuestas y errores](07-respuestas-y-errores.md): códigos HTTP, catálogo de errores, reintentos.
+   - [08 — Notificaciones de callback](08-notificaciones-callback.md): cambios de estado del testimonio.
 
 > **Regla mental:** artefacto = **armar** el formulario · XSD = **validar** el XML · protocolo =
 > **enviar**. Los tres se usan, en ese orden.
@@ -315,7 +328,7 @@ El artefacto te ayuda a **armar y pre-validar** el formulario. Pero el testimoni
 - [ ] Rotular partes con los roles genéricos, sin traducir (§5.3).
 - [ ] Validar el XML contra el XSD antes de enviar (§7).
 - [ ] Detectar cambios de versión: `versionContenido` (refrescar datos) vs `versionEsquema` (revisar).
-- [ ] Manejar los códigos de error de rechazo del backend *(cuando esté el doc de protocolo)*.
+- [ ] Manejar los códigos de error de rechazo del backend — ver [07 — Respuestas y errores](07-respuestas-y-errores.md).
 
 ---
 
@@ -323,5 +336,15 @@ El artefacto te ayuda a **armar y pre-validar** el formulario. Pero el testimoni
 
 - Formato/endpoint de publicación del artefacto (¿URL fija? ¿cómo se entera el editor de una versión
   nueva — polling, endpoint de versión?).
-- Documento del protocolo de envío (endpoint, auth, formato, catálogo de errores) — pendiente.
+- Del protocolo de envío quedan abiertos los puntos marcados como pendientes en
+  [03 — Endpoint API](03-endpoint-api.md): URL definitiva de staging/producción y mecanismo de
+  autenticación (Bearer token vs mTLS).
 - Semántica del "aceptado" sincrónico: ¿confirma recepción/validación, o inscripción registral?
+
+---
+
+## Próximos pasos
+
+Si venís del formulario y querés el detalle campo por campo del XML, seguí con
+[10 — Campos del formulario](10-campos-del-formulario.md). Si querés implementar el envío,
+empezá por [03 — Endpoint API](03-endpoint-api.md).

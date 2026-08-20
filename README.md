@@ -37,6 +37,7 @@ describe la v3.0. Para versiones anteriores, consultar los [tags del repositorio
 | Audiencia | Por dónde empezar |
 |-----------|-------------------|
 | Programador que va a integrar un sistema cliente con el RPI | [docs/01-introduccion.md](docs/01-introduccion.md) y luego en orden. |
+| Programador del editor del Colegio de Escribanos (formulario del escribano) | [docs/11-artefacto-campos-por-acto.md](docs/11-artefacto-campos-por-acto.md), junto con [docs/10-campos-del-formulario.md](docs/10-campos-del-formulario.md). |
 | Equipo técnico del RPI que mantiene este contrato | [GOVERNANCE.md](GOVERNANCE.md) y [CONTRIBUTING.md](CONTRIBUTING.md). |
 | Auditor o revisor que evalúa el contrato | Empezar por [docs/02-flujo-end-to-end.md](docs/02-flujo-end-to-end.md). |
 | Consumidores futuros (otros registros, otras integraciones) | Este README + [docs/01-introduccion.md](docs/01-introduccion.md). |
@@ -57,6 +58,7 @@ Orden recomendado para integraciones nuevas:
 8. **[Notificaciones de callback](docs/08-notificaciones-callback.md)** — qué te devuelve el RPI cuando inscribe.
 9. **[Glosario](docs/09-glosario.md)** — términos del dominio registral y notarial.
 10. **[Campos del formulario](docs/10-campos-del-formulario.md)** — tabla plana de todos los campos para armar el formulario del escribano.
+11. **[Artefacto de campos por acto](docs/11-artefacto-campos-por-acto.md)** — cómo consumir `artefacto-campos-por-acto.json` para generar el formulario dinámicamente por acto.
 
 ---
 
@@ -81,7 +83,8 @@ Orden recomendado para integraciones nuevas:
 │   ├── 07-respuestas-y-errores.md
 │   ├── 08-notificaciones-callback.md
 │   ├── 09-glosario.md
-│   └── 10-campos-del-formulario.md
+│   ├── 10-campos-del-formulario.md
+│   └── 11-artefacto-campos-por-acto.md   ← guía de integración del artefacto (editor del escribano)
 │
 ├── xsd/                                   ← contratos XSD modulares
 │   ├── README.md
@@ -113,6 +116,7 @@ Orden recomendado para integraciones nuevas:
 │       └── comunes/                       ← tipos comunes (SIN actos/: el acto es un dato)
 │
 ├── catalogo-actos.json                    ← ★ lista informativa de códigos (dato, no esquema)
+├── artefacto-campos-por-acto.json         ← ★ reglas de campos/partes por acto habilitado (ver docs/11)
 └── ejemplos/                              ← XMLs válidos de ejemplo
     ├── README.md
     ├── *.xml                              ← ejemplos v1 (legacy, validan contra xsd/)

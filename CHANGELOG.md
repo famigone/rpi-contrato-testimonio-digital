@@ -7,6 +7,22 @@ y este contrato adhiere a [Semantic Versioning 2.0.0](https://semver.org/spec/v2
 
 ---
 
+## [No publicado]
+
+### Agregado
+- **`artefacto-campos-por-acto.json`** (raíz del repo): reglas de **partes y campos por acto
+  habilitado** para que el editor del escribano arme el formulario dinámicamente. Versionado propio
+  e independiente del contrato: `versionEsquema` (estructuras genéricas; cambiarlo es *breaking*
+  para el editor) y `versionContenido` (qué actos están habilitados; no requiere cambios de código).
+- **`docs/11-artefacto-campos-por-acto.md`**: guía de integración del artefacto con el editor del
+  Colegio de Escribanos (antes `INTEGRACION-artefacto-editor.md` en la raíz), incorporada como
+  capítulo 11 de la documentación.
+
+> Es un **dato**, no parte del esquema XML: no afecta el XSD ni la versión del contrato. La
+> validación definitiva del testimonio sigue siendo el XSD v3 más las reglas del servicio.
+
+---
+
 ## [3.0.0] — 2026-07-24
 
 Cambio **MAJOR (incompatible)**: el **tipo de acto pasa de ser un elemento del esquema a ser un
