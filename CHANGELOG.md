@@ -18,6 +18,13 @@ y este contrato adhiere a [Semantic Versioning 2.0.0](https://semver.org/spec/v2
   Colegio de Escribanos (antes `INTEGRACION-artefacto-editor.md` en la raíz), incorporada como
   capítulo 11 de la documentación.
 
+### Cambiado
+- **Documentación alineada a v3**: los capítulos 01 a 11, el `README.md`, `xsd/README.md`,
+  `ejemplos/README.md` y `xsd/v3/README.md` describen **solo la v3** (namespace `/v3`,
+  `version="3.0"`, `<VersionContrato>3.0</VersionContrato>`, XSD `xsd/v3/`). Se quitaron las
+  comparaciones con v1/v2; el historial de versiones queda en este CHANGELOG.
+- **`docs/07`**: se agrega el código de error `CODIGO_ACTO_NO_HABILITADO` (422).
+
 > Es un **dato**, no parte del esquema XML: no afecta el XSD ni la versión del contrato. La
 > validación definitiva del testimonio sigue siendo el XSD v3 más las reglas del servicio.
 

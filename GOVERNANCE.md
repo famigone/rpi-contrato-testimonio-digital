@@ -9,7 +9,7 @@ políticas que aplican a este repositorio.
 ## Principios
 
 1. **El contrato es un activo compartido**. Lo usa el RPI internamente, los
-   sistemas notariales que integran (en v1.0: el Colegio de Escribanos de
+   sistemas notariales que integran (hoy: el Colegio de Escribanos de
    Neuquén), y eventualmente otros consumidores.
 
 2. **Los cambios incompatibles tienen costo institucional**. Romper un contrato
@@ -46,7 +46,7 @@ Responsabilidades del mantenedor:
 Personas que pueden revisar propuestas de cambio sin ser mantenedoras. Su
 revisión no es vinculante pero ayuda al mantenedor a tomar mejores decisiones.
 
-En v1.0 incluyen al menos:
+Hoy incluyen al menos:
 
 - Responsable técnico del Colegio de Escribanos de Neuquén (para cambios que
   afectan al integrador principal).
@@ -118,7 +118,7 @@ Cambios **incompatibles** con versiones anteriores:
    migración (`docs/migracion-vX-a-vY.md`).
 5. **Aprobación de mantenedor + al menos dos revisores**, incluyendo
    obligatoriamente:
-   - Revisor del lado del integrador principal (en v1: Colegio).
+   - Revisor del lado del integrador principal (hoy: Colegio).
    - Revisor del lado del RPI (Dirección de Notariado o Líder Técnico).
 6. **Período de coexistencia**: la versión anterior y la nueva conviven en
    producción durante un período definido (sugerido: 6 meses) antes de
@@ -153,7 +153,7 @@ con la publicación de la versión nueva.
 
 1. Mergear los PRs pendientes a la rama principal.
 2. Actualizar `CHANGELOG.md` agregando la nueva versión.
-3. Crear tag Git: `git tag -a v1.0.1 -m "Release v1.0.1"`.
+3. Crear tag Git: `git tag -a v3.0.1 -m "Release v3.0.1"`.
 4. Hacer push del tag.
 5. Crear Release en la plataforma Git con notas de release.
 

@@ -11,10 +11,10 @@
 | Producción | `https://[POR-DEFINIR].jusneuquen.gov.ar/api/v1/testimonios` |
 
 > **Nota sobre el `v1` del path**: el `/api/v1/` de la URL es la versión de la
-> **API HTTP**, independiente de la versión del **contrato** del testimonio (hoy
-> **v2**, con namespace `https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v2`).
+> **API HTTP**, independiente de la versión del **contrato** del testimonio
+> (**v3**, con namespace `https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v3`).
 > Son dos ejes distintos: la API puede seguir en `v1` mientras el cuerpo del XML
-> usa el contrato v2. No confundir "v1 de la API" con "v1 del contrato".
+> usa el contrato v3. No confundir la versión de la API con la del contrato.
 
 ## Método HTTP
 

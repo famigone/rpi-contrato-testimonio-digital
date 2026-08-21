@@ -32,56 +32,54 @@ El flujo actual en papel implica:
 El testimonio digital elimina la impresión, el desplazamiento físico y la carga
 manual. Los datos llegan estructurados al RPI y se procesan automáticamente.
 
-## Alcance de la v2.0
+## Alcance del contrato
 
-El cambio central de la v2.0 respecto de la v1.0 es que **un testimonio puede
-contener N actos (1 a N)** en lugar de uno solo. Una misma escritura suele
-formalizar varios actos (por ejemplo, dos compraventas), y v2 lo modela
-explícitamente con una lista `<Actos>` de elementos `<Acto>`.
+**Un testimonio contiene N actos (1 a N).** Una misma escritura suele formalizar
+varios actos (por ejemplo, dos compraventas), y el contrato lo modela con una
+lista `<Actos>` de elementos `<Acto>`.
 
-> **v3 (vigente): el tipo de acto es un CÓDIGO, no un elemento.** Un acto se
-> identifica con `<Codigo>NNNN</Codigo>` (el código del catálogo legacy `act`), no
-> con un elemento nombrado por tipo (`<Compraventa/>` ya no existe). El XSD no lleva
-> un enum de códigos: la lista de códigos existentes se publica en
-> `catalogo-actos.json` y qué códigos están *habilitados* lo decide el servicio.
-> Ver ADR-004. Lo de abajo describe el modelo de tipos de acto; en v3 la variabilidad
-> por acto (roles, montos, certificaciones) se valida en el servicio por
-> combinación código→familia, no en el XSD.
+**El tipo de acto es un CÓDIGO, no un elemento del esquema.** Un acto se
+identifica con `<Codigo>NNNN</Codigo>` (el código del catálogo `act`). El XSD no
+lleva un enum de códigos: la lista de códigos existentes se publica como dato en
+[`catalogo-actos.json`](../catalogo-actos.json), y qué códigos están
+*habilitados* lo decide el servicio. Ver el ADR-004 del repo del servicio.
 
-En v3, **agregar un acto ya NO toca el contrato**: es habilitar un código más en el
-servicio (con su familia estructural), no agregar un XSD ni una rama del esquema.
-Actos con evidencia hasta ahora: compraventa (1028), hipoteca (1075), donación
-(1056), permuta (1102), y la familia de cancelaciones/liberaciones (1020, 1088, …).
+Como consecuencia, **agregar un acto no toca el contrato**: es habilitar un
+código más en el servicio (con su familia estructural), no agregar un XSD ni una
+rama del esquema. La variabilidad por acto (qué roles, qué montos, qué
+certificaciones exige) se valida en el servicio por combinación código→familia,
+no en el XSD. Actos con evidencia hasta ahora: compraventa (1028), hipoteca
+(1075), donación (1056), permuta (1102), y la familia de
+cancelaciones/liberaciones (1020, 1088, …).
 
-Esta versión soporta, igual que v1:
+El contrato soporta:
 
 - **Personas jurídicas** (sociedades, asociaciones) y **organismos públicos**
   como partes del acto, además de personas humanas.
 - **Representantes** (tutor, apoderado, etc.) mediante un bloque opcional dentro
   de cada persona.
-
-Y agrega como novedad de v2:
-
 - **N actos por testimonio**, cada uno con sus propias partes, inmuebles, datos
-  económicos, certificaciones y visado. Los bloques que en v1 vivían a nivel
-  testimonio **bajan al nivel de cada acto**.
-- **Partes con rol genérico**: en lugar de los contenedores `Adquirentes` /
-  `Transmitentes` de v1, cada acto tiene una lista de `<Parte rol="...">`. Los
-  roles definidos hoy son `ADQUIRENTE`, `TRANSMITENTE`, `ACREEDOR` y `DEUDOR`.
+  económicos, certificaciones y visado.
+- **Partes con rol genérico**: cada acto tiene una lista de `<Parte rol="...">`.
+  Los roles definidos hoy son `ADQUIRENTE`, `TRANSMITENTE`, `ACREEDOR` y
+  `DEUDOR`.
+- **Actos sin catastro** (por ejemplo, cancelación de hipoteca): la certificación
+  catastral y la nomenclatura son opcionales.
 
-No están soportadas en v2.0:
+No están soportados:
 
 - **Asentimiento conyugal estructurado**: se modela como **texto libre** en el
-  campo `AsentimientoConyugal`, no como bloque con cónyuge, fecha, etc.
-- **Otros tipos de actos** (división de condominio, etc.):
-  se incorporarán en versiones futuras (la estructura ya está preparada;
-  **compraventa**, **hipoteca**, **donación** y **permuta** ya están soportados).
+  campo `AsentimientoConyugal` (hijo opcional de `<Acto>`), no como bloque con
+  cónyuge, fecha, etc.
+- **Actos no habilitados**: el catálogo tiene 231 códigos, pero solo los que el
+  servicio habilita pueden enviarse por testimonio digital. Ver
+  [11 — Artefacto de campos por acto](11-artefacto-campos-por-acto.md).
 - **Ampliatorios** o reingresos del mismo testimonio (cada envío genera un
   trámite nuevo).
 
-> v2 **coexiste** con v1: los XSD de v1 quedan intactos en `xsd/` y los de v2
-> viven en `xsd/v2/` con su propio namespace (`/v2`). Esta documentación
-> describe la v2.0.
+> Esta documentación describe la **v3.0**, la versión vigente del contrato. El
+> XSD es [`xsd/v3/testimonio-digital.xsd`](../xsd/v3/testimonio-digital.xsd),
+> con namespace `https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v3`.
 
 ## Roles en la integración
 

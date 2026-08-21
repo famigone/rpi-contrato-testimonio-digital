@@ -2,22 +2,25 @@
 
 ## Estructura general
 
-El cambio central de v2 es que un testimonio contiene **N actos (1 a N)**. Los
-bloques sustantivos (partes, inmuebles, datos económicos, certificaciones,
-visado) **bajan del nivel testimonio al nivel de cada `<Acto>`**. A nivel
-testimonio quedan los datos que son únicos por trámite (un escribano, un
-otorgamiento, un cuerpo de escritura, una firma).
+Un testimonio contiene **N actos (1 a N)**. Los bloques sustantivos (partes,
+inmuebles, datos económicos, certificaciones, visado) viven **dentro de cada
+`<Acto>`**, porque cada acto puede tener distintas partes, inmuebles, monto y
+certificaciones. A nivel testimonio quedan los datos que son únicos por trámite
+(un escribano, un otorgamiento, un cuerpo de escritura, una firma).
+
+El **tipo de acto es un dato**: cada `<Acto>` declara su tipo con `<Codigo>`, el
+código del catálogo `act`. No hay un elemento por tipo de acto en el esquema.
 
 El XML del testimonio digital tiene esta estructura raíz:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <TestimonioDigital
-    xmlns="https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v2"
+    xmlns="https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v3"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
-    xsi:schemaLocation="https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v2 testimonio-digital.xsd"
-    version="2.0">
+    xsi:schemaLocation="https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v3 testimonio-digital.xsd"
+    version="3.0">
 
   <!-- ── Nivel testimonio: un trámite, un cuerpo de escritura ── -->
 
@@ -36,7 +39,7 @@ El XML del testimonio digital tiene esta estructura raíz:
   <!-- ── Lista de actos: 1..N, de tipos heterogéneos ── -->
   <Actos>
     <Acto numero="1">
-      <!-- v3: el tipo de acto es el CÓDIGO del catálogo `act` (no un elemento nombrado). -->
+      <!-- El tipo de acto es el CÓDIGO del catálogo `act`. -->
       <Codigo>1028</Codigo>
       <!-- <ActoSecundario>1075</ActoSecundario>  ← opcional (2º código de la minuta) -->
       <Partes>
@@ -57,10 +60,11 @@ El XML del testimonio digital tiene esta estructura raíz:
             <!-- Matrícula o terna Tomo/Folio/Finca + departamento -->
           </IdentificacionInmueble>
           <CertificacionCatastral>
-            <!-- Catastral del inmueble (obligatoria por inmueble) -->
+            <!-- Catastral del inmueble (opcional en el XSD; la exige el servicio
+                 en los actos cuya familia lleva catastro) -->
           </CertificacionCatastral>
           <NomenclaturaCatastral>
-            <!-- Nomenclatura en 5 campos (obligatoria por inmueble) -->
+            <!-- Nomenclatura en 5 campos (misma regla que la certificación) -->
           </NomenclaturaCatastral>
         </Inmueble>
         <!-- Más <Inmueble> si el acto los tiene; cada uno con su catastro -->
@@ -105,7 +109,7 @@ El XML del testimonio digital tiene esta estructura raíz:
 > (opcional), `VisadoRentas` y, al final, los textos libres opcionales
 > (`DescripcionActoIncompleto`, `ReconocimientoHipotecaMedidasCautelares`,
 > `AfectacionesAlDominio`, `AsentimientoConyugal`). Dentro de cada `<Inmueble>`:
-> `IdentificacionInmueble` y —**opcionales en v3**— `CertificacionCatastral` y
+> `IdentificacionInmueble` y —**opcionales**— `CertificacionCatastral` y
 > `NomenclaturaCatastral`. Cada `<Parte rol="TRANSMITENTE">` puede llevar su
 > `CertificacionInhibicion` como último hijo de la parte.
 
@@ -122,16 +126,14 @@ El XML del testimonio digital tiene esta estructura raíz:
 El namespace del contrato es:
 
 ```
-https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v2
+https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v3
 ```
 
 Todos los elementos del testimonio (excepto la firma XML-DSig, que usa su
 propio namespace) están bajo este namespace.
 
-La versión MAJOR del contrato está embebida en el namespace (`/v2`). El
-namespace de v1 (`/v1`) y sus XSD siguen existiendo en paralelo en `xsd/`: un
-XML de v1 sigue siendo válido contra el XSD de v1. Esta documentación describe
-la v2.0.
+La versión MAJOR del contrato está embebida en el namespace (`/v3`). Los
+cambios MINOR y PATCH mantienen el mismo namespace; un cambio MAJOR lo cambia.
 
 ## Secciones del XML
 
@@ -151,7 +153,7 @@ Datos de control del envío:
   <IdentificadorEnvio>550e8400-e29b-41d4-a716-446655440000</IdentificadorEnvio>
   <TimestampEnvio>2026-06-15T10:23:45-03:00</TimestampEnvio>
   <HashPDF>3a7bd3e2360a3d29eea436fcfb7e44c735d117c42d1c1835420b6b9942dd4f1b</HashPDF>
-  <VersionContrato>2.0</VersionContrato>
+  <VersionContrato>3.0</VersionContrato>
 </MetadatosEnvio>
 ```
 
@@ -191,23 +193,20 @@ cada uno declara su tipo por **código** (`<Codigo>`).
 Cada `<Acto>` contiene, en este orden:
 
 1. El **`Codigo`** del acto (código del catálogo `act`).
-2. `Partes` — las personas que intervienen, con su rol por atributo. Cada
+2. `ActoSecundario` — opcional, el segundo código de la minuta.
+3. `Partes` — las personas que intervienen, con su rol por atributo. Cada
    `<Parte rol="TRANSMITENTE">` lleva su `CertificacionInhibicion` (ver
    [La Parte](#la-parte-persona--rol)).
-3. `Inmuebles` — uno o más `<Inmueble>`, cada uno con su `IdentificacionInmueble`,
-   su `CertificacionCatastral` y su `NomenclaturaCatastral` (el catastro es **por
-   inmueble**).
-4. `DatosEconomicos`, `CertificacionDominio` y `VisadoRentas`.
-
-Estos bloques en v1 vivían a nivel testimonio; en v2 **bajan al acto**, porque
-cada acto puede tener distintas partes, inmuebles, monto y certificaciones.
+4. `Inmuebles` — uno o más `<Inmueble>`, cada uno con su `IdentificacionInmueble`
+   y, cuando el acto lleva catastro, su `CertificacionCatastral` y su
+   `NomenclaturaCatastral` (el catastro es **por inmueble**).
+5. `DatosEconomicos`, `CertificacionDominio` (opcional) y `VisadoRentas`.
+6. Los **textos libres** opcionales del acto, al final.
 
 ```xml
 <Actos>
   <Acto numero="1">
-    <Compraventa>
-      <DescripcionActoIncompleto>Compraventa con saldo de precio</DescripcionActoIncompleto>
-    </Compraventa>
+    <Codigo>1028</Codigo>
     <Partes>
       <Parte rol="TRANSMITENTE">
         <!-- ...persona... -->
@@ -225,6 +224,7 @@ cada acto puede tener distintas partes, inmuebles, monto y certificaciones.
     <DatosEconomicos> ... </DatosEconomicos>
     <CertificacionDominio> ... </CertificacionDominio>
     <VisadoRentas> ... </VisadoRentas>
+    <DescripcionActoIncompleto>Compraventa con saldo de precio</DescripcionActoIncompleto>
   </Acto>
 </Actos>
 ```
@@ -232,9 +232,9 @@ cada acto puede tener distintas partes, inmuebles, monto y certificaciones.
 Cada certificado vive donde recae lo que certifica: el **catastro**
 (`CertificacionCatastral` y `NomenclaturaCatastral`) dentro de cada `<Inmueble>`;
 la **inhibición** (`CertificacionInhibicion`) dentro de cada `<Parte>`
-transmitente; el resto de los bloques (`CertificacionDominio`, `DatosEconomicos`,
-`VisadoRentas`, `Compraventa`, `Partes` e `Inmuebles`) directamente **dentro de
-cada `<Acto>`**.
+transmitente; el resto de los bloques (`Codigo`, `CertificacionDominio`,
+`DatosEconomicos`, `VisadoRentas`, `Partes` e `Inmuebles`) directamente **dentro
+de cada `<Acto>`**.
 
 ### CertificacionDominio
 
@@ -242,12 +242,10 @@ Certificado de dominio previo que el escribano solicitó al RPI antes de otorgar
 la escritura. Recae sobre el **inmueble** (estado de dominio, gravámenes,
 restricciones) y por eso vive a **nivel acto**.
 
-Estructura simple: `Numero` + `FechaEmision`. Junto con la certificación de
-inhibición (que recae sobre la persona y vive dentro de cada transmitente, ver
-[La Parte](#la-parte-persona--rol)) reemplaza al antiguo
-`CertificacionRegistralPrevia` (un número con dos fechas heredado del legacy).
-Estructuralmente opcional en el XSD, pero **para compraventa el servicio del RPI
-la exige**.
+Estructura simple: `Numero` + `FechaEmision`. Es distinta de la certificación de
+inhibición, que recae sobre la persona y vive dentro de cada transmitente (ver
+[La Parte](#la-parte-persona--rol)). Estructuralmente opcional en el XSD, pero
+**para compraventa el servicio del RPI la exige**.
 
 ```xml
 <CertificacionDominio>
@@ -259,7 +257,9 @@ la exige**.
 ### CertificacionCatastral (por inmueble)
 
 Certificación catastral del inmueble (distinta de la registral). Vive **dentro
-de cada `<Inmueble>`** y es **obligatoria por inmueble**: si un acto tiene varios
+de cada `<Inmueble>`** y es **opcional en el XSD**: los actos de la familia
+HIPOTECARIA-LIBERA (cancelación, liberación) no llevan catastro. En los actos
+que sí lo llevan, el servicio la exige **por inmueble**: si un acto tiene varios
 inmuebles, cada uno lleva la suya. Si `Emitido` es `false`, los demás campos
 pueden omitirse. Si es `true`, `Numero` y `CodigoValidacion` son obligatorios (lo
 valida el servicio). `Observaciones` es obligatorio solo si
@@ -284,9 +284,11 @@ Caso sin certificación emitida:
 
 ### NomenclaturaCatastral (por inmueble)
 
-Identificación parcelaria del inmueble. Vive **dentro de cada `<Inmueble>`** y es
-**obligatoria por inmueble**. Los 5 campos son obligatorios, con longitudes fijas
-(2, 2, 3, 4 y 4 caracteres).
+Identificación parcelaria del inmueble. Vive **dentro de cada `<Inmueble>`** y
+sigue la misma regla que la certificación catastral: **opcional en el XSD**,
+exigida por el servicio en los actos que llevan catastro. Si el bloque está
+presente, sus 5 campos son obligatorios, con longitudes fijas (2, 2, 3, 4 y 4
+caracteres).
 
 ```xml
 <NomenclaturaCatastral>
@@ -340,27 +342,30 @@ Visado de la Dirección Provincial de Rentas. Bloque **obligatorio**.
 
 ### Codigo (tipo del acto)
 
-Primer elemento de cada `<Acto>`. Es el **código del catálogo `act`** (`xs:integer`),
-p. ej. `1028` compraventa, `1075` hipoteca, `1056` donación, `1102` permuta, `1020`
-cancelación. Reemplaza al elemento nombrado por tipo de v2 (`<Compraventa/>` ya no
-existe). El XSD solo valida que sea un entero; qué código está **habilitado** y qué
-exige (roles, montos, certificaciones) lo valida el servicio por familia (ADR-004).
+Primer elemento de cada `<Acto>`. Es el **código del catálogo `act`** (`xs:integer`,
+hasta 4 dígitos), p. ej. `1028` compraventa, `1075` hipoteca, `1056` donación, `1102`
+permuta, `1020` cancelación. El XSD **no** lleva un enum de códigos —el catálogo
+cambia y no debe versionar el contrato—: solo valida que sea un entero. Qué código
+está **habilitado** y qué exige (roles, montos, certificaciones) lo valida el
+servicio por familia (ADR-004). La lista de códigos existentes está en
+[`catalogo-actos.json`](../catalogo-actos.json); las reglas de campos por acto
+habilitado, en [`artefacto-campos-por-acto.json`](../artefacto-campos-por-acto.json)
+(ver [11 — Artefacto de campos por acto](11-artefacto-campos-por-acto.md)).
 
-Los **textos libres** del acto (antes dentro del elemento de tipo) son ahora hijos
-opcionales de `<Acto>`, **al final** (después de `VisadoRentas`):
+Los **textos libres** del acto son hijos opcionales de `<Acto>`, **al final**
+(después de `VisadoRentas`):
 
 - `DescripcionActoIncompleto`: aclaración del escribano si el acto no es estándar/completo.
 - `ReconocimientoHipotecaMedidasCautelares` (texto libre).
 - `AfectacionesAlDominio` (texto libre).
 - `AsentimientoConyugal` (texto libre).
 
-Ver `xsd/v2/actos/compraventa.xsd` para el detalle.
+Ver [`xsd/v3/testimonio-digital.xsd`](../xsd/v3/testimonio-digital.xsd) para el detalle.
 
 ### Partes
 
-Lista de personas que intervienen en el acto. Reemplaza los contenedores
-`Adquirentes` / `Transmitentes` de v1 por una lista única de `<Parte>`, donde el
-rol se expresa con el atributo obligatorio `rol`. Una o más `Parte`.
+Lista de personas que intervienen en el acto: una o más `<Parte>`, donde el rol
+se expresa con el atributo obligatorio `rol`.
 
 ```xml
 <Partes>
@@ -375,16 +380,16 @@ rol se expresa con el atributo obligatorio `rol`. Una o más `Parte`.
 ```
 
 Roles definidos: `ADQUIRENTE`, `TRANSMITENTE`, `ACREEDOR`, `DEUDOR`
-(`ACREEDOR`/`DEUDOR` se usan en el acto **Hipoteca**, disponible desde v2.1). El XSD
-acepta **cualquier** rol en cualquier acto; que el rol corresponda al tipo de
-acto lo valida el servicio del RPI.
+(`ACREEDOR`/`DEUDOR` se usan en los actos de hipoteca). El XSD acepta
+**cualquier** rol en cualquier acto; que el rol corresponda al acto lo valida el
+servicio del RPI según la familia del código.
 
 ### Inmuebles
 
 Uno o más `<Inmueble>` (hasta 50 por acto). Cada `<Inmueble>` contiene, en este
-orden: su `IdentificacionInmueble`, su `CertificacionCatastral` y su
-`NomenclaturaCatastral`. El catastro es **por inmueble** (obligatorio en cada
-uno): si el acto tiene varios inmuebles, cada uno lleva su propio catastro y su
+orden: su `IdentificacionInmueble` y —opcionales— su `CertificacionCatastral` y
+su `NomenclaturaCatastral`. El catastro es **por inmueble**: si el acto lo lleva
+y tiene varios inmuebles, cada uno debe llevar su propio catastro y su
 nomenclatura. Ver [Identificación del inmueble](#identificación-del-inmueble).
 
 ### Rogante
@@ -444,8 +449,9 @@ Notarial Número 123...
 ### Observaciones (opcional)
 
 Texto libre que el escribano quiere transmitir al RPI (hasta 4000 caracteres).
-Es distinto de `AsentimientoConyugal`, `ReconocimientoHipotecaMedidasCautelares`
-y `AfectacionesAlDominio`, que viven dentro de `<Compraventa>`.
+Vive a **nivel testimonio**, a diferencia de `AsentimientoConyugal`,
+`ReconocimientoHipotecaMedidasCautelares` y `AfectacionesAlDominio`, que son
+hijos opcionales de cada `<Acto>`.
 
 ```xml
 <Observaciones>
@@ -459,8 +465,8 @@ Firma XML-DSig del escribano. Detalle en [05 — Firma digital](05-firma-digital
 
 ## La Parte (Persona + rol)
 
-Cada `<Parte>` **es** una persona (el tipo `Persona`, reutilizado sin cambios de
-v1) más el atributo obligatorio `rol`. El contenido de `<Parte>` es exactamente
+Cada `<Parte>` **es** una persona (el tipo `Persona`) más el atributo
+obligatorio `rol`. El contenido de `<Parte>` es exactamente
 el de una `Persona` (los mismos subelementos), con `rol` en el elemento de
 apertura, más —solo en los transmitentes— la `CertificacionInhibicion` como
 último subelemento. Por eso los campos de persona descritos abajo aplican igual a
@@ -623,12 +629,12 @@ Un `<Inmueble>` completo incluye, además de la identificación, su catastro
 
 ## Tipos comunes
 
-Algunos tipos se reutilizan entre actos. Por eso están en archivos XSD
-separados bajo `xsd/v2/comunes/`:
+Todos los actos comparten los mismos tipos. Por eso están en archivos XSD
+separados bajo `xsd/v3/comunes/`:
 
 - **Parte** (`parte.xsd`): `Persona` + atributo `rol` + `CertificacionInhibicion`
   (solo para transmitentes). Define el enum de roles.
-- **Persona**: contenido de cada `Parte` (reutilizado tal cual de v1).
+- **Persona** (`persona.xsd`): contenido de cada `Parte`.
 - **CertificacionInhibicion** (`certificacion-inhibicion.xsd`): se referencia
   **dentro de cada `<Parte>`** transmitente (sobre la persona).
 - **IdentificacionInmueble**, **CertificacionCatastral**, **NomenclaturaCatastral**:
@@ -636,26 +642,28 @@ separados bajo `xsd/v2/comunes/`:
 - **CertificacionDominio**, **VisadoRentas**, **DatosEconomicos**: bloques
   comunes del acto.
 
-Los actos nuevos (hipoteca, donación y permuta ya incorporados; otros a futuro)
-reutilizan estos mismos tipos sin redefinirlos: el acto nuevo solo define sus campos propios, ya
-que partes e inmuebles viven en `Acto`.
+**No hay un XSD por tipo de acto**: como el acto es un `<Codigo>`, habilitar un
+acto nuevo no agrega ni modifica ningún esquema. Todos los actos usan la misma
+estructura de `<Acto>`; qué exige cada uno lo resuelve el servicio por familia.
 
 ## Validación
 
-El XML debe validar contra `xsd/v2/testimonio-digital.xsd`. La validación
-incluye:
+El XML debe validar contra
+[`xsd/v3/testimonio-digital.xsd`](../xsd/v3/testimonio-digital.xsd). La
+validación incluye:
 
 - Estructura (todos los elementos requeridos presentes).
-- Tipos de datos (fechas válidas, montos numéricos, `numero` entero positivo, etc.).
+- Tipos de datos (fechas válidas, montos numéricos, `numero` entero positivo,
+  `Codigo` entero de hasta 4 dígitos, etc.).
 - Cardinalidades (al menos un acto, al menos una parte por acto, al menos un
-  inmueble por acto, una `CertificacionCatastral` y una `NomenclaturaCatastral`
-  por inmueble, etc.).
+  inmueble por acto, hasta 50 inmuebles, etc.).
 - Restricciones de longitud y formato.
 
-Las validaciones cruzadas las hace el servicio del RPI **después** del XSD:
-unicidad de `numero` entre actos, que el rol corresponda al tipo de acto,
-proporciones que suman 1 por acto, condicionales por `Tipo` de persona,
-matrícula vs. terna, etc. Si el XML no valida contra el XSD, el RPI responde
+Las validaciones cruzadas las hace el servicio del RPI **después** del XSD: que
+el código del acto esté habilitado y qué exige su familia (roles, montos,
+certificaciones, catastro), unicidad de `numero` entre actos, proporciones que
+suman 1 por acto, condicionales por `Tipo` de persona, matrícula vs. terna, etc.
+Si el XML no valida contra el XSD, el RPI responde
 HTTP 400; si falla una validación de negocio, responde HTTP 422 (ver
 [07 — Respuestas y errores](07-respuestas-y-errores.md)).
 
@@ -670,4 +678,6 @@ El XML debe estar en **UTF-8** con BOM opcional. El RPI acepta ambos
   [10 — Campos del formulario](10-campos-del-formulario.md).
 - Para la firma digital, andá a [05 — Firma digital](05-firma-digital.md).
 - Para el manejo del PDF, andá a [06 — Adjunto PDF](06-adjunto-pdf.md).
-- Para ver XMLs reales, mirá los archivos en `../ejemplos/`.
+- Para las reglas de campos por acto habilitado, andá a
+  [11 — Artefacto de campos por acto](11-artefacto-campos-por-acto.md).
+- Para ver XMLs reales, mirá los archivos en [`ejemplos/v3/`](../ejemplos/v3/).

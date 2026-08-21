@@ -4,11 +4,12 @@
 > del Colegio. Lista todos los campos que el escribano debe completar para
 > generar un testimonio digital válido.
 >
-> La autoridad técnica final es el XSD (`xsd/v2/testimonio-digital.xsd`). Este
+> La autoridad técnica final es el XSD
+> ([`xsd/v3/testimonio-digital.xsd`](../xsd/v3/testimonio-digital.xsd)). Este
 > documento sirve como referencia rápida pero ante discrepancia, el XSD manda.
 >
-> **v2.0**: un testimonio contiene **N actos**. La sección 4 y sus subsecciones
-> (4.1 a 4.6: compraventa, partes, inmuebles —con su catastro—, datos
+> Un testimonio contiene **N actos**. La sección 4 y sus subsecciones
+> (4.1 a 4.6: código del acto, partes, inmuebles —con su catastro—, datos
 > económicos, certificación de dominio y visado) se completan **una vez por
 > cada acto** dentro de `TestimonioDigital/Actos/Acto`. El catastro
 > (certificación catastral y nomenclatura) va **por inmueble**, dentro de cada
@@ -78,22 +79,21 @@ Camino base: `TestimonioDigital/Otorgamiento`
 Camino base: `TestimonioDigital/Actos`
 
 El testimonio contiene **uno o más actos** (`<Acto>`, sin tope). Cada acto se
-completa entero con las secciones 4.1 a 4.7 de abajo. En v2.0 todos los actos
-son de tipo `Compraventa`, pero la estructura admite tipos heterogéneos.
+completa entero con las secciones 4.1 a 4.7 de abajo. Los actos pueden ser de
+tipos distintos entre sí: cada uno declara el suyo con `<Codigo>`.
 
 | Campo del formulario | Camino XML | Tipo | Longitud | Obligatorio | Valores / Notas | Ejemplo |
 |---|---|---|---|---|---|---|
 | Número de acto | `Acto/@numero` | Entero positivo | — | Sí | Atributo del `<Acto>`. Único entre actos (lo valida el servicio) | `1` |
 
 > **Las secciones 4.1 a 4.6 se completan dentro de cada `<Acto>`.** Su camino
-> base es `TestimonioDigital/Actos/Acto/...`. En v1 muchos de estos bloques
-> vivían a nivel testimonio; en v2 bajan al acto.
+> base es `TestimonioDigital/Actos/Acto/...`.
 >
-> El orden dentro de `<Acto>` es fijo (v3): el `Codigo` (código del acto), el
+> El orden dentro de `<Acto>` es fijo: el `Codigo` (código del acto), el
 > `ActoSecundario` opcional (código 1075/1157), `Partes`, `Inmuebles`,
 > `DatosEconomicos`, `CertificacionDominio` (opcional), `VisadoRentas`, y al final los
 > textos libres opcionales. Dentro de cada `<Inmueble>`: `IdentificacionInmueble` y
-> —**opcionales en v3**— `CertificacionCatastral`, `NomenclaturaCatastral`. Cada
+> —**opcionales**— `CertificacionCatastral`, `NomenclaturaCatastral`. Cada
 > `<Parte rol="TRANSMITENTE">` puede llevar su `CertificacionInhibicion` como último
 > hijo (ver 4.2).
 
@@ -101,9 +101,8 @@ son de tipo `Compraventa`, pero la estructura admite tipos heterogéneos.
 
 Camino base: `Actos/Acto/Codigo`
 
-Primer elemento del acto (v3). Es el **código del catálogo `act`** (`xs:integer`), p.
-ej. `1028` compraventa. Reemplaza al elemento nombrado por tipo de v2. Los textos
-libres del acto (antes dentro del elemento de tipo) son ahora hijos opcionales de
+Primer elemento del acto. Es el **código del catálogo `act`** (`xs:integer`), p.
+ej. `1028` compraventa. Los textos libres del acto son hijos opcionales de
 `<Acto>`, al final (después de `VisadoRentas`). Las partes y los inmuebles van en
 `Partes` e `Inmuebles` (4.2 y 4.3).
 
@@ -119,9 +118,8 @@ libres del acto (antes dentro del elemento de tipo) son ahora hijos opcionales d
 
 Camino base: `Actos/Acto/Partes/Parte`
 
-Lista de personas que intervienen en el acto. Reemplaza los contenedores
-`Adquirentes`/`Transmitentes` de v1: el rol se indica con el atributo `rol` de
-cada `<Parte>`. Cada `<Parte>` tiene el contenido de una persona más ese
+Lista de personas que intervienen en el acto. El rol se indica con el atributo
+`rol` de cada `<Parte>`. Cada `<Parte>` tiene el contenido de una persona más ese
 atributo.
 
 | Campo del formulario | Camino XML | Tipo | Longitud | Obligatorio | Valores / Notas | Ejemplo |

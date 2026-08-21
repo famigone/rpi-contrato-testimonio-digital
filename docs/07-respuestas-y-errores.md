@@ -74,6 +74,7 @@ El campo `detalle` es opcional y varía según el código de error.
 | `MATRICULA_NO_EXISTENTE` | La matrícula del inmueble no existe en el RPI. |
 | `CERTIFICACION_VENCIDA` | Una certificación registral previa está vencida: la de **dominio** (`Acto/CertificacionDominio`) o la de **inhibición** de algún transmitente (`Acto/Partes/Parte/CertificacionInhibicion`). |
 | `VERSION_CONTRATO_NO_SOPORTADA` | El RPI no soporta la versión del contrato declarada. |
+| `CODIGO_ACTO_NO_HABILITADO` | El `<Codigo>` del acto existe en el catálogo pero **no está habilitado** para testimonio digital. |
 | `MONEDA_SIN_COTIZACION` | Si moneda=USD, cotización es obligatoria. |
 | `PERSONA_HUMANA_SIN_NOMBRES` | Tipo=H requiere Nombres. |
 | `CERT_CATASTRAL_DATOS_FALTANTES` | Si Emitido=true, Numero y CodigoValidacion obligatorios. |
@@ -82,8 +83,8 @@ El campo `detalle` es opcional y varía según el código de error.
 | `INMUEBLE_SIN_IDENTIFICACION` | Inmueble debe tener Matricula o (Tomo+Folio+Finca). |
 | `PROPORCIONES_NO_SUMAN_UNO` | Suma de proporciones de partes ADQUIRENTE debe ser 1, **por acto**. |
 | `NUMERO_ACTO_DUPLICADO` | El atributo `numero` debe ser único entre los actos del testimonio. |
-| `ROL_NO_VALIDO_PARA_ACTO` | El `rol` de la parte no corresponde al tipo de acto (ej. ACREEDOR en una Compraventa). |
-| `ACTO_SIN_ADQUIRENTE` | El acto de compraventa debe tener al menos una parte con rol ADQUIRENTE. |
+| `ROL_NO_VALIDO_PARA_ACTO` | El `rol` de la parte no corresponde al acto (ej. ACREEDOR en una compraventa, código 1028). |
+| `ACTO_SIN_ADQUIRENTE` | El acto exige al menos una parte con rol ADQUIRENTE (ej. compraventa, código 1028). |
 | `CUIT_FIRMANTE_NO_COINCIDE` | El CUIT del certificado debe coincidir con el del XML. |
 
 ### Errores del servidor (5xx)

@@ -1,35 +1,39 @@
 # XSD — Contratos modulares
 
-> **El contrato vigente es la v2.0**, definida en [`v2/`](v2/) (namespace `/v2`,
-> N actos por testimonio, partes con rol genérico). Este documento describe la
-> **v1.0 (legacy)**, que se conserva intacta porque v2 coexiste con v1. Si vas a
-> integrar desde cero, usá `v2/testimonio-digital.xsd` y leé [`v2/README.md`](v2/README.md).
+> **El contrato vigente es la v3.0**, definida en [`v3/`](v3/) (namespace `/v3`,
+> el tipo de acto es un `<Codigo>`). Si vas a integrar, validá contra
+> `v3/testimonio-digital.xsd` y leé [`v3/README.md`](v3/README.md).
 
 Esta carpeta contiene los esquemas XSD que definen el contrato del testimonio
-digital. La organización es **modular**: hay componentes comunes reutilizables
-y específicos por tipo de acto.
+digital. La organización es **modular**: un entry point más componentes comunes
+reutilizables, todos bajo el mismo namespace.
 
 ## Organización
 
 ```
 xsd/
-├── testimonio-digital.xsd       ← entry point (lo que el cliente valida)
 ├── xmldsig-core-schema.xsd      ← XSD oficial de W3C XML-DSig (copia local, dominio público)
-├── comunes/                     ← tipos reutilizables entre actos
-│   ├── metadatos-envio.xsd
-│   ├── escribano-autorizante.xsd
-│   ├── persona.xsd
-│   ├── identificacion-inmueble.xsd
-│   ├── datos-economicos.xsd
-│   ├── certificacion-registral.xsd
-│   ├── certificacion-catastral.xsd
-│   ├── nomenclatura-catastral.xsd
-│   ├── visado-rentas.xsd
-│   ├── otorgamiento.xsd
-│   └── rogante.xsd
-└── actos/
-    └── compraventa.xsd          ← en v1.0 solo compraventa
+└── v3/                          ← ★ contrato vigente
+    ├── README.md
+    ├── testimonio-digital.xsd   ← entry point (lo que el cliente valida)
+    └── comunes/                 ← tipos reutilizables por todos los actos
+        ├── metadatos-envio.xsd
+        ├── escribano-autorizante.xsd
+        ├── otorgamiento.xsd
+        ├── persona.xsd
+        ├── parte.xsd
+        ├── certificacion-inhibicion.xsd
+        ├── identificacion-inmueble.xsd
+        ├── certificacion-catastral.xsd
+        ├── nomenclatura-catastral.xsd
+        ├── certificacion-dominio.xsd
+        ├── datos-economicos.xsd
+        ├── visado-rentas.xsd
+        └── rogante.xsd
 ```
+
+**No hay carpeta `actos/`**: el tipo de acto es un dato (`<Codigo>`), no un
+elemento del esquema, así que ningún acto tiene su propio XSD.
 
 ## Sobre xmldsig-core-schema.xsd
 
@@ -42,46 +46,42 @@ modificable por el contrato — es el estándar W3C tal cual.
 
 ## Namespace
 
-Todos los XSD comparten el mismo namespace:
+Todos los XSD del contrato comparten el mismo namespace:
 
 ```
-https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v1
+https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v3
 ```
 
 Esto se logra usando `xs:include` (mismo namespace) en lugar de `xs:import`
 (distinto namespace). De esta forma el cliente solo necesita validar contra
-`testimonio-digital.xsd` y todas las definiciones se resuelven automáticamente.
+`v3/testimonio-digital.xsd` y todas las definiciones se resuelven automáticamente.
 
 ## Cómo validar
 
 ### Desde línea de comandos con xmllint
 
 ```bash
-xmllint --schema testimonio-digital.xsd ../ejemplos/compraventa-minima.xml --noout
+xmllint --schema v3/testimonio-digital.xsd ../ejemplos/v3/compraventa-minima.xml --noout
 ```
 
 ### Desde código
 
-Cualquier parser XSD estándar puede validar contra `testimonio-digital.xsd`.
+Cualquier parser XSD estándar puede validar contra `v3/testimonio-digital.xsd`.
 El parser resuelve los `xs:include` automáticamente, siempre que se respete
-la estructura de carpetas (`comunes/`, `actos/`).
+la estructura de carpetas (`comunes/`).
 
-## Cómo agregar un nuevo acto (en v2)
+## Cómo agregar un nuevo acto
 
-El alta de nuevos tipos de acto se hace sobre la **v2** (ver
-[`v2/README.md`](v2/README.md)). Para agregar, por ejemplo, hipoteca:
-
-1. Crear `v2/actos/hipoteca.xsd` con el tipo `HipotecaType` (solo los campos
-   propios del tipo; partes e inmuebles ya viven en `<Acto>`).
-2. Agregar el `xs:include` en `v2/testimonio-digital.xsd`.
-3. Agregar la opción al `xs:choice` de `ActoType`.
-4. Los roles `ACREEDOR`/`DEUDOR` ya existen en `RolParteEnum` (`v2/comunes/parte.xsd`).
+**No se toca el XSD.** Habilitar un acto es sumar su código en el servicio (con
+su familia estructural) y publicarlo en `catalogo-actos.json` y
+`artefacto-campos-por-acto.json`. Ver [`v3/README.md`](v3/README.md) y el
+ADR-004 del repo del servicio.
 
 ## Convenciones
 
 - **Tipos**: nombres en PascalCase terminados en `Type` (ej: `PersonaType`).
-- **Elementos**: nombres en PascalCase (ej: `Adquirentes`, `EscribanoAutorizante`).
-- **Atributos**: nombres en camelCase (ej: `version`).
+- **Elementos**: nombres en PascalCase (ej: `EscribanoAutorizante`).
+- **Atributos**: nombres en camelCase (ej: `version`, `rol`, `numero`).
 - **Documentación**: cada tipo y elemento principal lleva `xs:annotation/xs:documentation`
   en español.
 
@@ -95,6 +95,8 @@ Algunos campos tienen restricciones que el XSD no puede validar completamente:
   verificador.
 - **Hash SHA-256**: el XSD valida que sean 64 caracteres hexadecimales pero
   no que coincida con el PDF.
+- **Código de acto**: el XSD valida que sea un entero, pero no que ese código
+  esté **habilitado** ni qué bloques exige.
 
 Estas validaciones adicionales las hace el servicio del RPI después de la
 validación XSD.

@@ -7,37 +7,44 @@ Términos del dominio registral y notarial que aparecen en este contrato.
 ### Acto
 
 La operación jurídica que se inscribe en el RPI. Un testimonio puede contener
-**N actos** (elemento `<Acto>` dentro de `<Actos>`). En v3 del contrato, el tipo de
-acto se identifica por su **`<Codigo>`** (el código del catálogo legacy `act`: 1028
-compraventa, 1075 hipoteca, 1056 donación, 1102 permuta, 1020 cancelación, etc.), no
-por un elemento nombrado. Ver `catalogo-actos.json` y el ADR-004.
+**N actos** (elemento `<Acto>` dentro de `<Actos>`). El tipo de acto se
+identifica por su **`<Codigo>`** (el código del catálogo `act`: 1028 compraventa,
+1075 hipoteca, 1056 donación, 1102 permuta, 1020 cancelación, etc.), no por un
+elemento nombrado del esquema. Ver [`catalogo-actos.json`](../catalogo-actos.json)
+y el ADR-004.
 
 ### Código de acto
 
-El número del catálogo legacy `act` que identifica el tipo de acto (campo `actact`).
-En v3 es el elemento `<Codigo>` del `<Acto>`. El XSD no lleva un enum de códigos: qué
-códigos existen se publica en `catalogo-actos.json`; qué códigos están *habilitados*
-lo decide el servicio.
+El número del catálogo `act` que identifica el tipo de acto (campo `actact`). Es
+el elemento `<Codigo>` del `<Acto>`. El XSD no lleva un enum de códigos: qué
+códigos existen se publica en [`catalogo-actos.json`](../catalogo-actos.json);
+qué códigos están *habilitados* lo decide el servicio.
+
+### Familia (de acto)
+
+Agrupación estructural de códigos que exigen los mismos bloques (por ejemplo,
+`HIPOTECARIA_CONSTITUYE`, `HIPOTECARIA_LIBERA`). El servicio valida por familia
+qué roles, montos y certificaciones corresponden a cada código habilitado. Ver
+[11 — Artefacto de campos por acto](11-artefacto-campos-por-acto.md).
 
 ### Adquirente
 
 Persona que **recibe** el inmueble en una compraventa. En el sistema legacy
-se llama "titular adquirente". En el contrato v2 es una `<Parte rol="ADQUIRENTE">`.
+se llama "titular adquirente". En el contrato es una `<Parte rol="ADQUIRENTE">`.
 
 ### Parte
 
-Persona que interviene en un acto. En v2 cada acto tiene una lista de `<Parte>`,
-donde el rol se indica con el atributo `rol`. Reemplaza los contenedores
-`Adquirentes` / `Transmitentes` de v1. Una `Parte` es una persona (con su `Tipo`
+Persona que interviene en un acto. Cada acto tiene una lista de `<Parte>`, donde
+el rol se indica con el atributo `rol`. Una `Parte` es una persona (con su `Tipo`
 H/J/O, representante y proporción) más el atributo `rol`.
 
 ### Rol de parte
 
 Atributo obligatorio de cada `<Parte>` que indica su papel en el acto. Roles
 definidos: `ADQUIRENTE`, `TRANSMITENTE`, `ACREEDOR`, `DEUDOR`
-(`ACREEDOR`/`DEUDOR` se usan en el acto de hipoteca, disponible desde v2.1). El XSD
-acepta cualquier rol en cualquier acto; la correspondencia rol/tipo-de-acto la
-valida el servicio del RPI.
+(`ACREEDOR`/`DEUDOR` se usan en los actos de hipoteca). El XSD acepta cualquier
+rol en cualquier acto; la correspondencia rol/acto la valida el servicio del RPI
+según la familia del código.
 
 ### Asiento
 
@@ -53,7 +60,7 @@ inscripto. Puede inscribir, observar (provisoriamente) o rechazar.
 
 Certificado emitido por el RPI antes del acto, que el escribano solicita antes
 de otorgar la escritura para asegurarse del estado del bien y de las personas.
-En el contrato v2 son **dos certificados distintos**, cada uno con su número y
+En el contrato son **dos certificados distintos**, cada uno con su número y
 fecha de emisión, y cada uno vive donde recae lo que certifica: la **certificación
 de dominio** (`CertificacionDominio`), sobre el estado dominial del **inmueble**,
 va a **nivel acto**; la **certificación de inhibición** (`CertificacionInhibicion`),
@@ -172,7 +179,7 @@ inscribible. Es lo que históricamente se presenta en papel al RPI.
 ### Transmitente
 
 Persona que **entrega** el inmueble en una compraventa. En el sistema legacy
-se llama "titular transmitente". En el contrato v2 es una
+se llama "titular transmitente". En el contrato es una
 `<Parte rol="TRANSMITENTE">`.
 
 ### Visado de Rentas
@@ -192,9 +199,11 @@ para referirse al estado de inscripción provisoria en sí.
 ### Asentimiento conyugal
 
 Cuando el inmueble es ganancial (durante el matrimonio en régimen de comunidad),
-el cónyuge del transmitente debe prestar asentimiento para la venta. En v2.0
-del contrato esto se modela como **texto libre** en el campo
-`AsentimientoConyugal` dentro de `Compraventa`, no como bloque estructurado.
+el cónyuge de quien dispone del inmueble debe prestar asentimiento. En el
+contrato se modela como **texto libre** en el campo `AsentimientoConyugal`,
+hijo opcional de `<Acto>`, no como bloque estructurado. Qué rol presta el
+asentimiento depende del acto (ver
+[11 — Artefacto de campos por acto](11-artefacto-campos-por-acto.md)).
 
 ### Escribano autorizante
 

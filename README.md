@@ -16,19 +16,21 @@ a lo definido acá.
 |-------|-------|
 | Versión del contrato | 3.0.0 (borrador para revisión) |
 | Estado | En proceso de homologación |
-| Modelo de acto | **El tipo de acto es un DATO** (`<Codigo>`), no un elemento del esquema (MAJOR respecto de v2) |
+| XSD vigente | [`xsd/v3/testimonio-digital.xsd`](xsd/v3/testimonio-digital.xsd), namespace `.../testimonio-digital/v3` |
+| Modelo de acto | **El tipo de acto es un DATO** (`<Codigo>`), no un elemento del esquema |
 | Actos | Cualquier código del catálogo `act`; qué códigos están **habilitados** lo decide el servicio. Ver [catalogo-actos.json](catalogo-actos.json) |
 | Última actualización | Ver [CHANGELOG.md](CHANGELOG.md) |
 
-**El código de acto es un dato.** En v3 un acto se identifica con `<Codigo>NNNN</Codigo>` (el
-código del catálogo legacy `act`), no con un elemento nombrado por tipo. El XSD **no** lleva un
-enum de códigos (el catálogo cambia y no debe versionar el contrato): la lista de códigos
-existentes se publica como dato en [`catalogo-actos.json`](catalogo-actos.json), y qué códigos
-están *habilitados* lo valida el servicio. Ver el ADR-004 del repo del servicio.
+**El código de acto es un dato.** Un acto se identifica con `<Codigo>NNNN</Codigo>` (el código
+del catálogo `act`), no con un elemento nombrado por tipo. El XSD **no** lleva un enum de códigos
+(el catálogo cambia y no debe versionar el contrato): la lista de códigos existentes se publica
+como dato en [`catalogo-actos.json`](catalogo-actos.json), y qué códigos están *habilitados* lo
+valida el servicio. Ver el ADR-004 del repo del servicio.
 
-v3 **coexiste** con las versiones anteriores en disco: v1 en `xsd/` (namespace `/v1`), v2 en
-`xsd/v2/` (`/v2`, **congelado**) y v3 en `xsd/v3/` (`/v3`, **vigente**). Esta documentación
-describe la v3.0. Para versiones anteriores, consultar los [tags del repositorio](#versionado).
+Las reglas de qué campos y qué partes exige cada acto habilitado se publican en
+[`artefacto-campos-por-acto.json`](artefacto-campos-por-acto.json), para que el editor del
+escribano arme el formulario dinámicamente. Ver
+[docs/11-artefacto-campos-por-acto.md](docs/11-artefacto-campos-por-acto.md).
 
 ---
 
@@ -86,50 +88,43 @@ Orden recomendado para integraciones nuevas:
 │   ├── 10-campos-del-formulario.md
 │   └── 11-artefacto-campos-por-acto.md   ← guía de integración del artefacto (editor del escribano)
 │
-├── xsd/                                   ← contratos XSD modulares
+├── xsd/
 │   ├── README.md
-│   ├── xmldsig-core-schema.xsd            ← W3C XML-DSig local (compartido v1/v2/v3)
-│   ├── testimonio-digital.xsd             ← entry point v1 (legacy, coexiste)
-│   ├── comunes/                           ← tipos comunes v1
-│   ├── actos/
-│   │   └── compraventa.xsd
-│   ├── v2/                                ← contrato v2 (CONGELADO)
-│       ├── README.md
-│       ├── testimonio-digital.xsd         ← entry point del XSD v2
-│       ├── comunes/
-│       │   ├── metadatos-envio.xsd
-│       │   ├── escribano-autorizante.xsd
-│       │   ├── persona.xsd
-│       │   ├── parte.xsd                  ← Persona + rol (ADQUIRENTE/TRANSMITENTE/...)
-│       │   ├── identificacion-inmueble.xsd
-│       │   ├── datos-economicos.xsd
-│       │   ├── certificacion-registral.xsd
-│       │   ├── certificacion-catastral.xsd
-│       │   ├── nomenclatura-catastral.xsd
-│       │   ├── visado-rentas.xsd
-│       │   ├── otorgamiento.xsd
-│       │   └── rogante.xsd
-│       └── actos/                         ← (v2) 4 tipos de acto vacíos
+│   ├── xmldsig-core-schema.xsd            ← W3C XML-DSig local
 │   └── v3/                                ← ★ contrato VIGENTE (v3.0)
 │       ├── README.md
-│       ├── testimonio-digital.xsd         ← entry point v3 (Acto con <Codigo>, sin choice)
+│       ├── testimonio-digital.xsd         ← entry point (Acto con <Codigo>)
 │       └── comunes/                       ← tipos comunes (SIN actos/: el acto es un dato)
+│           ├── metadatos-envio.xsd
+│           ├── escribano-autorizante.xsd
+│           ├── otorgamiento.xsd
+│           ├── persona.xsd
+│           ├── parte.xsd                  ← Persona + rol (ADQUIRENTE/TRANSMITENTE/...)
+│           ├── certificacion-inhibicion.xsd
+│           ├── identificacion-inmueble.xsd
+│           ├── certificacion-catastral.xsd
+│           ├── nomenclatura-catastral.xsd
+│           ├── certificacion-dominio.xsd
+│           ├── datos-economicos.xsd
+│           ├── visado-rentas.xsd
+│           └── rogante.xsd
 │
 ├── catalogo-actos.json                    ← ★ lista informativa de códigos (dato, no esquema)
 ├── artefacto-campos-por-acto.json         ← ★ reglas de campos/partes por acto habilitado (ver docs/11)
-└── ejemplos/                              ← XMLs válidos de ejemplo
+└── ejemplos/
     ├── README.md
-    ├── *.xml                              ← ejemplos v1 (legacy, validan contra xsd/)
-    ├── v2/                                ← ejemplos v2 (congelado)
-    └── v3/                                ← ★ ejemplos v3 (validan contra xsd/v3/)
+    └── v3/                                ← ★ XMLs válidos (validan contra xsd/v3/)
         ├── compraventa-*.xml              ← compraventas (mínima, usd, jurídica, representante, etc.)
         ├── compraventa-dos-actos.xml      ← testimonio con 2 actos
         ├── hipoteca-ejemplo-valido.xml    ← <Codigo>1075</> (ACREEDOR/DEUDOR, MontoHipoteca)
         ├── donacion-ejemplo-valido.xml    ← <Codigo>1056</>
         ├── permuta-ejemplo-valido.xml     ← <Codigo>1102</>, permuta de 2 actos con cruce de partes
         ├── compraventa-con-hipoteca-ejemplo-valido.xml  ← <Codigo>1028</> + ActoSecundario 1075
-        └── cancelacion-hipoteca-ejemplo-valido.xml      ← <Codigo>1020</> (familia LIBERA; SIN catastro — imposible en v2)
+        └── cancelacion-hipoteca-ejemplo-valido.xml      ← <Codigo>1020</> (familia LIBERA; SIN catastro)
 ```
+
+> Los directorios de versiones anteriores (`xsd/`, `xsd/v2/`, `ejemplos/`, `ejemplos/v2/`) siguen
+> en disco pero están **congelados** y fuera de esta documentación.
 
 ---
 
@@ -154,8 +149,7 @@ Para validar un XML de testimonio contra el contrato:
 xmllint --schema xsd/v3/testimonio-digital.xsd ejemplos/v3/compraventa-minima.xml --noout
 ```
 
-Los 12 ejemplos en `ejemplos/v3/` validan contra el XSD v3. Los de `ejemplos/v2/` y
-`ejemplos/` (v1) siguen validando contra sus respectivos XSD congelados.
+Los 12 ejemplos de [`ejemplos/v3/`](ejemplos/v3/) validan contra el XSD v3.
 
 ---
 
@@ -166,16 +160,16 @@ Este contrato sigue [Semantic Versioning 2.0.0](https://semver.org/):
 | Tipo de cambio | Cuándo | Impacto |
 |----------------|--------|---------|
 | **MAJOR** (`X.0.0`) | Cambio incompatible | Rompe clientes existentes. Requiere coordinación previa con consumidores. Período de coexistencia. |
-| **MINOR** (`1.X.0`) | Funcionalidad nueva compatible | Agregar un acto nuevo, agregar un campo opcional. Los clientes viejos siguen funcionando. |
-| **PATCH** (`1.0.X`) | Correcciones que no cambian el contrato | Aclaraciones de documentación, ejemplos nuevos, fixes de typos. |
+| **MINOR** (`3.X.0`) | Funcionalidad nueva compatible | Agregar un campo opcional. Los clientes existentes siguen funcionando. Habilitar un acto nuevo **no** cambia el contrato: es un código más en el servicio. |
+| **PATCH** (`3.0.X`) | Correcciones que no cambian el contrato | Aclaraciones de documentación, ejemplos nuevos, fixes de typos. |
 
-El namespace XML incluye solo la versión MAJOR (`/v1`, `/v2`). Cambios MINOR
+El namespace XML incluye solo la versión MAJOR (hoy `/v3`). Cambios MINOR
 y PATCH mantienen el mismo namespace. Cambios MAJOR cambian el namespace.
 
 Para ver una versión específica:
 
 ```bash
-git checkout v1.0.0
+git checkout v3.0.0
 ```
 
 Todas las versiones publicadas tienen un tag Git y aparecen en
