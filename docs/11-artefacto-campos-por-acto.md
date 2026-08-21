@@ -348,3 +348,7 @@ El artefacto te ayuda a **armar y pre-validar** el formulario. Pero el testimoni
 Si venís del formulario y querés el detalle campo por campo del XML, seguí con
 [10 — Campos del formulario](10-campos-del-formulario.md). Si querés implementar el envío,
 empezá por [03 — Endpoint API](03-endpoint-api.md).
+
+---
+
+[← Índice de la documentación](README.md)

@@ -101,3 +101,6 @@ Si querés entender cómo funciona el flujo completo, seguí con
 
 Si querés ir directo al contrato técnico, andá a
 [03 — Endpoint API](03-endpoint-api.md).
+
+Para ver todos los capítulos y buscar un tema puntual, mirá el
+[índice de la documentación](README.md).

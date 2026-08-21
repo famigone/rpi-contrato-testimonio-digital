@@ -178,3 +178,7 @@ documentados en `07-respuestas-y-errores.md`.
 
 - Para el adjunto PDF y su verificación, andá a [06 — Adjunto PDF](06-adjunto-pdf.md).
 - Para los códigos de error de firma, andá a [07 — Respuestas y errores](07-respuestas-y-errores.md).
+
+---
+
+[← Índice de la documentación](README.md)

@@ -48,6 +48,9 @@ escribano arme el formulario dinámicamente. Ver
 
 ## Cómo leer la documentación
 
+**Índice completo: [docs/README.md](docs/README.md)** — capítulos, recorridos según tu
+caso y una tabla de "dónde encontrar cada cosa".
+
 Orden recomendado para integraciones nuevas:
 
 1. **[Introducción](docs/01-introduccion.md)** — qué es el testimonio digital y qué problema resuelve.
@@ -76,6 +79,7 @@ Orden recomendado para integraciones nuevas:
 ├── LICENSE.md                             ← licencia de uso
 │
 ├── docs/                                  ← documentación funcional y técnica
+│   ├── README.md                          ← ★ índice de la documentación
 │   ├── 01-introduccion.md
 │   ├── 02-flujo-end-to-end.md
 │   ├── 03-endpoint-api.md

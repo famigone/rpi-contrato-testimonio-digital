@@ -254,3 +254,7 @@ procesarlos para evitar inyección de eventos falsos.
 
 - Para términos del dominio que pueden no resultar familiares, andá a
   [09 — Glosario](09-glosario.md).
+
+---
+
+[← Índice de la documentación](README.md)

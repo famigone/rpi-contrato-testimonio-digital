@@ -681,3 +681,7 @@ El XML debe estar en **UTF-8** con BOM opcional. El RPI acepta ambos
 - Para las reglas de campos por acto habilitado, andá a
   [11 — Artefacto de campos por acto](11-artefacto-campos-por-acto.md).
 - Para ver XMLs reales, mirá los archivos en [`ejemplos/v3/`](../ejemplos/v3/).
+
+---
+
+[← Índice de la documentación](README.md)

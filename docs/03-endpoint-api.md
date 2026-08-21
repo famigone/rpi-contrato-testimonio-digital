@@ -164,3 +164,7 @@ Si la petición excede los límites, el RPI responde 413 Payload Too Large.
 
 - Para el formato del XML, andá a [04 — Formato XML](04-formato-xml.md).
 - Para los códigos de error, andá a [07 — Respuestas y errores](07-respuestas-y-errores.md).
+
+---
+
+[← Índice de la documentación](README.md)

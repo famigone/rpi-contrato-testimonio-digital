@@ -146,3 +146,7 @@ adicional del lado del Colegio.
 - Para el contrato técnico del endpoint, seguí con
   [03 — Endpoint API](03-endpoint-api.md).
 - Para el formato del XML, andá a [04 — Formato XML](04-formato-xml.md).
+
+---
+
+[← Índice de la documentación](README.md)

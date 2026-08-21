@@ -312,3 +312,7 @@ Si querés profundizar:
 - **Ley provincial 1.946** de Neuquén — Régimen registral provincial.
 - **W3C XML Signature Syntax and Processing** — https://www.w3.org/TR/xmldsig-core/
 - **RFC 7515** — JSON Web Signature (para referencia, aunque no se usa en este contrato).
+
+---
+
+[← Índice de la documentación](README.md)

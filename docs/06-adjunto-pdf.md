@@ -136,3 +136,7 @@ recuperar para inspección humana cuando se necesita.
 - Para códigos de error relacionados con PDF y hash, andá a
   [07 — Respuestas y errores](07-respuestas-y-errores.md).
 - Para ejemplos de envíos completos, mirá [`ejemplos/v3/`](../ejemplos/v3/).
+
+---
+
+[← Índice de la documentación](README.md)

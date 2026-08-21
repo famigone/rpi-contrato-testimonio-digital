@@ -18,6 +18,9 @@ y este contrato adhiere a [Semantic Versioning 2.0.0](https://semver.org/spec/v2
   Colegio de Escribanos (antes `INTEGRACION-artefacto-editor.md` en la raíz), incorporada como
   capítulo 11 de la documentación.
 
+- **`docs/README.md`**: índice de la documentación (capítulos, recorridos por perfil y tabla de
+  "dónde encontrar cada cosa"). Cada capítulo cierra con un enlace de vuelta al índice.
+
 ### Cambiado
 - **Documentación alineada a v3**: los capítulos 01 a 11, el `README.md`, `xsd/README.md`,
   `ejemplos/README.md` y `xsd/v3/README.md` describen **solo la v3** (namespace `/v3`,

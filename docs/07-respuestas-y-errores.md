@@ -199,3 +199,7 @@ Content-Type: application/json
 
 - Para los callbacks que el RPI envía al Colegio, andá a
   [08 — Notificaciones de callback](08-notificaciones-callback.md).
+
+---
+
+[← Índice de la documentación](README.md)

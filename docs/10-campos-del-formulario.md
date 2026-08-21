@@ -314,3 +314,7 @@ transcribe del PDF.
 
 Camino XML: `TestimonioDigital/Observaciones` (nivel testimonio). Texto libre,
 hasta 4000 caracteres. Opcional.
+
+---
+
+[← Índice de la documentación](README.md)
