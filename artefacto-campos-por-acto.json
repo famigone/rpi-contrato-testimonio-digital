@@ -1,8 +1,8 @@
 {
   "versionEsquema": "1.0.0",
-  "versionContenido": "1.1.1",
+  "versionContenido": "1.2.0",
   "generado": {
-    "totalActos": 79
+    "totalActos": 83
   },
   "esquema": {
     "tiposDePersona": {
@@ -130,6 +130,63 @@
     }
   },
   "actos": {
+    "1001": {
+      "nombre": "ACEPTACION DE GESTION",
+      "familia": "DECLARATIVO",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certCatastral": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "asentimiento": {
+          "aplica": false,
+          "rol": null,
+          "condicional": null
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
     "1005": {
       "nombre": "ADJUDICACION EXTRAJUDICIAL POR DISOLUCION DE SOCIEDAD CONYUGAL",
       "familia": "TRANSMISION",
@@ -338,6 +395,63 @@
           "aplica": true,
           "rol": "wmt",
           "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1016": {
+      "nombre": "AFECTACION A VIVIENDA",
+      "familia": "DECLARATIVO",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certCatastral": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "asentimiento": {
+          "aplica": false,
+          "rol": null,
+          "condicional": null
         },
         "reconHipoteca": {
           "aplica": true,
@@ -1944,6 +2058,63 @@
           "aplica": true,
           "rol": "wmc",
           "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1073": {
+      "nombre": "EXTINCION DE USUFRUCTO",
+      "familia": "DECLARATIVO",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certCatastral": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "asentimiento": {
+          "aplica": false,
+          "rol": null,
+          "condicional": null
         },
         "reconHipoteca": {
           "aplica": true,
@@ -5667,6 +5838,63 @@
           "aplica": true,
           "rol": "wmc",
           "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1300": {
+      "nombre": "ACEPTACION DE DONACION SOLIDARIA",
+      "familia": "DECLARATIVO",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certCatastral": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "asentimiento": {
+          "aplica": false,
+          "rol": null,
+          "condicional": null
         },
         "reconHipoteca": {
           "aplica": true,
