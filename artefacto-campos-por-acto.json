@@ -1,8 +1,8 @@
 {
   "versionEsquema": "1.0.0",
-  "versionContenido": "1.1.0",
+  "versionContenido": "1.1.1",
   "generado": {
-    "totalActos": 76
+    "totalActos": 79
   },
   "esquema": {
     "tiposDePersona": {
@@ -2466,6 +2466,79 @@
         }
       }
     },
+    "1110": {
+      "nombre": "PROTOCOLIZACION DECLARATORIA DE HEREDEROS",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
     "1113": {
       "nombre": "REDUCCION MONTO HIPOTECA",
       "familia": "HIPOTECARIA_LIBERA",
@@ -2833,6 +2906,79 @@
     },
     "1130": {
       "nombre": "TRANSFERENCIA DE DOMINIO ART.14 LEY 24145",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1136": {
+      "nombre": "USUFRUCTO",
       "familia": "TRANSMISION",
       "partes": [
         {
@@ -4001,6 +4147,79 @@
     },
     "1185": {
       "nombre": "DONACION CON RESERVA DE HABITACION",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1189": {
+      "nombre": "PROTOCOLIZACION DE USUCAPION",
       "familia": "TRANSMISION",
       "partes": [
         {
