@@ -1,8 +1,8 @@
 {
   "versionEsquema": "1.0.0",
-  "versionContenido": "1.2.3",
+  "versionContenido": "1.2.4",
   "generado": {
-    "totalActos": 109
+    "totalActos": 116
   },
   "esquema": {
     "tiposDePersona": {
@@ -132,6 +132,63 @@
   "actos": {
     "1001": {
       "nombre": "ACEPTACION DE GESTION",
+      "familia": "DECLARATIVO",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certCatastral": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "asentimiento": {
+          "aplica": false,
+          "rol": null,
+          "condicional": null
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1002": {
+      "nombre": "ACRECENTAMIENTO DE USUFRUCTO",
       "familia": "DECLARATIVO",
       "partes": [
         {
@@ -3595,6 +3652,63 @@
         }
       }
     },
+    "1147": {
+      "nombre": "RECONOCIMIENTO DE EMBARGO",
+      "familia": "DECLARATIVO",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certCatastral": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "asentimiento": {
+          "aplica": false,
+          "rol": null,
+          "condicional": null
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
     "1149": {
       "nombre": "REINSCRIPCION HIPOTECA",
       "familia": "HIPOTECARIA_LIBERA",
@@ -4005,6 +4119,79 @@
         "valuacionFiscal": {
           "aplica": true,
           "obligatorio": true
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "certCatastral": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "asentimiento": {
+          "aplica": true,
+          "rol": "wmc",
+          "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1170": {
+      "nombre": "CONSOLIDACION DE DOMINIO LEY 24374",
+      "familia": "TRANSMISION",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        },
+        {
+          "rol": "wmc",
+          "label": "Transmitente",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": false,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": false,
+          "inhibicion": {
+            "admite": true,
+            "obligatoria": true
+          },
+          "asentimiento": true
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": true,
+          "obligatorio": true
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
         },
         "montoHipoteca": {
           "aplica": false,
@@ -5096,6 +5283,120 @@
         }
       }
     },
+    "1200": {
+      "nombre": "SEGUNDO TESTIMONIO",
+      "familia": "DECLARATIVO",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certCatastral": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "asentimiento": {
+          "aplica": false,
+          "rol": null,
+          "condicional": null
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1208": {
+      "nombre": "RECTIFICACION DE NOMBRE DE TITULAR",
+      "familia": "DECLARATIVO",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certCatastral": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "asentimiento": {
+          "aplica": false,
+          "rol": null,
+          "condicional": null
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
     "1214": {
       "nombre": "EXTINCION DE USUFRUCTO POR RENUNCIA",
       "familia": "DECLARATIVO",
@@ -5155,6 +5456,120 @@
     },
     "1215": {
       "nombre": "EXTINCION DE USUFRUCTO POR FALLECIMIENTO",
+      "familia": "DECLARATIVO",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certCatastral": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "asentimiento": {
+          "aplica": false,
+          "rol": null,
+          "condicional": null
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1218": {
+      "nombre": "RECTIFICACION DE CUIT",
+      "familia": "DECLARATIVO",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certCatastral": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "asentimiento": {
+          "aplica": false,
+          "rol": null,
+          "condicional": null
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1221": {
+      "nombre": "PRIMERA INSCRIPCION DE DECRETO",
       "familia": "DECLARATIVO",
       "partes": [
         {
