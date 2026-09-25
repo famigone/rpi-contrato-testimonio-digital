@@ -1,8 +1,8 @@
 {
   "versionEsquema": "1.0.0",
-  "versionContenido": "1.2.1",
+  "versionContenido": "1.2.2",
   "generado": {
-    "totalActos": 90
+    "totalActos": 100
   },
   "esquema": {
     "tiposDePersona": {
@@ -1471,6 +1471,63 @@
     },
     "1049": {
       "nombre": "DESAFECTACION DE DOMINIO PUBLICO",
+      "familia": "DECLARATIVO",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certCatastral": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "asentimiento": {
+          "aplica": false,
+          "rol": null,
+          "condicional": null
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1050": {
+      "nombre": "DESAFECTACION DE PROPIEDAD HORIZONTAL",
       "familia": "DECLARATIVO",
       "partes": [
         {
@@ -4779,6 +4836,177 @@
         }
       }
     },
+    "1193": {
+      "nombre": "DESAFECTACION DE VIVIENDA",
+      "familia": "DECLARATIVO",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certCatastral": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "asentimiento": {
+          "aplica": false,
+          "rol": null,
+          "condicional": null
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1194": {
+      "nombre": "SUBSISTENCIA DE AFECTACION A VIVIENDA",
+      "familia": "DECLARATIVO",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certCatastral": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "asentimiento": {
+          "aplica": false,
+          "rol": null,
+          "condicional": null
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1214": {
+      "nombre": "EXTINCION DE USUFRUCTO POR RENUNCIA",
+      "familia": "DECLARATIVO",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certCatastral": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "asentimiento": {
+          "aplica": false,
+          "rol": null,
+          "condicional": null
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
     "1215": {
       "nombre": "EXTINCION DE USUFRUCTO POR FALLECIMIENTO",
       "familia": "DECLARATIVO",
@@ -5336,6 +5564,120 @@
           "aplica": true,
           "rol": "wmc",
           "condicional": "estadoCivil"
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1261": {
+      "nombre": "RENUNCIA AL DERECHO DE REVERSION",
+      "familia": "DECLARATIVO",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certCatastral": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "asentimiento": {
+          "aplica": false,
+          "rol": null,
+          "condicional": null
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1263": {
+      "nombre": "DESAFECTACION DE RESERVA FISCAL",
+      "familia": "DECLARATIVO",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certCatastral": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "asentimiento": {
+          "aplica": false,
+          "rol": null,
+          "condicional": null
         },
         "reconHipoteca": {
           "aplica": true,
@@ -6118,6 +6460,63 @@
         }
       }
     },
+    "1290": {
+      "nombre": "EXTINCION DE CLAUSULA DE REVERSION POR FALLECIMIENTO",
+      "familia": "DECLARATIVO",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certCatastral": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "asentimiento": {
+          "aplica": false,
+          "rol": null,
+          "condicional": null
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
     "1294": {
       "nombre": "COMPRAVENTA MITAD NUDA MITAD PLENA PROPIEDAD",
       "familia": "TRANSMISION",
@@ -6321,6 +6720,120 @@
         }
       }
     },
+    "1306": {
+      "nombre": "EXTINCION DE USO POR RENUNCIA",
+      "familia": "DECLARATIVO",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certCatastral": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "asentimiento": {
+          "aplica": false,
+          "rol": null,
+          "condicional": null
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1307": {
+      "nombre": "EXTINCION DE USO POR FALLECIMIENTO",
+      "familia": "DECLARATIVO",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certDominio": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certCatastral": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "asentimiento": {
+          "aplica": false,
+          "rol": null,
+          "condicional": null
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
     "1318": {
       "nombre": "TRANSFERENCIA DE DOMINIO POR CUMPLIMIENTO DE CONTRATO DE OBRA",
       "familia": "TRANSMISION",
@@ -6443,6 +6956,63 @@
         "montoHipoteca": {
           "aplica": true,
           "obligatorio": true
+        },
+        "certDominio": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "certCatastral": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "asentimiento": {
+          "aplica": false,
+          "rol": null,
+          "condicional": null
+        },
+        "reconHipoteca": {
+          "aplica": true,
+          "obligatorio": false
+        },
+        "afectaciones": {
+          "aplica": true,
+          "obligatorio": false
+        }
+      }
+    },
+    "1328": {
+      "nombre": "EXTINCION DE CLAUSULA DE REVERSION POR RENUNCIA",
+      "familia": "DECLARATIVO",
+      "partes": [
+        {
+          "rol": "wmt",
+          "label": "Adquirente / Titular",
+          "obligatorio": true,
+          "cardinalidad": "1..n",
+          "proporcion": {
+            "admite": true,
+            "sumaUno": false
+          },
+          "datosHumanosCompletos": true,
+          "inhibicion": {
+            "admite": false,
+            "obligatoria": false
+          },
+          "asentimiento": false
+        }
+      ],
+      "campos": {
+        "precioOperacion": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "valuacionFiscal": {
+          "aplica": false,
+          "obligatorio": false
+        },
+        "montoHipoteca": {
+          "aplica": false,
+          "obligatorio": false
         },
         "certDominio": {
           "aplica": false,
