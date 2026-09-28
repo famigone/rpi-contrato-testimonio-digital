@@ -1,6 +1,6 @@
 {
   "versionEsquema": "1.0.0",
-  "versionContenido": "1.2.6",
+  "versionContenido": "1.2.7",
   "generado": {
     "totalActos": 125
   },
@@ -3269,8 +3269,8 @@
           "obligatorio": false
         },
         "certCatastral": {
-          "aplica": true,
-          "obligatorio": true
+          "aplica": false,
+          "obligatorio": false
         },
         "asentimiento": {
           "aplica": false,
@@ -4316,8 +4316,8 @@
           "obligatorio": false
         },
         "certCatastral": {
-          "aplica": true,
-          "obligatorio": true
+          "aplica": false,
+          "obligatorio": false
         },
         "asentimiento": {
           "aplica": false,
@@ -8303,8 +8303,8 @@
           "obligatorio": false
         },
         "certCatastral": {
-          "aplica": true,
-          "obligatorio": true
+          "aplica": false,
+          "obligatorio": false
         },
         "asentimiento": {
           "aplica": false,
