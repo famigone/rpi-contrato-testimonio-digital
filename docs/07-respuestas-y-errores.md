@@ -1,22 +1,37 @@
 # 07 — Respuestas y errores
 
+## Dos tipos de error, dos conductas
+
+Antes del catálogo, la distinción que define qué hacer:
+
+- **Rechazo (4xx, salvo 429)**: el envío tiene un problema que el Colegio debe
+  corregir. El testimonio **no ingresó** al registro. El rechazo es definitivo para
+  ese `IdentificadorEnvio`: **corregir y enviar con un `IdentificadorEnvio` nuevo**.
+- **Problema transitorio (5xx, 429, timeout, error de red)**: el envío no tiene nada
+  que corregir. **Reintentar el mismo envío con el mismo `IdentificadorEnvio`.**
+
+Los rechazos de este capítulo ocurren **antes** de que el testimonio tenga Entrada
+General. Las observaciones del calificador, que ocurren después, no son errores de
+la API: llegan por callback (ver [02 — Qué pasa si algo falla](02-flujo-end-to-end.md#qué-pasa-si-algo-falla)
+y [08 — Notificaciones](08-notificaciones-callback.md)).
+
 ## Códigos HTTP de respuesta
 
 | Código | Significado | Acción del cliente |
 |--------|-------------|--------------------|
-| 200 OK | Testimonio ya recibido previamente (idempotencia) | Usar la respuesta para sincronizar estado local. No reenviar. |
-| 202 Accepted | Testimonio recibido y aceptado para procesamiento | Guardar el `identificadorEnvio` y esperar callbacks. |
-| 400 Bad Request | XML inválido (XSD), hash de PDF no coincide, JSON mal formado | Corregir y reenviar. No reintentar sin cambios. |
-| 401 Unauthorized | Credenciales faltantes, inválidas, o firma XML inválida | Revisar autenticación y firma. No reintentar sin cambios. |
+| 200 OK | Testimonio ya recibido y aceptado previamente (idempotencia) | Usar la respuesta para sincronizar el estado local. No reenviar. |
+| 202 Accepted | Testimonio validado y aceptado | Guardar el `identificadorEnvio` y esperar callbacks. |
+| 400 Bad Request | XML mal formado o inválido (XSD), multipart inválido, hash o firma del PDF | Corregir y enviar con un `identificadorEnvio` nuevo. |
+| 401 Unauthorized | Credenciales faltantes o inválidas, o firma XML inválida | Revisar autenticación y firma. Corregir y enviar con un `identificadorEnvio` nuevo. |
 | 403 Forbidden | Cliente autenticado pero sin permiso para esta operación | Contactar al equipo del RPI. No reintentar. |
-| 409 Conflict | `identificadorEnvio` ya usado con contenido distinto | Generar nuevo `identificadorEnvio` y reenviar. |
-| 413 Payload Too Large | Petición excede el límite (50 MB total) | Reducir tamaño del PDF y reenviar. |
-| 422 Unprocessable Entity | El XML es válido sintácticamente pero falla validación de negocio | Revisar el error específico y corregir datos. |
-| 429 Too Many Requests | Rate limit del RPI alcanzado | Esperar y reintentar respetando el header `Retry-After`. |
-| 500 Internal Server Error | Error del lado del RPI | Reintentar con backoff exponencial. |
-| 502 Bad Gateway | RPI temporalmente no disponible | Reintentar con backoff exponencial. |
-| 503 Service Unavailable | RPI en mantenimiento | Reintentar con backoff exponencial. |
-| 504 Gateway Timeout | Timeout del RPI procesando | Reintentar con backoff exponencial. |
+| 409 Conflict | `identificadorEnvio` ya usado con contenido distinto | Generar un `identificadorEnvio` nuevo y reenviar. |
+| 413 Payload Too Large | Petición excede el límite (50 MB total) | Reducir el tamaño del PDF y enviar con un `identificadorEnvio` nuevo. |
+| 422 Unprocessable Entity | XML válido pero falla una regla de negocio o la tasa | Revisar el error específico, corregir y enviar con un `identificadorEnvio` nuevo. |
+| 429 Too Many Requests | Rate limit del RPI alcanzado | Reintentar con el mismo `identificadorEnvio`, respetando `Retry-After`. |
+| 500 Internal Server Error | Error del lado del RPI | Reintentar con el mismo `identificadorEnvio` y backoff exponencial. |
+| 502 Bad Gateway | RPI temporalmente no disponible | Ídem. |
+| 503 Service Unavailable | RPI en mantenimiento o dependencia no disponible | Ídem, respetando `Retry-After` si viene. |
+| 504 Gateway Timeout | Timeout del RPI procesando | Ídem. |
 
 ## Formato del cuerpo de error
 
@@ -59,7 +74,7 @@ El campo `detalle` es opcional y varía según el código de error.
 | `PDF_FIRMA_INVALIDA` | 400 | El PDF tiene firma pero es inválida. |
 | `MULTIPART_INVALIDO` | 400 | La petición multipart está mal formada o falta una parte. |
 | `IDENTIFICADOR_INVALIDO` | 400 | El `IdentificadorEnvio` no es un UUID v4 válido. |
-| `IDENTIFICADOR_DUPLICADO_CONTENIDO_DISTINTO` | 409 | UUID ya usado para un testimonio con contenido distinto. |
+| `IDENTIFICADOR_DUPLICADO_CONTENIDO_DISTINTO` | 409 | UUID ya usado para un envío con contenido distinto. |
 | `AUTENTICACION_REQUERIDA` | 401 | Falta el header de autenticación. |
 | `AUTENTICACION_INVALIDA` | 401 | El token o certificado de autenticación es inválido. |
 | `SIN_PERMISO` | 403 | Cliente autenticado pero sin permiso para enviar testimonios. |
@@ -71,6 +86,7 @@ El campo `detalle` es opcional y varía según el código de error.
 | Código | Descripción |
 |--------|-------------|
 | `ESCRIBANO_NO_REGISTRADO` | El escribano declarado no figura en el catálogo del RPI. Requiere acción manual. |
+| `ROGANTE_NO_ENCONTRADO` | El rogante declarado no está registrado en el RPI (se resuelve por CUIT). |
 | `MATRICULA_NO_EXISTENTE` | La matrícula del inmueble no existe en el RPI. |
 | `CERTIFICACION_VENCIDA` | Una certificación registral previa está vencida: la de **dominio** (`Acto/CertificacionDominio`) o la de **inhibición** de algún transmitente (`Acto/Partes/Parte/CertificacionInhibicion`). |
 | `VERSION_CONTRATO_NO_SOPORTADA` | El RPI no soporta la versión del contrato declarada. |
@@ -86,6 +102,13 @@ El campo `detalle` es opcional y varía según el código de error.
 | `ROL_NO_VALIDO_PARA_ACTO` | El `rol` de la parte no corresponde al acto (ej. ACREEDOR en una compraventa, código 1028). |
 | `ACTO_SIN_ADQUIRENTE` | El acto exige al menos una parte con rol ADQUIRENTE (ej. compraventa, código 1028). |
 | `CUIT_FIRMANTE_NO_COINCIDE` | El CUIT del certificado debe coincidir con el del XML. |
+| `TASA_INEXISTENTE` | El número de tasa declarado no existe en el sistema de tasas. |
+| `TASA_NO_PAGADA` | La tasa declarada existe pero no está paga. |
+| `TASA_YA_UTILIZADA` | La tasa declarada ya fue aplicada a otro trámite. |
+
+Los errores de tasa también pueden llegar después del 202, por el callback
+`validacion_fallida`, cuando el sistema de tasas no respondió durante la recepción
+(estado `aceptado_tasa_pendiente`).
 
 ### Errores del servidor (5xx)
 
@@ -96,20 +119,29 @@ El campo `detalle` es opcional y varía según el código de error.
 | `MANTENIMIENTO` | 503 | RPI en mantenimiento programado. Header `Retry-After` indica cuándo reintentar. |
 | `TIMEOUT_INTERNO` | 504 | El RPI se quedó procesando demasiado tiempo. |
 
+Un error 5xx nunca es un rechazo del testimonio: indica que el RPI no pudo
+completar el procesamiento por una causa propia.
+
 ## Política de reintentos
 
-### Errores 4xx — NO reintentar
+### Rechazos (4xx, salvo 429) — corregir y enviar de nuevo
 
-Los errores 4xx (excepto 429) indican que el cliente tiene que **cambiar algo**
-antes de reenviar. Reintentar idéntico no va a cambiar el resultado.
+Un 4xx indica que el envío tiene que **cambiar** antes de reenviarse. Reenviarlo
+idéntico devuelve el mismo error.
 
-**Excepción**: HTTP 429 (rate limit) sí se reintenta, respetando el header
-`Retry-After`.
+- El rechazo es definitivo para ese `IdentificadorEnvio`.
+- El envío corregido es un envío nuevo y **lleva un `IdentificadorEnvio` nuevo**.
+- Si se reusa el identificador con contenido distinto, el RPI responde 409
+  (`IDENTIFICADOR_DUPLICADO_CONTENIDO_DISTINTO`).
 
-### Errores 5xx — Reintentar con backoff exponencial
+### Problemas transitorios — reintentar el mismo envío
 
-Los errores 5xx indican problemas transitorios del lado del RPI. Reintentar
-con backoff exponencial:
+Errores 5xx, 429, timeouts del cliente y errores de red. Se reintenta **el mismo
+envío con el mismo `IdentificadorEnvio`**: si el RPI llegó a procesarlo, devuelve
+el resultado original sin duplicarlo.
+
+Para 429 y 503, respetar el header `Retry-After` si viene. En los demás casos,
+backoff exponencial:
 
 | Intento | Espera antes del próximo |
 |---------|--------------------------|
@@ -124,16 +156,14 @@ con backoff exponencial:
 Después de varios reintentos fallidos (por ejemplo 10), conviene alertar a un
 operador del sistema del Colegio para que investigue.
 
-### Idempotencia siempre
+### Resumen
 
-Los reintentos deben usar el **mismo `IdentificadorEnvio`** que el envío
-original. El RPI detecta el reenvío y devuelve el resultado del envío original
-sin reprocesar.
-
-Si por error se reenvía con el mismo `IdentificadorEnvio` **pero contenido
-distinto** (por ejemplo, otro PDF), el RPI rechaza con HTTP 409
-(`IDENTIFICADOR_DUPLICADO_CONTENIDO_DISTINTO`). En ese caso hay que generar un
-nuevo UUID.
+| Situación | ¿Mismo `IdentificadorEnvio`? |
+|-----------|------------------------------|
+| Timeout, error de red, 5xx, 429 | Sí: es el mismo envío |
+| Rechazo 4xx, después de corregir | No: es un envío nuevo |
+| Rechazo diferido (callback `validacion_fallida`), después de corregir | No: es un envío nuevo |
+| Observación registral (callback `inscripcion_provisoria`) | No aplica: se subsana por mesa de entradas (ver [02](02-flujo-end-to-end.md#observación-registral-después-de-la-eg)) |
 
 ## Ejemplos de respuestas de error
 
@@ -146,9 +176,9 @@ Content-Type: application/json
 {
   "error": {
     "codigo": "XML_INVALIDO",
-    "mensaje": "El elemento 'NomenclaturaCatastral' es obligatorio pero no se encontró.",
+    "mensaje": "El elemento 'Partes' debe tener al menos un hijo 'Parte'.",
     "detalle": {
-      "elemento": "/TestimonioDigital/Actos/Acto/Inmuebles/Inmueble/NomenclaturaCatastral"
+      "elemento": "/TestimonioDigital/Actos/Acto/Partes"
     },
     "identificadorEnvio": "550e8400-e29b-41d4-a716-446655440000",
     "timestamp": "2026-06-15T10:23:45Z"
@@ -189,6 +219,22 @@ Content-Type: application/json
       "hashDeclarado": "3a7bd3e2360a3d29eea436fcfb7e44c735d117c42d1c1835420b6b9942dd4f1b",
       "hashCalculado": "8e34a7c1f9b8e0c8de72e80e2b9bf28c1c34e2f0b7d5a3c1f8e9b8e0c8de72e80"
     },
+    "identificadorEnvio": "550e8400-e29b-41d4-a716-446655440000",
+    "timestamp": "2026-06-15T10:23:45Z"
+  }
+}
+```
+
+### Tasa no pagada
+
+```http
+HTTP/1.1 422 Unprocessable Entity
+Content-Type: application/json
+
+{
+  "error": {
+    "codigo": "TASA_NO_PAGADA",
+    "mensaje": "La tasa registral declarada no registra pago.",
     "identificadorEnvio": "550e8400-e29b-41d4-a716-446655440000",
     "timestamp": "2026-06-15T10:23:45Z"
   }

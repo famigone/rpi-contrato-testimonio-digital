@@ -2,14 +2,13 @@
 
 ## Qué son
 
-Después de que el RPI acepta un testimonio (HTTP 202), el procesamiento del
-trámite registral sigue de manera asincrónica. Cuando hay eventos relevantes
-en el ciclo de vida del testimonio (inscripción provisoria, definitiva,
-rechazo registral, etc.), el RPI **notifica al sistema del Colegio** vía un
-callback HTTP.
+Después de que el RPI acepta un testimonio (HTTP 202), el procesamiento registral
+sigue de manera asincrónica. Cuando hay eventos relevantes en el ciclo de vida del
+testimonio (ingreso al registro, inscripción, observaciones, rechazo), el RPI
+**notifica al sistema del Colegio** vía un callback HTTP.
 
-El sistema del Colegio debe **exponer un endpoint** que el RPI invoca para
-entregar estos eventos.
+El sistema del Colegio debe **exponer un endpoint** que el RPI invoca para entregar
+estos eventos.
 
 ## Endpoint del callback (lado del Colegio)
 
@@ -25,15 +24,21 @@ El sistema del Colegio debe proveer al RPI:
 
 ## Tipos de eventos
 
-| Tipo de evento | Cuándo se dispara |
-|----------------|-------------------|
-| `validacion_completada` | El RPI completó validaciones (XSD, firma, hash) y el testimonio entró a la cola registral. |
-| `sincronizacion_completada` | El testimonio fue sincronizado con el sistema registral interno del RPI. |
-| `entrada_general_asignada` | El RPI asignó número de Entrada General al trámite. |
-| `inscripcion_provisoria` | Hay observaciones registrales pendientes de subsanar (VIP/VIO). |
-| `inscripcion_definitiva` | El trámite quedó inscripto definitivamente. |
-| `rechazo_registral` | El trámite fue rechazado por el calificador (causal grave). |
-| `validacion_fallida` | Las validaciones del RPI fallaron de manera persistente y el testimonio no podrá procesarse. |
+| Tipo de evento | Cuándo se dispara | Trae Entrada General |
+|----------------|-------------------|----------------------|
+| `entrada_general_asignada` | El registro asignó la Entrada General: el testimonio ingresó con su prioridad. | Sí |
+| `inscripcion_provisoria` | El calificador observó el documento: hay observaciones a subsanar dentro de un plazo. | Sí |
+| `inscripcion_definitiva` | El trámite quedó inscripto definitivamente. | Sí |
+| `rechazo_registral` | El calificador rechazó el trámite (causal grave). | Sí |
+| `validacion_fallida` | Rechazo estructural detectado **después** del 202. Hoy, solo la tasa verificada como impaga cuando el testimonio se había aceptado con `aceptado_tasa_pendiente`. | No |
+
+Las validaciones que el RPI hace durante la recepción no generan callbacks: su
+resultado viaja en la respuesta HTTP (202 o error 4xx).
+
+`validacion_fallida` es un **rechazo definitivo**: el testimonio no ingresó al
+registro y no tiene Entrada General. Para corregir, el Colegio hace un envío nuevo
+con un `identificadorEnvio` nuevo. Las fallas internas del RPI **nunca** se
+notifican como `validacion_fallida`: el RPI las reintenta por su cuenta.
 
 ## Estructura del payload
 
@@ -50,16 +55,19 @@ Todos los callbacks tienen esta estructura básica:
 }
 ```
 
-### Ejemplo: `validacion_completada`
+### La Entrada General
+
+Los eventos registrales identifican la Entrada General y la **presentación** a la
+que se refieren. Un mismo trámite puede tener varias presentaciones sobre la misma
+Entrada General: la primera es el ingreso; las siguientes, subsanaciones de
+observaciones.
 
 ```json
-{
-  "evento": "validacion_completada",
-  "identificadorEnvio": "550e8400-e29b-41d4-a716-446655440000",
-  "timestamp": "2026-06-15T10:24:01Z",
-  "datos": {
-    "estado": "validado"
-  }
+"entradaGeneral": {
+  "numero": 12345,
+  "anio": 2026,
+  "numeroPresentacion": 1,
+  "fechaPresentacion": "2026-06-15"
 }
 ```
 
@@ -74,7 +82,8 @@ Todos los callbacks tienen esta estructura básica:
     "entradaGeneral": {
       "numero": 12345,
       "anio": 2026,
-      "presentacion": "2026-06-15"
+      "numeroPresentacion": 1,
+      "fechaPresentacion": "2026-06-15"
     }
   }
 }
@@ -91,7 +100,8 @@ Todos los callbacks tienen esta estructura básica:
     "entradaGeneral": {
       "numero": 12345,
       "anio": 2026,
-      "presentacion": "2026-06-15"
+      "numeroPresentacion": 1,
+      "fechaPresentacion": "2026-06-15"
     },
     "fechaInscripcion": "2026-06-16",
     "matriculas": [
@@ -116,14 +126,15 @@ Todos los callbacks tienen esta estructura básica:
     "entradaGeneral": {
       "numero": 12345,
       "anio": 2026,
-      "presentacion": "2026-06-15"
+      "numeroPresentacion": 1,
+      "fechaPresentacion": "2026-06-15"
     },
     "fechaProvisoria": "2026-06-16",
     "fechaVencimientoVIP": "2026-08-15",
     "observaciones": [
       {
-        "codigo": "FALTA_TASA",
-        "descripcion": "Falta acreditar pago de tasa registral con número de tasa indicado."
+        "codigo": "ASENTIMIENTO_FALTANTE",
+        "descripcion": "Falta el asentimiento conyugal del transmitente."
       },
       {
         "codigo": "CLAUSULA_AMBIGUA",
@@ -133,6 +144,13 @@ Todos los callbacks tienen esta estructura básica:
   }
 }
 ```
+
+**Cómo se subsana.** El testimonio conserva su Entrada General y su prioridad
+mientras se subsana antes de `fechaVencimientoVIP`. **Por ahora, la subsanación se
+presenta por mesa de entradas, citando la Entrada General.** El registro la
+incorpora como una nueva presentación sobre la misma Entrada General. La
+subsanación por testimonio digital está prevista para una versión futura del
+contrato.
 
 ### Ejemplo: `rechazo_registral`
 
@@ -145,7 +163,8 @@ Todos los callbacks tienen esta estructura básica:
     "entradaGeneral": {
       "numero": 12345,
       "anio": 2026,
-      "presentacion": "2026-06-15"
+      "numeroPresentacion": 1,
+      "fechaPresentacion": "2026-06-15"
     },
     "fechaRechazo": "2026-06-16",
     "motivo": "Matrícula informada no corresponde al transmitente declarado."
@@ -159,13 +178,16 @@ Todos los callbacks tienen esta estructura básica:
 {
   "evento": "validacion_fallida",
   "identificadorEnvio": "550e8400-e29b-41d4-a716-446655440000",
-  "timestamp": "2026-06-15T10:25:00Z",
+  "timestamp": "2026-06-15T10:40:00Z",
   "datos": {
-    "motivo": "Escribano no registrado en catálogo del RPI.",
-    "codigo": "ESCRIBANO_NO_REGISTRADO"
+    "codigo": "TASA_NO_PAGADA",
+    "motivo": "La tasa registral declarada no registra pago."
   }
 }
 ```
+
+Los códigos de `validacion_fallida` son los del catálogo de errores
+([07](07-respuestas-y-errores.md#catálogo-de-códigos-de-error)).
 
 ## Headers del callback
 
@@ -182,13 +204,13 @@ X-RPI-Timestamp: 2026-06-16T14:30:22Z
 User-Agent: RPI-Neuquen/1.0
 ```
 
-Los headers `X-RPI-*` son redundantes con el cuerpo JSON pero útiles para
-ruteo o logging del lado del Colegio sin tener que parsear el body.
+Los headers `X-RPI-*` son redundantes con el cuerpo JSON pero útiles para ruteo o
+logging del lado del Colegio sin tener que parsear el body.
 
 ## Respuesta esperada del Colegio
 
-El endpoint del Colegio debe responder rápido (idealmente < 5 segundos) con
-uno de estos códigos:
+El endpoint del Colegio debe responder rápido (idealmente < 5 segundos) con uno de
+estos códigos:
 
 | Código | Significado |
 |--------|-------------|
@@ -219,20 +241,21 @@ intervención manual.
 
 El RPI puede reenviar la misma notificación (por ejemplo, si no recibió la
 respuesta del Colegio a tiempo). El sistema del Colegio debe **detectar
-duplicados** por el par `(identificadorEnvio, evento)`.
+duplicados** por la combinación `(identificadorEnvio, evento, numeroPresentacion)`;
+para `validacion_fallida`, que no tiene Entrada General, por
+`(identificadorEnvio, evento)`.
 
-Si ya procesaste una notificación con esa combinación, responder 200 OK sin
-volver a procesar.
+Si ya procesaste una notificación con esa combinación, responder 200 OK sin volver
+a procesar.
 
 ## Orden de los eventos
 
 Los eventos llegan en orden cronológico, pero por errores de red o reintentos
-pueden llegar **desordenados** o **duplicados**. El sistema del Colegio debe
-ser tolerante a esto.
+pueden llegar **desordenados** o **duplicados**. El sistema del Colegio debe ser
+tolerante a esto.
 
-Para garantizar consistencia, el campo `timestamp` indica cuándo se generó el
-evento del lado del RPI. El Colegio puede usarlo para detectar eventos viejos
-que llegan después de uno más nuevo.
+El campo `timestamp` indica cuándo se generó el evento del lado del RPI. El Colegio
+puede usarlo para detectar eventos viejos que llegan después de uno más nuevo.
 
 Ejemplo: si ya recibiste `inscripcion_definitiva`, ignorar callbacks
 `inscripcion_provisoria` con timestamp anterior (es un reintento tardío).

@@ -14,7 +14,7 @@
 > **API HTTP**, independiente de la versión del **contrato** del testimonio
 > (**v3**, con namespace `https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v3`).
 > Son dos ejes distintos: la API puede seguir en `v1` mientras el cuerpo del XML
-> usa el contrato v3. No confundir la versión de la API con la del contrato.
+> usa el contrato v3.
 
 ## Método HTTP
 
@@ -99,6 +99,10 @@ curl -X POST https://[POR-DEFINIR]/api/v1/testimonios \
 
 ## Respuesta
 
+El RPI completa **todas las validaciones antes de responder** (contrato, firmas,
+hash, reglas del acto y tasa; ver [02 — Paso 4](02-flujo-end-to-end.md#4-el-rpi-valida-persiste-y-responde)).
+Una respuesta 202 significa que el testimonio **fue validado y aceptado**.
+
 ### Caso de éxito (202 Accepted)
 
 ```http
@@ -107,20 +111,25 @@ Content-Type: application/json
 
 {
   "identificadorEnvio": "550e8400-e29b-41d4-a716-446655440000",
-  "estado": "recibido",
+  "estado": "aceptado",
   "recibidoEn": "2026-06-15T10:23:45Z",
-  "mensaje": "Testimonio recibido y en proceso de validación."
+  "mensaje": "Testimonio validado y aceptado. La Entrada General se notificará por callback."
 }
 ```
 
-El campo `identificadorEnvio` debe coincidir con el `MetadatosEnvio/IdentificadorEnvio`
+El campo `identificadorEnvio` coincide con el `MetadatosEnvio/IdentificadorEnvio`
 que el sistema del Colegio incluyó en el XML.
+
+Si el sistema de tasas no respondió a tiempo, el estado es
+`aceptado_tasa_pendiente`: el testimonio pasó todas las demás validaciones y la
+tasa se verificará después. Si resulta impaga, el RPI lo notifica con el callback
+`validacion_fallida`.
 
 ### Caso de idempotencia (200 OK)
 
-Si el sistema del Colegio reenvía el mismo testimonio (mismo `identificadorEnvio`)
-y el original ya fue procesado, el RPI devuelve **el estado actual** del testimonio
-original, **sin volver a procesarlo**:
+Si el sistema del Colegio reenvía el mismo testimonio (mismo
+`identificadorEnvio`, mismo contenido) y el original fue aceptado, el RPI
+devuelve **el estado actual**, **sin volver a procesarlo**:
 
 ```http
 HTTP/1.1 200 OK
@@ -128,12 +137,35 @@ Content-Type: application/json
 
 {
   "identificadorEnvio": "550e8400-e29b-41d4-a716-446655440000",
-  "estado": "sincronizado",
+  "estado": "ingresado",
   "recibidoEn": "2026-06-15T10:23:45Z",
-  "identificadorRPI": "12345",
+  "entradaGeneral": {
+    "numero": 12345,
+    "anio": 2026,
+    "numeroPresentacion": 1,
+    "fechaPresentacion": "2026-06-15"
+  },
   "mensaje": "Testimonio ya recibido anteriormente. Devolviendo estado actual."
 }
 ```
+
+`entradaGeneral` aparece solo cuando ya fue asignada.
+
+Si el original **fue rechazado**, el reenvío idéntico devuelve **el mismo error**
+que la primera vez. Para corregir, hay que hacer un envío nuevo con un
+`identificadorEnvio` nuevo (ver [02 — Idempotencia](02-flujo-end-to-end.md#idempotencia)).
+
+### Estados del testimonio
+
+| Estado | Significado |
+|--------|-------------|
+| `aceptado` | Validado y aceptado; pendiente de ingreso al registro. |
+| `aceptado_tasa_pendiente` | Validado salvo la tasa, que se verificará después. |
+| `ingresado` | El registro asignó Entrada General. |
+| `inscripto_provisorio` | Calificado con observaciones a subsanar. |
+| `inscripto_definitivo` | Inscripto. |
+| `rechazado_registral` | Rechazado por el calificador. |
+| `rechazado` | Rechazo estructural detectado después de aceptar (tasa impaga). |
 
 ### Casos de error
 
@@ -147,9 +179,14 @@ completo de códigos HTTP y respuestas de error.
 | Tamaño total de la petición | 50 MB (XML + PDF + overhead) |
 | Tamaño del XML solo | 5 MB |
 | Tamaño del PDF solo | 45 MB |
-| Timeout de respuesta | 30 segundos |
+| Tiempo de respuesta del RPI | Típico: menos de 5 segundos. El RPI responde siempre antes de 30 segundos |
+| Timeout recomendado para el cliente | 40 segundos |
 
-Si la petición excede los límites, el RPI responde 413 Payload Too Large.
+Si la petición excede los límites de tamaño, el RPI responde 413 Payload Too Large.
+
+Si el cliente corta por timeout, no sabe si el RPI procesó el envío: debe
+reintentar con el **mismo** `identificadorEnvio`. Si ya había sido procesado, el
+RPI devuelve el resultado original.
 
 ## Headers recomendados
 
