@@ -7,6 +7,54 @@ y este contrato adhiere a [Semantic Versioning 2.0.0](https://semver.org/spec/v2
 
 ---
 
+## [3.1.0] — pendiente de publicación
+
+Cambio **MINOR (compatible)**: se habilita la **firma XAdES-BES detached**, en la que la firma del
+escribano viaja como archivo aparte y no dentro del documento XML.
+
+**Por qué**: el firmador del Colegio produce firmas detached, con el digest calculado sobre los
+**bytes crudos** del archivo XML. El esquema v3.0 exigía `<ds:Signature>` como último hijo del
+elemento raíz, así que un XML con firma detached no validaba.
+
+**Por qué es compatible**: un documento v3.0 con la firma envuelta **sigue siendo válido** contra
+este esquema (verificado: los 12 ejemplos de `ejemplos/v3/` validan sin cambios). El atributo
+`version` pasa de `fixed="3.0"` a una enumeración `"3.0" | "3.1"`: dejarlo fijo en `3.0` habría
+impedido declarar la versión nueva, y fijarlo en `3.1` habría invalidado todos los envíos
+existentes, convirtiendo este MINOR en un MAJOR.
+
+### Cambiado
+- **`xsd/v3/testimonio-digital.xsd`**: `<ds:Signature>` pasa a `minOccurs="0"`. El esquema deja de
+  garantizar por sí solo que el testimonio esté firmado; esa obligación pasa a ser **regla del
+  servicio**, que exige la firma siempre y rechaza el envío si falta.
+- **`xsd/v3/testimonio-digital.xsd`**: el atributo `version` del elemento raíz pasa de
+  `fixed="3.0"` a enumeración `"3.0" | "3.1"`. Los envíos con firma detached declaran `"3.1"`.
+- **`docs/03-endpoint-api.md`**: el multipart pasa de dos a **tres partes**. La nueva se llama
+  **`firma_xml_escribano`** y es **obligatoria**. Se documenta que el XML se verifica byte a byte y
+  se agrega el límite de tamaño de la firma (1 MB).
+- **`docs/05-firma-digital.md`**: reescrito para firma detached. Documenta qué cubre cada
+  referencia, que el digest del documento es sobre los **bytes exactos** (sin canonicalizar, así que
+  CRLF vs LF importa), la política de algoritmos (**SHA-256 o superior; SHA-1 se rechaza**), que el
+  CUIT/CUIL se lee del atributo `serialNumber` del certificado aceptando ambos prefijos, y que la
+  lista de raíces confiables es configuración del servicio y no parte del contrato.
+- **`xsd/v3/comunes/metadatos-envio.xsd`**: se corrige un comentario que seguía diciendo
+  `"Para esta v2.0: 2.0"` dentro del esquema v3.
+
+### Agregado
+- **`docs/05`**: sección de pendientes de definición — **sello de tiempo (XAdES-T)** y **segunda
+  firma (de aplicación, del Colegio)**. Ninguna de las dos es exigible todavía. Se deja constancia
+  de que `<xades:SigningTime>` es una fecha **declarada por el firmante** y no prueba cuándo se
+  firmó.
+- **`docs/05`**: nota para implementadores en Node.js — `xml-crypto` **no resuelve referencias
+  externas** y además canonicaliza el contenido referenciado, así que para detached hay que resolver
+  la referencia a mano.
+
+### ⚠️ No se acepta la firma envuelta
+Aunque el **esquema** sigue admitiendo `<ds:Signature>` dentro del documento (por compatibilidad),
+el **servicio** rechaza un XML que la traiga adentro. Un solo modo de firma, para que no haya
+ambigüedad sobre qué bytes se verifican.
+
+---
+
 ## [No publicado]
 
 ### Agregado

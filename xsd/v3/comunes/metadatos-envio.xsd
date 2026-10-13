@@ -74,7 +74,8 @@
       <xs:element name="VersionContrato" type="VersionContratoType">
         <xs:annotation>
           <xs:documentation>
-            Versión del contrato XSD que el cliente declara usar. Para esta v2.0: "2.0".
+            Versión del contrato XSD que el cliente declara usar: "3.0" o,
+            para envíos con firma detached, "3.1".
           </xs:documentation>
         </xs:annotation>
       </xs:element>

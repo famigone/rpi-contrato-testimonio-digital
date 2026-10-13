@@ -46,7 +46,7 @@ Content-Type: multipart/form-data; boundary=...
 
 ### Partes del multipart
 
-La petición debe contener exactamente **dos partes**:
+La petición debe contener exactamente **tres partes**:
 
 #### Parte 1 — `xml`
 
@@ -61,6 +61,29 @@ La petición debe contener exactamente **dos partes**:
 - **Content-Type**: `application/pdf`
 - **Filename (opcional)**: `testimonio.pdf`
 - **Contenido**: el PDF firmado del testimonio.
+
+#### Parte 3 — `firma_xml_escribano`
+
+- **Nombre del campo**: `firma_xml_escribano`
+- **Content-Type**: `application/xml`
+- **Filename (opcional)**: `testimonio.sig.xml`
+- **Contenido**: la firma **XAdES-BES detached** del escribano sobre el XML de
+  la parte 1 — un documento cuyo elemento raíz es `<ds:Signature>`.
+- **Obligatoria**. Si falta, el RPI rechaza el envío.
+
+Desde la **v3.1** la firma no va dentro del XML sino en esta parte. La
+referencia de la firma se resuelve **contra la parte `xml`** del mismo envío,
+sin importar qué nombre de archivo declare su atributo `URI`.
+
+> ⚠️ **El XML de la parte 1 se verifica byte a byte.** El digest de la firma se
+> calcula sobre los **bytes crudos** del archivo, sin canonicalizar, así que los
+> finales de línea (CRLF vs LF), el BOM y la indentación son parte de lo
+> firmado. Hay que enviar el XML **exactamente** como salió del firmador: no
+> reformatearlo, no reserializarlo, no convertir saltos de línea.
+> Ver [05 — Firma digital](05-firma-digital.md).
+
+> ⚠️ **No se acepta la firma envuelta.** Si el XML de la parte 1 contiene un
+> `<ds:Signature>` adentro, el RPI rechaza el envío.
 
 ### Ejemplo de petición (raw HTTP)
 
@@ -85,6 +108,14 @@ Content-Type: application/pdf
 
 %PDF-1.7
 ...
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="firma_xml_escribano"; filename="testimonio.sig.xml"
+Content-Type: application/xml
+
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" Id="id-396e95...">
+  ...
+</ds:Signature>
 ------WebKitFormBoundary7MA4YWxkTrZu0gW--
 ```
 
@@ -94,8 +125,13 @@ Content-Type: application/pdf
 curl -X POST https://[POR-DEFINIR]/api/v1/testimonios \
   -H "Authorization: Bearer $TOKEN" \
   -F "xml=@testimonio.xml;type=application/xml" \
-  -F "pdf=@testimonio.pdf;type=application/pdf"
+  -F "pdf=@testimonio.pdf;type=application/pdf" \
+  -F "firma_xml_escribano=@testimonio.sig.xml;type=application/xml"
 ```
+
+> `curl -F "campo=@archivo"` manda el archivo **sin modificarlo**, que es lo que
+> hace falta para que el digest del XML cierre. Cuidado con los pipes y las
+> redirecciones del shell, que sí pueden tocar los finales de línea.
 
 ## Respuesta
 
@@ -176,9 +212,10 @@ completo de códigos HTTP y respuestas de error.
 
 | Recurso | Límite |
 |---------|--------|
-| Tamaño total de la petición | 50 MB (XML + PDF + overhead) |
+| Tamaño total de la petición | 50 MB (XML + PDF + firma + overhead) |
 | Tamaño del XML solo | 5 MB |
 | Tamaño del PDF solo | 45 MB |
+| Tamaño de `firma_xml_escribano` solo | 1 MB |
 | Tiempo de respuesta del RPI | Típico: menos de 5 segundos. El RPI responde siempre antes de 30 segundos |
 | Timeout recomendado para el cliente | 40 segundos |
 

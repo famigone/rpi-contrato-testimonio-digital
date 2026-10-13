@@ -31,7 +31,8 @@
 
   <xs:annotation>
     <xs:documentation>
-      Contrato XSD del Testimonio Digital del RPI Neuquén — v3.0 (version="3.0").
+      Contrato XSD del Testimonio Digital del RPI Neuquén — v3.1
+      (version="3.0" o "3.1").
 
       Cambio central respecto de v2 (MAJOR, incompatible): el tipo de acto es un
       DATO, no un elemento del esquema. En v2 cada tipo era un elemento del
@@ -68,6 +69,17 @@
       A nivel testimonio quedan (igual que v2): MetadatosEnvio,
       EscribanoAutorizante, Otorgamiento, Rogante, TextoCuerpo, Observaciones y
       Signature.
+
+      CAMBIO DE v3.1 (MINOR, compatible): &lt;ds:Signature&gt; pasa a
+      minOccurs="0" para habilitar la FIRMA DETACHED, en la que la firma viaja
+      como archivo aparte y no dentro del documento. Ver docs/05-firma-digital.md.
+
+      Es compatible porque un documento v3.0 con la firma envuelta sigue siendo
+      válido contra este esquema. La contracara es que el esquema, por sí solo,
+      ya no garantiza que el testimonio esté firmado: eso pasa a ser
+      responsabilidad del servicio receptor, que lo exige siempre y rechaza el
+      envío si falta la firma. El esquema describe la FORMA; la obligación de
+      firmar es una regla del servicio.
     </xs:documentation>
   </xs:annotation>
 
@@ -297,9 +309,29 @@
             </xs:restriction>
           </xs:simpleType>
         </xs:element>
-        <xs:element ref="ds:Signature"/>
+        <!--
+          minOccurs="0" desde v3.1: habilita la firma DETACHED, donde
+          &lt;ds:Signature&gt; viaja en un archivo aparte y el documento no la
+          contiene. La firma sigue siendo OBLIGATORIA a nivel servicio: el RPI
+          rechaza todo envío sin firma. Ver docs/05-firma-digital.md.
+        -->
+        <xs:element ref="ds:Signature" minOccurs="0"/>
       </xs:sequence>
-      <xs:attribute name="version" type="xs:string" use="required" fixed="3.0"/>
+      <!--
+        Hasta v3.0 era fixed="3.0". Desde v3.1 es una enumeración de las dos
+        versiones vigentes de la serie 3: dejarlo fijo en "3.0" habría impedido
+        declarar la versión nueva, y fijarlo en "3.1" habría invalidado todos
+        los envíos existentes — o sea, habría convertido un MINOR en un MAJOR.
+        Los envíos con firma detached declaran "3.1".
+      -->
+      <xs:attribute name="version" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="3.0"/>
+            <xs:enumeration value="3.1"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
       <xs:attribute name="Id" type="xs:ID" use="optional">
         <xs:annotation>
           <xs:documentation>
