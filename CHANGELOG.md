@@ -7,7 +7,37 @@ y este contrato adhiere a [Semantic Versioning 2.0.0](https://semver.org/spec/v2
 
 ---
 
-## [3.1.0] — pendiente de publicación
+## [3.1.1] — pendiente de publicación
+
+Solo **documentación**: no cambia ningún XSD, así que no hay nada que migrar y
+un cliente ya integrado no necesita tocar nada más que la URL base.
+
+### Cambiado
+- **`docs/03-endpoint-api.md`**: se define la URL pública del endpoint.
+  - Staging / Homologación: `https://test.jusneuquen.gov.ar/rpi-td/api/v1/testimonios`
+  - Producción: `https://[HOST-PRODUCCION-POR-DEFINIR]/rpi-td/api/v1/testimonios`
+    (la ruta queda definida; falta confirmar el host)
+  Se actualizan el bloque de método HTTP y los dos ejemplos (raw HTTP y `curl`).
+- **`README.md`**: en "Decisiones pendientes", la URL de staging pasa a
+  resuelta; queda abierto solo el host de producción.
+
+### Agregado
+- **`docs/03`**, sección "Sobre el prefijo `/rpi-td`": el prefijo es parte de la
+  **URL pública**, **no del servicio**. Lo agrega el enrutamiento del RPI, cuyo
+  proxy inverso lo recorta y le entrega al servicio `/api/v1/testimonios`.
+
+  Se documenta explícitamente porque invita a tres errores:
+  1. pegarle a `/api/v1/testimonios` sin el prefijo, que no funciona desde
+     afuera;
+  2. deducir otras rutas sacando el prefijo — cualquier endpoint futuro se
+     publica acá con su URL pública completa;
+  3. escribir la URL base en el código. El prefijo es un detalle del
+     enrutamiento del RPI y **puede cambiar sin que cambie el contrato del
+     testimonio**, así que conviene que sea configurable del lado del
+     integrador.
+
+---
+## [3.1.0] — 2026-10-13
 
 Cambio **MINOR (compatible)**: se habilita la **firma XAdES-BES detached**, en la que la firma del
 escribano viaja como archivo aparte y no dentro del documento XML.
@@ -54,7 +84,6 @@ el **servicio** rechaza un XML que la traiga adentro. Un solo modo de firma, par
 ambigüedad sobre qué bytes se verifican.
 
 ---
-
 ## [No publicado]
 
 ### Agregado

@@ -2,13 +2,31 @@
 
 ## URL del endpoint
 
-> ⚠️ **Pendiente de definición**. Las URLs finales se confirmarán antes de
-> la entrega definitiva del contrato.
-
 | Ambiente | URL |
 |----------|-----|
-| Staging / Homologación | `https://[POR-DEFINIR].jusneuquen.gov.ar/api/v1/testimonios` |
-| Producción | `https://[POR-DEFINIR].jusneuquen.gov.ar/api/v1/testimonios` |
+| Staging / Homologación | `https://test.jusneuquen.gov.ar/rpi-td/api/v1/testimonios` |
+| Producción | `https://[HOST-PRODUCCION-POR-DEFINIR]/rpi-td/api/v1/testimonios` |
+
+> ⚠️ **El host de producción está pendiente de definición.** El de staging ya es
+> definitivo.
+
+### Sobre el prefijo `/rpi-td`
+
+El `/rpi-td` **es parte de la URL pública, no del servicio**. Lo agrega el
+enrutamiento del RPI: el proxy inverso de infraestructura lo recorta y reenvía
+la petición al servicio, que recibe `/api/v1/testimonios`.
+
+Qué implica para quien integra:
+
+- **Usar siempre la URL pública completa**, con el prefijo. Pegarle directo a
+  `/api/v1/testimonios` sin el prefijo no funciona desde afuera.
+- **No deducir otras rutas sacando el prefijo.** Cualquier endpoint que el RPI
+  publique en el futuro va a estar documentado acá con su URL pública completa.
+- El prefijo es un detalle del enrutamiento del RPI y **puede cambiar** sin que
+  cambie el contrato del testimonio. Si cambia, se avisa por el canal de
+  gobernanza y se publica una versión nueva de este capítulo. Conviene que la
+  URL base sea **configurable** en el sistema del Colegio y no esté escrita en
+  el código.
 
 > **Nota sobre el `v1` del path**: el `/api/v1/` de la URL es la versión de la
 > **API HTTP**, independiente de la versión del **contrato** del testimonio
@@ -19,8 +37,12 @@
 ## Método HTTP
 
 ```
-POST /api/v1/testimonios
+POST /rpi-td/api/v1/testimonios
 ```
+
+> El `v1` del path es la versión de la **API HTTP**; el `/rpi-td` es el prefijo
+> del enrutamiento público (ver arriba). Ninguno de los dos tiene relación con
+> la versión del **contrato** del XML.
 
 ## Autenticación
 
@@ -88,8 +110,8 @@ sin importar qué nombre de archivo declare su atributo `URI`.
 ### Ejemplo de petición (raw HTTP)
 
 ```http
-POST /api/v1/testimonios HTTP/1.1
-Host: [POR-DEFINIR].jusneuquen.gov.ar
+POST /rpi-td/api/v1/testimonios HTTP/1.1
+Host: test.jusneuquen.gov.ar
 Authorization: Bearer eyJhbGciOi...
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Length: 1234567
@@ -122,7 +144,7 @@ Content-Type: application/xml
 ### Ejemplo con `curl`
 
 ```bash
-curl -X POST https://[POR-DEFINIR]/api/v1/testimonios \
+curl -X POST https://test.jusneuquen.gov.ar/rpi-td/api/v1/testimonios \
   -H "Authorization: Bearer $TOKEN" \
   -F "xml=@testimonio.xml;type=application/xml" \
   -F "pdf=@testimonio.pdf;type=application/pdf" \

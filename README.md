@@ -202,7 +202,9 @@ breaking están en [GOVERNANCE.md](GOVERNANCE.md).
 
 Antes de salir de "borrador para revisión":
 
-- [ ] Confirmar URL del endpoint en ambientes de staging y producción.
+- [x] URL del endpoint en **staging**: `https://test.jusneuquen.gov.ar/rpi-td/api/v1/testimonios`.
+- [ ] Confirmar el **host de producción** (la ruta ya está definida:
+      `/rpi-td/api/v1/testimonios`).
 - [ ] Confirmar mecanismo de autenticación (Bearer token vs mTLS).
 - [ ] Confirmar requisitos específicos de la cadena de certificación para
       firma XML-DSig en el ámbito del Poder Judicial de Neuquén.
