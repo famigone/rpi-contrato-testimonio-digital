@@ -135,6 +135,31 @@ propio namespace) están bajo este namespace.
 La versión MAJOR del contrato está embebida en el namespace (`/v3`). Los
 cambios MINOR y PATCH mantienen el mismo namespace; un cambio MAJOR lo cambia.
 
+## Orden de armado del envío
+
+Las tres partes del envío tienen **dependencias entre sí**, así que el orden no
+es opcional:
+
+1. **Firmar el PDF.** El PDF tiene que estar firmado ANTES de calcular su hash:
+   la firma PAdES cambia los bytes del archivo, así que el hash de un PDF sin
+   firmar no sirve.
+2. **Armar el XML completo**, ya con el `HashPDF` del paso 1 y el
+   `TimestampEnvio` del momento en que se arma.
+3. **Firmar el XML.** La firma detached cubre los **bytes exactos** del archivo
+   XML resultante del paso 2 (ver [05 — Firma digital](05-firma-digital.md)).
+
+De ahí se siguen dos consecuencias que conviene tener presentes:
+
+- **Después del paso 3 no se puede tocar nada.** Cambiar un campo del XML
+  invalida su firma; cambiar el PDF invalida el `HashPDF` y, con él, el XML y su
+  firma. Si hay que corregir algo, se vuelve al paso que corresponda y se
+  rearma: el envío es un bloque.
+- **Un reintento NO se rearma.** Reintentar es retransmitir los **mismos tres
+  archivos**, con el mismo `identificadorEnvio` (ver
+  [07 — Respuestas y errores](07-respuestas-y-errores.md)). No hay que
+  regenerar el XML ni refrescar el `TimestampEnvio`: eso cambiaría los bytes y
+  habría que volver a firmar, además de romper la idempotencia.
+
 ## Secciones del XML
 
 ### MetadatosEnvio
@@ -143,7 +168,8 @@ Datos de control del envío:
 
 - `IdentificadorEnvio`: UUID v4 generado por el sistema del Colegio. **Único**
   por testimonio. Si se reenvía, debe ser el mismo (para idempotencia).
-- `TimestampEnvio`: fecha y hora del envío en formato ISO 8601 con timezone.
+- `TimestampEnvio`: fecha y hora en que se **arma** el envío, en formato
+  ISO 8601 **con timezone**. Ver la aclaración de abajo.
 - `HashPDF`: hash SHA-256 del PDF que viaja en la misma petición, en
   hexadecimal lowercase.
 - `VersionContrato`: la versión del contrato XSD que el cliente declara usar.
@@ -156,6 +182,29 @@ Datos de control del envío:
   <VersionContrato>3.0</VersionContrato>
 </MetadatosEnvio>
 ```
+
+#### Qué es y qué no es `TimestampEnvio`
+
+`TimestampEnvio` es el momento en que el sistema del Colegio **arma** el envío
+—paso 2 del orden de armado—, no el de la transmisión. Queda fijado antes de
+firmar el XML y, como la firma cubre los bytes exactos del archivo, **no se
+puede cambiar después** sin volver a firmar.
+
+Por eso es normal que esté lejos de la hora en que el RPI recibe el envío: se
+puede armar y transmitir más tarde, y un reintento del mismo envío puede ocurrir
+al día siguiente conservando su `TimestampEnvio` original.
+
+> **El momento oficial del envío es la RECEPCIÓN en el RPI**, no este campo. Es
+> la fecha que el RPI registra, la que determina el orden de ingreso y la que
+> vale a efectos registrales. `TimestampEnvio` es un dato del emisor, útil para
+> trazabilidad y para conciliar con los registros del Colegio.
+
+**El RPI no rechaza por este campo.** No se valida contra la hora de recepción:
+ni una fecha vieja ni una ligeramente futura invalidan el envío. Un desfase muy
+grande —más de 7 días hacia el pasado, o más de una hora hacia el futuro— se
+**registra como advertencia** en la traza del testimonio y el envío se acepta
+igual. Esa advertencia existe porque un desfase así suele indicar un reloj mal
+configurado del lado del emisor, o un envío que quedó colgado; no es un rechazo.
 
 ### EscribanoAutorizante
 

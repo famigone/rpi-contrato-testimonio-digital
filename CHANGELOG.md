@@ -9,8 +9,9 @@ y este contrato adhiere a [Semantic Versioning 2.0.0](https://semver.org/spec/v2
 
 ## [3.1.1] — pendiente de publicación
 
-Solo **documentación**: no cambia ningún XSD, así que no hay nada que migrar y
-un cliente ya integrado no necesita tocar nada más que la URL base.
+Solo **documentación**: no cambia ningún XSD, así que no hay nada que migrar.
+Un cliente ya integrado solo tiene que ajustar su URL base; el resto son
+aclaraciones de cosas que ya eran así.
 
 ### Cambiado
 - **`docs/03-endpoint-api.md`**: se define la URL pública del endpoint.
@@ -22,6 +23,23 @@ un cliente ya integrado no necesita tocar nada más que la URL base.
   resuelta; queda abierto solo el host de producción.
 
 ### Agregado
+- **`docs/04`**, sección "Orden de armado del envío": las tres partes tienen
+  dependencias entre sí, así que el orden no es opcional — (1) firmar el PDF,
+  (2) armar el XML completo con ese `HashPDF`, (3) firmar el XML. Se explicitan
+  las dos consecuencias: después del paso 3 no se puede tocar nada (el envío es
+  un bloque), y **un reintento NO se rearma** — se retransmiten los mismos tres
+  archivos, sin regenerar el XML ni refrescar el `TimestampEnvio`.
+- **`docs/04`**, sección "Qué es y qué no es `TimestampEnvio`": es el momento de
+  **armado** del envío, no el de la transmisión, y queda fijado antes de firmar
+  el XML (la firma cubre sus bytes, así que no se puede cambiar después). **El
+  momento oficial del envío es la RECEPCIÓN en el RPI**: es la fecha que el RPI
+  registra y la que vale a efectos registrales.
+
+  Se documenta además que **el RPI no rechaza por este campo**: no se valida
+  contra la hora de recepción, así que un envío armado horas antes o reintentado
+  al día siguiente se acepta. Un desfase muy grande (más de 7 días al pasado,
+  más de 1 hora al futuro) queda como **advertencia** en la traza, no como
+  rechazo.
 - **`docs/03`**, sección "Sobre el prefijo `/rpi-td`": el prefijo es parte de la
   **URL pública**, **no del servicio**. Lo agrega el enrutamiento del RPI, cuyo
   proxy inverso lo recorta y le entrega al servicio `/api/v1/testimonios`.
