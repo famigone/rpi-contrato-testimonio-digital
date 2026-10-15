@@ -7,7 +7,7 @@ y este contrato adhiere a [Semantic Versioning 2.0.0](https://semver.org/spec/v2
 
 ---
 
-## [3.1.1] — pendiente de publicación
+## [3.1.1] — 2026-10-15
 
 Solo **documentación**: no cambia ningún XSD, así que no hay nada que migrar.
 Un cliente ya integrado solo tiene que ajustar su URL base; el resto son
