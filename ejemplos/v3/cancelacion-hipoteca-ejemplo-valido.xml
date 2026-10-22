@@ -2,7 +2,6 @@
 <TestimonioDigital
     xmlns="https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v3"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
     xsi:schemaLocation="https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v3 ../../xsd/v3/testimonio-digital.xsd"
     version="3.0">
 
@@ -111,26 +110,5 @@
   <TextoCuerpo>CANCELACIÓN DE HIPOTECA. En la ciudad de Neuquén, capital de la Provincia del Neuquén, República Argentina, a los veinte días del mes de julio del año dos mil veintiséis, ante mí, JUAN CARLOS PÉREZ, escribano titular del Registro Notarial Número 123 con sede en Neuquén, comparece el BANCO DE LA PROVINCIA DEL NEUQUÉN S.A., y declara que, habiendo sido íntegramente cancelado el crédito garantizado, otorga la cancelación total del derecho real de hipoteca que gravaba el inmueble matrícula 22.106 del Departamento Confluencia, a favor de CARLA VANESA ROMERO, por el capital de pesos sesenta millones ($ 60.000.000,00). Doy fe.</TextoCuerpo>
 
   <Observaciones>Ejemplo de cancelación de hipoteca (código 1020, familia HIPOTECARIA-LIBERA). Datos ficticios. No lleva certificación catastral, dominio ni inhibiciones: por eso NO valida contra el contrato v2 (donde el catastro era obligatorio) y sí contra v3.</Observaciones>
-
-  <ds:Signature>
-    <ds:SignedInfo>
-      <ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
-      <ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>
-      <ds:Reference URI="">
-        <ds:Transforms>
-          <ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
-          <ds:Transform Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
-        </ds:Transforms>
-        <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
-        <ds:DigestValue>UExBQ0VIT0xERVJfTk9fVVNBUl9WQUxJREFSX1NPTE9fRVNUUlVDVFVSQV9f</ds:DigestValue>
-      </ds:Reference>
-    </ds:SignedInfo>
-    <ds:SignatureValue>WFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWA==</ds:SignatureValue>
-    <ds:KeyInfo>
-      <ds:X509Data>
-        <ds:X509Certificate>UExBQ0VIT0xERVJfQ0VSVElGSUNBVEVfWDUwOV9ERUxfRVNDUklCQU5PX05PX1VTQVJfRVNfU09MT19QQVJBX1ZBTElEQVJfTEFfRVNUUlVDVFVSQV9ERUxfWE1MX0NPTlRSQV9FTF9YU0Q=</ds:X509Certificate>
-      </ds:X509Data>
-    </ds:KeyInfo>
-  </ds:Signature>
 
 </TestimonioDigital>
