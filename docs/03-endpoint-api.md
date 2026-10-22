@@ -168,7 +168,7 @@ curl -X POST https://test.jusneuquen.gov.ar/rpi-td/api/v1/testimonios \
 ## Respuesta
 
 El RPI completa **todas las validaciones antes de responder** (contrato, firmas,
-hash, reglas del acto y tasa; ver [02 — Paso 4](02-flujo-end-to-end.md#4-el-rpi-valida-persiste-y-responde)).
+hash y reglas del acto; ver [02 — Paso 4](02-flujo-end-to-end.md#4-el-rpi-valida-persiste-y-responde)).
 Una respuesta 202 significa que el testimonio **fue validado y aceptado**.
 
 ### Caso de éxito (202 Accepted)
@@ -181,17 +181,36 @@ Content-Type: application/json
   "identificadorEnvio": "550e8400-e29b-41d4-a716-446655440000",
   "estado": "aceptado",
   "recibidoEn": "2026-06-15T10:23:45Z",
-  "mensaje": "Testimonio validado y aceptado. La Entrada General se notificará por callback."
+  "mensaje": "Testimonio validado y aceptado. La Entrada General se notificará por callback.",
+  "tasa": {
+    "numero": 15851,
+    "estado": "sin_verificar"
+  }
 }
 ```
 
 El campo `identificadorEnvio` coincide con el `MetadatosEnvio/IdentificadorEnvio`
 que el sistema del Colegio incluyó en el XML.
 
-Si el sistema de tasas no respondió a tiempo, el estado es
-`aceptado_tasa_pendiente`: el testimonio pasó todas las demás validaciones y la
-tasa se verificará después. Si resulta impaga, el RPI lo notifica con el callback
-`validacion_fallida`.
+### La tasa en la respuesta
+
+`tasa` informa el `NumeroTasa` recibido y su estado **en el momento de
+responder**. La verificación contra el Sistema Único de Recaudación es
+posterior al 202, así que ese estado es:
+
+| `tasa.estado` | Cuándo |
+|---|---|
+| `sin_codigo` | El XML no trajo `NumeroTasa`. |
+| `sin_verificar` | Trajo número; todavía no se consultó al sistema de tasas. |
+
+**Ningún estado de la tasa cambia el código de respuesta ni impide el ingreso.**
+Si la tasa resulta impaga, inexistente o ya usada, el testimonio ingresa igual y
+la inscripción sale provisional: la ley impide rechazar por cuestiones
+tributarias.
+
+El estado verificado **no se informa por esta vía**. El escribano lo conoce por
+el resultado de la calificación (una provisional por tasa impaga). Más adelante
+se puede agregar una consulta para verlo antes.
 
 ### Caso de idempotencia (200 OK)
 
@@ -228,12 +247,15 @@ que la primera vez. Para corregir, hay que hacer un envío nuevo con un
 | Estado | Significado |
 |--------|-------------|
 | `aceptado` | Validado y aceptado; pendiente de ingreso al registro. |
-| `aceptado_tasa_pendiente` | Validado salvo la tasa, que se verificará después. |
 | `ingresado` | El registro asignó Entrada General. |
 | `inscripto_provisorio` | Calificado con observaciones a subsanar. |
 | `inscripto_definitivo` | Inscripto. |
 | `rechazado_registral` | Rechazado por el calificador. |
-| `rechazado` | Rechazo estructural detectado después de aceptar (tasa impaga). |
+
+> Antes había dos estados más, `aceptado_tasa_pendiente` y `rechazado`, para el
+> caso de una tasa verificada como impaga después del 202. **Ya no existen:** la
+> tasa no rechaza, así que no hay rechazos posteriores al 202 y todo rechazo
+> estructural es síncrono.
 
 ### Casos de error
 

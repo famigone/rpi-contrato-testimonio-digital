@@ -5,7 +5,7 @@
 ```
 Escribano → Colegio    : confecciona y firma el testimonio
 Colegio   → RPI        : POST /testimonios (XML + PDF firmados)
-RPI                    : valida contrato, firmas, hash, reglas del acto y tasa
+RPI                    : valida contrato, firmas, hash y reglas del acto
 RPI       → Colegio    : 202 Accepted   (o 4xx: rechazo estructural)
 RPI       → Registro   : sincroniza los datos
 Registro               : asigna la Entrada General
@@ -61,19 +61,27 @@ llegue al Colegio en la misma respuesta HTTP:
 5. Reglas de negocio: el código de acto está habilitado, las partes y datos
    corresponden al acto, el escribano y el rogante están registrados, las
    certificaciones están vigentes.
-6. **Tasa registral**: el RPI consulta al sistema de tasas que la tasa declarada
-   exista, esté paga y no haya sido usada en otro trámite.
-7. Persiste el testimonio y almacena el PDF.
-8. Responde **HTTP 202 Accepted**.
+6. Persiste el testimonio y almacena el PDF.
+7. Responde **HTTP 202 Accepted**.
 
 Si alguna validación falla, el RPI responde con un error 4xx y el testimonio
 **no ingresa** (ver [Qué pasa si algo falla](#qué-pasa-si-algo-falla)).
 
-**Excepción — tasa pendiente de verificación**: si el sistema de tasas no
-responde a tiempo, el RPI acepta el testimonio con estado
-`aceptado_tasa_pendiente` y verifica la tasa después. El testimonio no avanza al
-paso 5 hasta que la tasa se confirma. Si resulta impaga, el RPI lo rechaza con el
-callback `validacion_fallida`.
+### La tasa registral no es una validación
+
+**La tasa nunca rechaza un ingreso.** La ley impide rechazar un trámite por
+cuestiones tributarias. Una tasa impaga, inexistente o ya usada en otro trámite
+**ingresa igual**, y el resultado es una **inscripción provisional** hasta que
+se pague.
+
+El escribano puede informar un `NumeroTasa` —uno solo por testimonio, opcional—
+y el RPI lo verifica contra el Sistema Único de Recaudación. Sea cual sea el
+resultado, la respuesta es 202 y el testimonio sigue su curso. El estado de la
+tasa viaja en la respuesta a título informativo.
+
+El pago posterior se presenta como un reingreso: una nueva presentación de la
+misma EG con el número de tasa pagado, porque hace falta inscribir un asiento
+definitivo.
 
 ### 5. El RPI ingresa el testimonio al sistema registral
 
@@ -106,10 +114,11 @@ es un problema del envío; lo que se detecta después es un problema registral.
 ### Rechazo estructural (antes de la EG)
 
 El envío no cumple las condiciones para ingresar: el XML no respeta el contrato,
-una firma no valida, la tasa no está paga, el acto no está habilitado, etc.
+una firma no valida, el acto no está habilitado, etc. **La tasa no está en esta
+lista: no es motivo de rechazo.**
 
-- Llega en la respuesta HTTP como error 4xx. Excepcionalmente (tasa verificada
-  después), llega como callback `validacion_fallida`.
+- Llega **siempre** en la respuesta HTTP, como error 4xx. Todo rechazo
+  estructural es síncrono: no hay rechazos que lleguen después del 202.
 - El testimonio **no ingresó**: no tiene EG ni prioridad.
 - **Un rechazo es definitivo para ese `IdentificadorEnvio`.** El Colegio corrige
   y hace **un envío nuevo, con un `IdentificadorEnvio` nuevo**. Para el RPI, el

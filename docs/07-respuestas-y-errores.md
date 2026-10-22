@@ -26,7 +26,7 @@ y [08 — Notificaciones](08-notificaciones-callback.md)).
 | 403 Forbidden | Cliente autenticado pero sin permiso para esta operación | Contactar al equipo del RPI. No reintentar. |
 | 409 Conflict | `identificadorEnvio` ya usado con contenido distinto | Generar un `identificadorEnvio` nuevo y reenviar. |
 | 413 Payload Too Large | Petición excede el límite (50 MB total) | Reducir el tamaño del PDF y enviar con un `identificadorEnvio` nuevo. |
-| 422 Unprocessable Entity | XML válido pero falla una regla de negocio o la tasa | Revisar el error específico, corregir y enviar con un `identificadorEnvio` nuevo. |
+| 422 Unprocessable Entity | XML válido pero falla una regla de negocio | Revisar el error específico, corregir y enviar con un `identificadorEnvio` nuevo. |
 | 429 Too Many Requests | Rate limit del RPI alcanzado | Reintentar con el mismo `identificadorEnvio`, respetando `Retry-After`. |
 | 500 Internal Server Error | Error del lado del RPI | Reintentar con el mismo `identificadorEnvio` y backoff exponencial. |
 | 502 Bad Gateway | RPI temporalmente no disponible | Ídem. |
@@ -102,13 +102,15 @@ El campo `detalle` es opcional y varía según el código de error.
 | `ROL_NO_VALIDO_PARA_ACTO` | El `rol` de la parte no corresponde al acto (ej. ACREEDOR en una compraventa, código 1028). |
 | `ACTO_SIN_ADQUIRENTE` | El acto exige al menos una parte con rol ADQUIRENTE (ej. compraventa, código 1028). |
 | `CUIT_FIRMANTE_NO_COINCIDE` | El CUIT del certificado debe coincidir con el del XML. |
-| `TASA_INEXISTENTE` | El número de tasa declarado no existe en el sistema de tasas. |
-| `TASA_NO_PAGADA` | La tasa declarada existe pero no está paga. |
-| `TASA_YA_UTILIZADA` | La tasa declarada ya fue aplicada a otro trámite. |
-
-Los errores de tasa también pueden llegar después del 202, por el callback
-`validacion_fallida`, cuando el sistema de tasas no respondió durante la recepción
-(estado `aceptado_tasa_pendiente`).
+> **No hay errores de tasa.** Antes figuraban `TASA_INEXISTENTE`,
+> `TASA_NO_PAGADA` y `TASA_YA_UTILIZADA`. **Se eliminaron:** la ley impide
+> rechazar un trámite por cuestiones tributarias, así que una tasa impaga,
+> inexistente o ya usada **no rechaza el ingreso**. El testimonio entra igual y
+> la inscripción sale provisional hasta que se pague. Ver
+> [03 — La tasa en la respuesta](03-endpoint-api.md#la-tasa-en-la-respuesta).
+>
+> Con eso desaparece también el único rechazo que podía llegar después del 202:
+> **todo rechazo estructural es síncrono**.
 
 ### Errores del servidor (5xx)
 
@@ -162,7 +164,6 @@ operador del sistema del Colegio para que investigue.
 |-----------|------------------------------|
 | Timeout, error de red, 5xx, 429 | Sí: es el mismo envío |
 | Rechazo 4xx, después de corregir | No: es un envío nuevo |
-| Rechazo diferido (callback `validacion_fallida`), después de corregir | No: es un envío nuevo |
 | Observación registral (callback `inscripcion_provisoria`) | No aplica: se subsana por mesa de entradas (ver [02](02-flujo-end-to-end.md#observación-registral-después-de-la-eg)) |
 
 ## Ejemplos de respuestas de error
@@ -225,27 +226,3 @@ Content-Type: application/json
 }
 ```
 
-### Tasa no pagada
-
-```http
-HTTP/1.1 422 Unprocessable Entity
-Content-Type: application/json
-
-{
-  "error": {
-    "codigo": "TASA_NO_PAGADA",
-    "mensaje": "La tasa registral declarada no registra pago.",
-    "identificadorEnvio": "550e8400-e29b-41d4-a716-446655440000",
-    "timestamp": "2026-06-15T10:23:45Z"
-  }
-}
-```
-
-## Próximos pasos
-
-- Para los callbacks que el RPI envía al Colegio, andá a
-  [08 — Notificaciones de callback](08-notificaciones-callback.md).
-
----
-
-[← Índice de la documentación](README.md)

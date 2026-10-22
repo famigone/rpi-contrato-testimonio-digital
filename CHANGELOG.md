@@ -7,6 +7,60 @@ y este contrato adhiere a [Semantic Versioning 2.0.0](https://semver.org/spec/v2
 
 ---
 
+## [3.2.0] — 2026-10-22
+
+**Cambio MINOR del XSD**: se agrega el elemento opcional `NumeroTasa`. Los
+envíos que hoy validan siguen validando sin tocar nada (verificado: los 12
+ejemplos de `ejemplos/v3/` validan contra el XSD nuevo).
+
+Y una corrección de fondo en la documentación: **la tasa registral nunca
+rechaza un ingreso**. La ley impide rechazar un trámite por cuestiones
+tributarias. Lo que la documentación prometía —rechazos por tasa, un estado
+intermedio y un rechazo diferido por callback— no existía en el XSD ni en el
+servicio, y no va a existir: se elimina.
+
+### Agregado
+- **`xsd/v3/testimonio-digital.xsd`**: elemento **`NumeroTasa`**, opcional
+  (`minOccurs="0"`), de **primer nivel** y ubicado **después de
+  `Otorgamiento`**. Tipo `NumeroTasaType`: `xs:positiveInteger` con
+  `totalDigits="12"`.
+  > Es de nivel testimonio y no de acto, porque una misma tasa puede cubrir
+  > varios actos, cada uno con su concepto y su monto. Uno solo por testimonio.
+- **`docs/02-flujo-end-to-end.md`**, sección "La tasa registral no es una
+  validación".
+- **`docs/03-endpoint-api.md`**, sección "La tasa en la respuesta": el 202
+  informa `tasa.numero` y `tasa.estado`, que en ese momento solo puede ser
+  `sin_codigo` (el XML no trajo número) o `sin_verificar` (trajo número y
+  todavía no se consultó al SUR).
+
+### Eliminado
+- **Códigos de error `TASA_INEXISTENTE`, `TASA_NO_PAGADA` y
+  `TASA_YA_UTILIZADA`** (capítulo 07), con su ejemplo de respuesta.
+- **Estados `aceptado_tasa_pendiente` y `rechazado`** (capítulo 03).
+- **Evento de callback `validacion_fallida`** (capítulo 08), con su ejemplo y su
+  regla de deduplicación propia.
+  > Era el **único** rechazo que podía llegar después del 202, y existía solo
+  > para el caso de una tasa verificada como impaga. Al desaparecer, **todo
+  > rechazo estructural pasa a ser síncrono**: viaja siempre en la respuesta
+  > HTTP. Eso simplifica la integración del Colegio, que ya no necesita manejar
+  > un rechazo asincrónico.
+
+### Cambiado
+- **`docs/09-glosario.md`**, "Tasa registral": ahora dice que una tasa impaga
+  ingresa y sale provisional, y describe el reingreso por pago. "Rechazo
+  estructural" deja de mencionar la tasa y aclara que siempre es síncrono.
+- **`docs/02`** y **`docs/03`**: la tasa sale de la lista de validaciones de la
+  recepción.
+
+### Qué tiene que hacer el Colegio
+- **Nada obligatorio para seguir enviando**: `NumeroTasa` es opcional.
+- Para informar la tasa, agregar `<NumeroTasa>` después de `</Otorgamiento>`.
+- Si el sistema del Colegio maneja los códigos `TASA_*`, el estado
+  `aceptado_tasa_pendiente` o el callback `validacion_fallida`, **se puede
+  sacar ese código**: no van a llegar nunca.
+
+---
+
 ## [3.1.2] — 2026-10-22
 
 Solo **documentación y reorganización de archivos**: no cambia ningún XSD, así

@@ -176,11 +176,10 @@ subsanaciones de observaciones. En los callbacks se informa como
 ### Rechazo estructural
 
 Rechazo de un envío que **no llegó a ingresar** al registro: no respeta el
-contrato, una firma no valida, la tasa no está paga, el acto no está
-habilitado, etc. Lo detecta el servicio del RPI antes de asignar Entrada
-General. Llega como error HTTP 4xx o, excepcionalmente, como callback
-`validacion_fallida`. El envío no tiene EG ni prioridad: se corrige y se envía
-de nuevo con un `IdentificadorEnvio` nuevo. Ver
+contrato, una firma no valida, el acto no está habilitado, etc. Lo detecta el
+servicio del RPI antes de asignar Entrada General. Llega **siempre** como error
+HTTP 4xx: todo rechazo estructural es síncrono. El envío no tiene EG ni
+prioridad: se corrige y se envía de nuevo con un `IdentificadorEnvio` nuevo. Ver
 [07 — Respuestas y errores](07-respuestas-y-errores.md).
 
 ### Rechazo registral
@@ -215,10 +214,19 @@ matrícula.
 
 ### Tasa registral
 
-Pago al RPI por el servicio de inscripción del trámite. Se acredita mediante
-un número de tasa que el escribano gestiona antes del envío. Al recibir el
-testimonio, el RPI verifica en el sistema de tasas que exista, esté paga y no
-haya sido usada en otro trámite.
+Tributo que se abona para el ingreso de un documento al Registro. Se identifica
+con un número que el escribano gestiona en el Sistema Único de Recaudación antes
+del envío, y se informa en el XML como `NumeroTasa` (opcional, uno por
+testimonio).
+
+**La tasa nunca rechaza un ingreso.** La ley impide rechazar un trámite por
+cuestiones tributarias. Una tasa impaga, inexistente o ya usada en otro trámite
+**ingresa igual**, y el resultado es una **inscripción provisional** hasta que se
+pague.
+
+El pago posterior se presenta como un reingreso: una nueva presentación de la
+misma EG informando el número de tasa pagado, porque hace falta inscribir un
+asiento definitivo.
 
 ### Testimonio
 
