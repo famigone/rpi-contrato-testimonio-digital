@@ -70,12 +70,22 @@ Content-Type: multipart/form-data; boundary=...
 
 La petición debe contener exactamente **tres partes**:
 
+> ⚠️ **Los nombres de campo son exactos y en minúsculas**: `xml`, `pdf` y
+> `firma_xml_escribano`. El RPI los compara carácter por carácter y **distingue
+> mayúsculas de minúsculas**: una parte con `name="XML"` o
+> `name="Firma_XML_Escribano"` **no** se toma como la parte equivalente. Las
+> partes con un nombre que no sea uno de esos tres se descartan en silencio, y
+> el envío se rechaza con `MULTIPART_INVALIDO` (400) por **parte faltante**: el
+> rechazo nombra la parte que falta, no el nombre mal escrito que se envió.
+> El `filename` de cada parte, en cambio, el RPI no lo lee nunca.
+
 #### Parte 1 — `xml`
 
 - **Nombre del campo**: `xml`
 - **Content-Type**: `application/xml`
 - **Filename (opcional)**: `testimonio.xml`
-- **Contenido**: el XML del testimonio digital, firmado con XML-DSig.
+- **Contenido**: el XML del testimonio digital, **sin firma adentro**. Desde la
+  **v3.1** la firma no va envuelta en el XML: va en la parte 3.
 
 #### Parte 2 — `pdf`
 

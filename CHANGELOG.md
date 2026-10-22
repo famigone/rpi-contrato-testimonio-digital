@@ -7,6 +7,27 @@ y este contrato adhiere a [Semantic Versioning 2.0.0](https://semver.org/spec/v2
 
 ---
 
+## [No publicado]
+
+Solo **documentación**: no cambia ningún XSD, así que no hay nada que migrar.
+Las dos son aclaraciones de cosas que ya funcionaban así.
+
+### Agregado
+- **`docs/03-endpoint-api.md`**, sección "Partes del multipart": los nombres de
+  campo (`xml`, `pdf`, `firma_xml_escribano`) son **exactos y en minúsculas**.
+  El RPI los compara carácter por carácter y distingue mayúsculas: una parte con
+  `name="XML"` se descarta en silencio y el envío se rechaza con
+  `MULTIPART_INVALIDO` (400) por parte faltante. Se aclara además que el
+  `filename` de cada parte el RPI no lo lee nunca.
+
+### Corregido
+- **`docs/03-endpoint-api.md`**, Parte 1: decía que el contenido era "el XML del
+  testimonio digital, firmado con XML-DSig", que contradecía al resto del
+  capítulo y al 05. Desde la **v3.1** el XML va **sin firma adentro** y la firma
+  detached viaja en la parte 3; un XML con `<ds:Signature>` adentro se rechaza.
+
+---
+
 ## [3.1.1] — 2026-10-15
 
 Solo **documentación**: no cambia ningún XSD, así que no hay nada que migrar.
