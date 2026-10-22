@@ -7,7 +7,7 @@ y este contrato adhiere a [Semantic Versioning 2.0.0](https://semver.org/spec/v2
 
 ---
 
-## [No publicado]
+## [3.1.2] — 2026-10-22
 
 Solo **documentación y reorganización de archivos**: no cambia ningún XSD, así
 que no hay nada que migrar. Las correcciones de la firma envuelta son
