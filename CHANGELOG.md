@@ -7,6 +7,68 @@ y este contrato adhiere a [Semantic Versioning 2.0.0](https://semver.org/spec/v2
 
 ---
 
+## [No publicado]
+
+Solo **documentación y reorganización de archivos**: no cambia ningún XSD, así
+que no hay nada que migrar. Las correcciones de la firma envuelta son
+aclaraciones de cosas que el servicio ya hacía así desde la v3.1.
+
+### Agregado
+- **`artefacto-campos-por-acto.json`** (raíz del repo): reglas de **partes y campos por acto
+  habilitado** para que el editor del escribano arme el formulario dinámicamente. Versionado propio
+  e independiente del contrato: `versionEsquema` (estructuras genéricas; cambiarlo es *breaking*
+  para el editor) y `versionContenido` (qué actos están habilitados; no requiere cambios de código).
+  > Es un **dato**, no parte del esquema XML: no afecta el XSD ni la versión del
+  > contrato. La validación definitiva del testimonio sigue siendo el XSD v3 más
+  > las reglas del servicio.
+- **`docs/11-artefacto-campos-por-acto.md`**: guía de integración del artefacto con el editor del
+  Colegio de Escribanos (antes `INTEGRACION-artefacto-editor.md` en la raíz), incorporada como
+  capítulo 11 de la documentación.
+- **`docs/README.md`**: índice de la documentación (capítulos, recorridos por perfil y tabla de
+  "dónde encontrar cada cosa"). Cada capítulo cierra con un enlace de vuelta al índice.
+- **`docs/03-endpoint-api.md`**, sección "Partes del multipart": los nombres de
+  campo (`xml`, `pdf`, `firma_xml_escribano`) son **exactos y en minúsculas**.
+  El RPI los compara carácter por carácter y distingue mayúsculas: una parte con
+  `name="XML"` se descarta en silencio y el envío se rechaza con
+  `MULTIPART_INVALIDO` (400) por parte faltante. Se aclara además que el
+  `filename` de cada parte el RPI no lo lee nunca.
+- **`obsoleto/`** (carpeta nueva, con un README de una línea): el esquema **v1**
+  (`testimonio-digital.xsd` de la raíz de `xsd/` más sus `comunes/` y `actos/`) y
+  los seis ejemplos sin versión de `ejemplos/`. No se usaban, pero eran los que
+  encontraba quien quisiera validar antes de enviar: el XSD v1 exige
+  `<ds:Signature>` adentro, así que todo documento válido contra él lo rechaza el
+  RPI. `xsd/xmldsig-core-schema.xsd` **no** se movió: v2 y v3 lo importan.
+
+### Cambiado
+- **Documentación alineada a v3**: los capítulos 01 a 11, el `README.md`, `xsd/README.md`,
+  `ejemplos/README.md` y `xsd/v3/README.md` describen **solo la v3** (namespace `/v3`,
+  `version="3.0"`, `<VersionContrato>3.0</VersionContrato>`, XSD `xsd/v3/`). Se quitaron las
+  comparaciones con v1/v2; el historial de versiones queda en este CHANGELOG.
+- **`docs/07`**: se agrega el código de error `CODIGO_ACTO_NO_HABILITADO` (422).
+- **`CONTRIBUTING.md`**: los comandos de validación previos al PR apuntaban a
+  `xsd/testimonio-digital.xsd` (v1) y a `ejemplos/*.xml` (sin versión). Ahora
+  validan los doce ejemplos de `ejemplos/v3/` contra `xsd/v3/testimonio-digital.xsd`.
+- **`ejemplos/README.md`**, sección de firma: describía el bloque
+  `<ds:Signature>` con valores placeholder y le indicaba al integrador que su
+  librería lo inserta en el documento. Ahora describe el flujo **detached**: XML
+  sin firma adentro, firma en su propia parte del multipart.
+
+### Corregido
+- **`docs/03-endpoint-api.md`**, Parte 1: decía que el contenido era "el XML del
+  testimonio digital, firmado con XML-DSig", que contradecía al resto del
+  capítulo y al 05. Desde la **v3.1** el XML va **sin firma adentro** y la firma
+  detached viaja en la parte 3; un XML con `<ds:Signature>` adentro se rechaza.
+- **`docs/04-formato-xml.md`**: el esqueleto de la raíz mostraba un
+  `<ds:Signature>` dentro de `<TestimonioDigital>` — justo lo que el RPI
+  rechaza, en el capítulo del que se copia la estructura. Se quita del
+  esqueleto, del párrafo de namespaces y de la sección "Signature", que ahora
+  dice que el elemento sigue existiendo en el XSD solo por compatibilidad.
+- **`ejemplos/v3/`** (los doce archivos): se quita el `<ds:Signature>` envuelto
+  con valores placeholder y la declaración `xmlns:ds` que quedaba sin uso. Los
+  doce validan contra `xsd/v3/testimonio-digital.xsd`.
+
+---
+
 ## [3.1.1] — 2026-10-15
 
 Solo **documentación**: no cambia ningún XSD, así que no hay nada que migrar.
@@ -100,31 +162,6 @@ existentes, convirtiendo este MINOR en un MAJOR.
 Aunque el **esquema** sigue admitiendo `<ds:Signature>` dentro del documento (por compatibilidad),
 el **servicio** rechaza un XML que la traiga adentro. Un solo modo de firma, para que no haya
 ambigüedad sobre qué bytes se verifican.
-
----
-## [No publicado]
-
-### Agregado
-- **`artefacto-campos-por-acto.json`** (raíz del repo): reglas de **partes y campos por acto
-  habilitado** para que el editor del escribano arme el formulario dinámicamente. Versionado propio
-  e independiente del contrato: `versionEsquema` (estructuras genéricas; cambiarlo es *breaking*
-  para el editor) y `versionContenido` (qué actos están habilitados; no requiere cambios de código).
-- **`docs/11-artefacto-campos-por-acto.md`**: guía de integración del artefacto con el editor del
-  Colegio de Escribanos (antes `INTEGRACION-artefacto-editor.md` en la raíz), incorporada como
-  capítulo 11 de la documentación.
-
-- **`docs/README.md`**: índice de la documentación (capítulos, recorridos por perfil y tabla de
-  "dónde encontrar cada cosa"). Cada capítulo cierra con un enlace de vuelta al índice.
-
-### Cambiado
-- **Documentación alineada a v3**: los capítulos 01 a 11, el `README.md`, `xsd/README.md`,
-  `ejemplos/README.md` y `xsd/v3/README.md` describen **solo la v3** (namespace `/v3`,
-  `version="3.0"`, `<VersionContrato>3.0</VersionContrato>`, XSD `xsd/v3/`). Se quitaron las
-  comparaciones con v1/v2; el historial de versiones queda en este CHANGELOG.
-- **`docs/07`**: se agrega el código de error `CODIGO_ACTO_NO_HABILITADO` (422).
-
-> Es un **dato**, no parte del esquema XML: no afecta el XSD ni la versión del contrato. La
-> validación definitiva del testimonio sigue siendo el XSD v3 más las reglas del servicio.
 
 ---
 

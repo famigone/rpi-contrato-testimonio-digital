@@ -23,22 +23,31 @@ Los ejemplos vigentes están en [`v3/`](v3/) y validan contra
 | `permuta-ejemplo-valido.xml` | 1102 + 1102 | Permuta de 2 actos con cruce de partes. |
 | `cancelacion-hipoteca-ejemplo-valido.xml` | 1020 | Familia HIPOTECARIA-LIBERA: **sin catastro, dominio ni inhibiciones**. |
 
-## Sobre la firma XML-DSig en estos ejemplos
+## Sobre la firma en estos ejemplos
 
-Los ejemplos incluyen un bloque `<ds:Signature>` con **valores base64 válidos
-pero ficticios** (strings que empiezan con `UExBQ0VIT0xERVI...` que decodificado
-significa "PLACEHOLDER..."). Esto permite que los ejemplos validen contra el XSD,
-pero **no pasarán la verificación criptográfica del RPI**.
+**Los ejemplos no llevan firma adentro, y es correcto que no la lleven.** Desde
+la **v3.1** la firma del escribano es **detached**: viaja en una parte aparte
+del envío (`firma_xml_escribano`) y el documento no la contiene. Un XML con un
+`<ds:Signature>` adentro **lo rechaza el RPI**, así que estos ejemplos son el
+XML completo tal como va en la parte `xml` del multipart.
 
-Sirven solo como referencia de estructura. Para producir un XML que el RPI
-acepte, hay que firmarlo con un certificado real del escribano autorizante.
+Lo que les falta para que el RPI los acepte no es estructura, es firma: hay que
+firmarlos con un certificado real del escribano autorizante y mandar esa firma
+en su propia parte.
 
-Cuando implementes el cliente, deberás:
+Cuando implementes el cliente:
 
-1. Generar el XML sin el bloque Signature.
-2. Firmarlo con la librería XML-DSig de tu stack (ver
-   [05 — Firma digital](../docs/05-firma-digital.md)).
-3. La librería inserta el bloque `<ds:Signature>` con valores reales.
+1. Generá el XML completo (como estos ejemplos), con el `HashPDF` del PDF ya
+   firmado.
+2. Firmalo **en modo detached** con la librería XAdES de tu stack (ver
+   [05 — Firma digital](../docs/05-firma-digital.md)). La firma cubre los
+   **bytes exactos** del archivo: no lo reformatees ni lo reserialices después.
+3. Mandá el XML y la firma como partes separadas del multipart (ver
+   [03 — Endpoint API](../docs/03-endpoint-api.md)).
+
+> Hasta la v3.0 estos ejemplos traían un `<ds:Signature>` con valores base64
+> ficticios (`UExBQ0VIT0xERVI...` = "PLACEHOLDER..."). Se quitó: con la firma
+> detached ese bloque hace que el envío se rechace.
 
 ## Validación de los ejemplos
 

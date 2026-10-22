@@ -6,7 +6,7 @@ Un testimonio contiene **N actos (1 a N)**. Los bloques sustantivos (partes,
 inmuebles, datos económicos, certificaciones, visado) viven **dentro de cada
 `<Acto>`**, porque cada acto puede tener distintas partes, inmuebles, monto y
 certificaciones. A nivel testimonio quedan los datos que son únicos por trámite
-(un escribano, un otorgamiento, un cuerpo de escritura, una firma).
+(un escribano, un otorgamiento, un cuerpo de escritura).
 
 El **tipo de acto es un dato**: cada `<Acto>` declara su tipo con `<Codigo>`, el
 código del catálogo `act`. No hay un elemento por tipo de acto en el esquema.
@@ -18,7 +18,6 @@ El XML del testimonio digital tiene esta estructura raíz:
 <TestimonioDigital
     xmlns="https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v3"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
     xsi:schemaLocation="https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v3 testimonio-digital.xsd"
     version="3.0">
 
@@ -96,12 +95,15 @@ El XML del testimonio digital tiene esta estructura raíz:
     <!-- Opcional, texto libre -->
   </Observaciones>
 
-  <ds:Signature>
-    <!-- Firma XML-DSig del escribano autorizante -->
-  </ds:Signature>
-
 </TestimonioDigital>
 ```
+
+> ⚠️ **El esqueleto NO lleva `<ds:Signature>` adentro.** Desde la **v3.1** la
+> firma del escribano es **detached**: viaja en una parte aparte del envío
+> (`firma_xml_escribano`) y el documento no la contiene. El RPI **rechaza** un
+> XML que traiga un `<ds:Signature>` adentro. Ver
+> [05 — Firma digital](05-firma-digital.md) y
+> [03 — Endpoint API](03-endpoint-api.md).
 
 > El orden de los elementos dentro de `<Acto>` es fijo: primero el `Codigo` (código
 > del acto), el `ActoSecundario` opcional (código 1075/1157) si la minuta lleva acto
@@ -129,8 +131,9 @@ El namespace del contrato es:
 https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v3
 ```
 
-Todos los elementos del testimonio (excepto la firma XML-DSig, que usa su
-propio namespace) están bajo este namespace.
+Todos los elementos del testimonio están bajo este namespace. Desde la
+**v3.1** el documento no lleva elementos de otro namespace: la firma, que usa el
+namespace `http://www.w3.org/2000/09/xmldsig#`, viaja en un archivo aparte.
 
 La versión MAJOR del contrato está embebida en el namespace (`/v3`). Los
 cambios MINOR y PATCH mantienen el mismo namespace; un cambio MAJOR lo cambia.
@@ -508,9 +511,13 @@ hijos opcionales de cada `<Acto>`.
 </Observaciones>
 ```
 
-### Signature
+### Signature — ya no es parte del documento
 
-Firma XML-DSig del escribano. Detalle en [05 — Firma digital](05-firma-digital.md).
+Hasta la v3.0 el testimonio llevaba un elemento `<ds:Signature>` con la firma
+envuelta. Desde la **v3.1** la firma es detached y va en la parte
+`firma_xml_escribano` del envío; el XSD mantiene el elemento como **opcional**
+solo por compatibilidad del esquema, pero el RPI **rechaza** un XML que lo
+traiga. Detalle en [05 — Firma digital](05-firma-digital.md).
 
 ## La Parte (Persona + rol)
 

@@ -83,10 +83,14 @@ Ver [GOVERNANCE.md](GOVERNANCE.md) para los criterios completos.
    siguen pasando:
 
    ```bash
-   xmllint --schema xsd/testimonio-digital.xsd ejemplos/compraventa-minima.xml --noout
-   xmllint --schema xsd/testimonio-digital.xsd ejemplos/compraventa-multiple-titulares.xml --noout
-   xmllint --schema xsd/testimonio-digital.xsd ejemplos/compraventa-usd.xml --noout
+   for f in ejemplos/v3/*.xml; do
+     xmllint --schema xsd/v3/testimonio-digital.xsd "$f" --noout || echo "FALLA: $f"
+   done
    ```
+
+   El contrato vigente es **v3**: validar contra `xsd/v3/testimonio-digital.xsd`
+   y con los ejemplos de `ejemplos/v3/`. El esquema v1 y los ejemplos sin
+   versión viven en `obsoleto/` y no se validan.
 
 2. **Verificar links de markdown**: links internos a otros documentos no
    deben estar rotos.
