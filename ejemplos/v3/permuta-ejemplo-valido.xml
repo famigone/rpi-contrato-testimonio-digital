@@ -34,7 +34,7 @@
 
   <EscribanoAutorizante>
     <Nombre>JUAN CARLOS PÉREZ</Nombre>
-    <CUIT>20-12345678-9</CUIT>
+    <CUIT>20-12345678-6</CUIT>
     <RegistroNumero>123</RegistroNumero>
     <Sede>NEUQUÉN</Sede>
   </EscribanoAutorizante>
@@ -57,7 +57,7 @@
           <Tipo>H</Tipo>
           <ApellidoODenominacion>GÓMEZ</ApellidoODenominacion>
           <Nombres>MARÍA ELENA</Nombres>
-          <CUIT>27-16888777-3</CUIT>
+          <CUIT>27-16888777-4</CUIT>
           <TipoDocumento>DNI</TipoDocumento>
           <NumeroDocumento>16888777</NumeroDocumento>
           <PEP>false</PEP>
@@ -70,7 +70,7 @@
           <Tipo>H</Tipo>
           <ApellidoODenominacion>LÓPEZ</ApellidoODenominacion>
           <Nombres>SILVIA RAQUEL</Nombres>
-          <CUIT>27-20999888-4</CUIT>
+          <CUIT>27-20999888-8</CUIT>
           <TipoDocumento>DNI</TipoDocumento>
           <NumeroDocumento>20999888</NumeroDocumento>
           <EstadoCivil>CASADA</EstadoCivil>
@@ -135,7 +135,7 @@
           <Tipo>H</Tipo>
           <ApellidoODenominacion>LÓPEZ</ApellidoODenominacion>
           <Nombres>SILVIA RAQUEL</Nombres>
-          <CUIT>27-20999888-4</CUIT>
+          <CUIT>27-20999888-8</CUIT>
           <TipoDocumento>DNI</TipoDocumento>
           <NumeroDocumento>20999888</NumeroDocumento>
           <PEP>false</PEP>
@@ -148,7 +148,7 @@
           <Tipo>H</Tipo>
           <ApellidoODenominacion>GÓMEZ</ApellidoODenominacion>
           <Nombres>MARÍA ELENA</Nombres>
-          <CUIT>27-16888777-3</CUIT>
+          <CUIT>27-16888777-4</CUIT>
           <TipoDocumento>DNI</TipoDocumento>
           <NumeroDocumento>16888777</NumeroDocumento>
           <EstadoCivil>VIUDA</EstadoCivil>
@@ -206,7 +206,7 @@
   </Actos>
 
   <Rogante>
-    <CUIT>20-12345678-9</CUIT>
+    <CUIT>20-12345678-6</CUIT>
     <Nombre>JUAN CARLOS PÉREZ</Nombre>
     <NumeroRegistro>123</NumeroRegistro>
     <Localidad>NEUQUÉN</Localidad>

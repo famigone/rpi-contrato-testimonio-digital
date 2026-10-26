@@ -19,7 +19,7 @@
 
   <EscribanoAutorizante>
     <Nombre>JUAN CARLOS PÉREZ</Nombre>
-    <CUIT>20-12345678-9</CUIT>
+    <CUIT>20-12345678-6</CUIT>
     <RegistroNumero>123</RegistroNumero>
     <Sede>NEUQUÉN</Sede>
   </EscribanoAutorizante>
@@ -41,7 +41,7 @@
           <Tipo>H</Tipo>
           <ApellidoODenominacion>SOSA</ApellidoODenominacion>
           <Nombres>ROBERTO DANIEL</Nombres>
-          <CUIT>20-14555666-7</CUIT>
+          <CUIT>20-14555666-0</CUIT>
           <TipoDocumento>DNI</TipoDocumento>
           <NumeroDocumento>14555666</NumeroDocumento>
           <PEP>false</PEP>
@@ -54,7 +54,7 @@
           <Tipo>H</Tipo>
           <ApellidoODenominacion>SOSA</ApellidoODenominacion>
           <Nombres>LUCÍA MARÍA</Nombres>
-          <CUIT>27-35888999-1</CUIT>
+          <CUIT>27-35888999-4</CUIT>
           <TipoDocumento>DNI</TipoDocumento>
           <NumeroDocumento>35888999</NumeroDocumento>
           <EstadoCivil>SOLTERA</EstadoCivil>
@@ -108,7 +108,7 @@
   </Actos>
 
   <Rogante>
-    <CUIT>20-12345678-9</CUIT>
+    <CUIT>20-12345678-6</CUIT>
     <Nombre>JUAN CARLOS PÉREZ</Nombre>
     <NumeroRegistro>123</NumeroRegistro>
     <Localidad>NEUQUÉN</Localidad>

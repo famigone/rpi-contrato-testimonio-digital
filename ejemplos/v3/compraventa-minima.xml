@@ -14,7 +14,7 @@
 
   <EscribanoAutorizante>
     <Nombre>JUAN CARLOS PÉREZ</Nombre>
-    <CUIT>20-12345678-9</CUIT>
+    <CUIT>20-12345678-6</CUIT>
     <RegistroNumero>123</RegistroNumero>
     <Sede>NEUQUÉN</Sede>
   </EscribanoAutorizante>
@@ -36,7 +36,7 @@
           <Tipo>H</Tipo>
           <ApellidoODenominacion>GONZÁLEZ</ApellidoODenominacion>
           <Nombres>MARÍA LAURA</Nombres>
-          <CUIT>27-28456789-3</CUIT>
+          <CUIT>27-28456789-2</CUIT>
           <TipoDocumento>DNI</TipoDocumento>
           <NumeroDocumento>28456789</NumeroDocumento>
           <EstadoCivil>SOLTERA</EstadoCivil>
@@ -49,7 +49,7 @@
           <Tipo>H</Tipo>
           <ApellidoODenominacion>RODRÍGUEZ</ApellidoODenominacion>
           <Nombres>CARLOS ALBERTO</Nombres>
-          <CUIT>20-15234567-1</CUIT>
+          <CUIT>20-15234567-5</CUIT>
           <TipoDocumento>DNI</TipoDocumento>
           <NumeroDocumento>15234567</NumeroDocumento>
           <PEP>false</PEP>
@@ -106,7 +106,7 @@
   </Actos>
 
   <Rogante>
-    <CUIT>20-12345678-9</CUIT>
+    <CUIT>20-12345678-6</CUIT>
     <Nombre>JUAN CARLOS PÉREZ</Nombre>
     <NumeroRegistro>123</NumeroRegistro>
     <Localidad>NEUQUÉN</Localidad>

@@ -7,6 +7,42 @@ y este contrato adhiere a [Semantic Versioning 2.0.0](https://semver.org/spec/v2
 
 ---
 
+## [3.2.0] — 2026-10-26
+
+**Un rechazo nuevo.** Un envío con un CUIT mal tipeado que antes entraba, ahora
+se rechaza. Entra antes de que el Colegio empiece las pruebas en serio, y no
+después, justamente para que no cambie el comportamiento en medio de ellas.
+
+### Agregado
+- **`docs/07`**: el código de error **`CUIT_INVALIDO`** (400), con su sección
+  propia. El RPI valida el **dígito verificador** (módulo 11) de **todos** los
+  CUIT del testimonio: `EscribanoAutorizante`, `Rogante`, cada `Parte` y cada
+  `Representante`. El detalle trae **todos** los que fallan —no el primero—, con
+  el campo, y para las partes el acto, la posición y el rol.
+
+  Esto implementa lo que el XSD ya documentaba: *"El XSD no valida el dígito
+  verificador; lo hace el servicio del RPI"*. Hasta ahora no lo hacía.
+
+  **El prefijo sigue sin importar:** un `30` de persona jurídica es tan válido
+  como un `20` o un `27`. El dígito verificador no dice nada del tipo de
+  persona, y el RPI no restringe el prefijo en ningún lado.
+
+  Un CUIT que no tenga 11 dígitos NO da este error: eso ya lo rechaza el XSD por
+  forma.
+
+### Cambiado
+- **`docs/07`**, `MULTIPART_INVALIDO`: ahora también cubre **dos partes con el
+  mismo nombre**, que antes se aceptaban quedándose con la última en silencio.
+  Con la firma detached eso importa más, porque la firma cubre un solo juego de
+  bytes y cuál se verificaba quedaba a merced del orden de las partes. El
+  detalle trae `causa: "campo_duplicado"` y el nombre del campo repetido.
+- **`ejemplos/v3/`** (los doce): se corrige el **dígito verificador** de 53 CUIT.
+  Los números siguen siendo los mismos ficticios de siempre, con el último
+  dígito arreglado, así que un envío copiado de un ejemplo pasa la validación
+  nueva. Los doce siguen validando contra `xsd/v3/testimonio-digital.xsd`.
+
+---
+
 ## [3.1.2] — 2026-10-22
 
 Solo **documentación y reorganización de archivos**: no cambia ningún XSD, así
@@ -382,7 +418,7 @@ intactos en `xsd/` y los de v2 viven en `xsd/v2/`.
 
 ---
 
-## [No publicado]
+## [2.0.0] — 2026-06-24 · detalle de los cambios
 
 ### Cambios mayores en el contrato (alineamiento al Excel del RPI)
 
