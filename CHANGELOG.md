@@ -75,6 +75,10 @@ en medio de ellas.
   dígito arreglado, así que un envío copiado de un ejemplo pasa la validación
   nueva. Verificado que los doce validan contra el XSD de esta versión, el que
   ya tiene `NumeroTasa`.
+
+  En las personas jurídicas se alinea además el `NumeroDocumento`, que por
+  contrato **es** el CUIT: al corregir el verificador del CUIT habían quedado
+  desalineados, con el ejemplo contradiciéndose a sí mismo.
 - **`docs/09-glosario.md`**, "Tasa registral": ahora dice que una tasa impaga
   ingresa y sale provisional, y describe el reingreso por pago. "Rechazo
   estructural" deja de mencionar la tasa y aclara que siempre es síncrono.
