@@ -30,15 +30,19 @@ El sistema del Colegio debe proveer al RPI:
 | `inscripcion_provisoria` | El calificador observó el documento: hay observaciones a subsanar dentro de un plazo. | Sí |
 | `inscripcion_definitiva` | El trámite quedó inscripto definitivamente. | Sí |
 | `rechazo_registral` | El calificador rechazó el trámite (causal grave). | Sí |
-| `validacion_fallida` | Rechazo estructural detectado **después** del 202. Hoy, solo la tasa verificada como impaga cuando el testimonio se había aceptado con `aceptado_tasa_pendiente`. | No |
 
 Las validaciones que el RPI hace durante la recepción no generan callbacks: su
 resultado viaja en la respuesta HTTP (202 o error 4xx).
 
-`validacion_fallida` es un **rechazo definitivo**: el testimonio no ingresó al
-registro y no tiene Entrada General. Para corregir, el Colegio hace un envío nuevo
-con un `identificadorEnvio` nuevo. Las fallas internas del RPI **nunca** se
-notifican como `validacion_fallida`: el RPI las reintenta por su cuenta.
+> **El evento `validacion_fallida` ya no existe.** Era el único rechazo que
+> llegaba después del 202, y existía solo para el caso de una tasa verificada
+> como impaga. Como **la tasa no rechaza** —la ley impide rechazar por
+> cuestiones tributarias—, ese caso desapareció y con él el evento: **todo
+> rechazo estructural es síncrono** y viaja en la respuesta HTTP.
+>
+> Una tasa impaga no genera ningún callback de rechazo. Lo que el Colegio va a
+> ver es una `inscripcion_provisoria`, igual que con cualquier otra observación
+> a subsanar.
 
 ## Estructura del payload
 
@@ -172,23 +176,6 @@ contrato.
 }
 ```
 
-### Ejemplo: `validacion_fallida`
-
-```json
-{
-  "evento": "validacion_fallida",
-  "identificadorEnvio": "550e8400-e29b-41d4-a716-446655440000",
-  "timestamp": "2026-06-15T10:40:00Z",
-  "datos": {
-    "codigo": "TASA_NO_PAGADA",
-    "motivo": "La tasa registral declarada no registra pago."
-  }
-}
-```
-
-Los códigos de `validacion_fallida` son los del catálogo de errores
-([07](07-respuestas-y-errores.md#catálogo-de-códigos-de-error)).
-
 ## Headers del callback
 
 El RPI envía las notificaciones con estos headers:
@@ -241,9 +228,7 @@ intervención manual.
 
 El RPI puede reenviar la misma notificación (por ejemplo, si no recibió la
 respuesta del Colegio a tiempo). El sistema del Colegio debe **detectar
-duplicados** por la combinación `(identificadorEnvio, evento, numeroPresentacion)`;
-para `validacion_fallida`, que no tiene Entrada General, por
-`(identificadorEnvio, evento)`.
+duplicados** por la combinación `(identificadorEnvio, evento, numeroPresentacion)`.
 
 Si ya procesaste una notificación con esa combinación, responder 200 OK sin volver
 a procesar.

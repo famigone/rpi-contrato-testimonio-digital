@@ -9,11 +9,33 @@ y este contrato adhiere a [Semantic Versioning 2.0.0](https://semver.org/spec/v2
 
 ## [3.2.0] — 2026-10-26
 
-**Un rechazo nuevo.** Un envío con un CUIT mal tipeado que antes entraba, ahora
-se rechaza. Entra antes de que el Colegio empiece las pruebas en serio, y no
-después, justamente para que no cambie el comportamiento en medio de ellas.
+Dos cosas en el mismo MINOR.
+
+**Un elemento nuevo y opcional, `NumeroTasa`.** Los envíos que hoy validan
+siguen validando sin tocar nada. Y con él, la corrección de fondo: **la tasa
+registral nunca rechaza un ingreso**. La ley impide rechazar un trámite por
+cuestiones tributarias, así que lo que la documentación prometía —rechazos por
+tasa, un estado intermedio y un rechazo diferido por callback— no existía en el
+XSD ni en el servicio, y no va a existir: se elimina.
+
+**Un rechazo nuevo, `CUIT_INVALIDO`.** Un envío con un CUIT mal tipeado que
+antes entraba, ahora se rechaza. Entra antes de que el Colegio empiece las
+pruebas en serio, y no después, justamente para que no cambie el comportamiento
+en medio de ellas.
 
 ### Agregado
+- **`xsd/v3/testimonio-digital.xsd`**: elemento **`NumeroTasa`**, opcional
+  (`minOccurs="0"`), de **primer nivel** y ubicado **después de
+  `Otorgamiento`**. Tipo `NumeroTasaType`: `xs:positiveInteger` con
+  `totalDigits="12"`.
+  > Es de nivel testimonio y no de acto, porque una misma tasa puede cubrir
+  > varios actos, cada uno con su concepto y su monto. Uno solo por testimonio.
+- **`docs/02-flujo-end-to-end.md`**, sección "La tasa registral no es una
+  validación".
+- **`docs/03-endpoint-api.md`**, sección "La tasa en la respuesta": el 202
+  informa `tasa.numero` y `tasa.estado`, que en ese momento solo puede ser
+  `sin_codigo` (el XML no trajo número) o `sin_verificar` (trajo número y
+  todavía no se consultó al SUR).
 - **`docs/07`**: el código de error **`CUIT_INVALIDO`** (400), con su sección
   propia. El RPI valida el **dígito verificador** (módulo 11) de **todos** los
   CUIT del testimonio: `EscribanoAutorizante`, `Rogante`, cada `Parte` y cada
@@ -30,6 +52,18 @@ después, justamente para que no cambie el comportamiento en medio de ellas.
   Un CUIT que no tenga 11 dígitos NO da este error: eso ya lo rechaza el XSD por
   forma.
 
+### Eliminado
+- **Códigos de error `TASA_INEXISTENTE`, `TASA_NO_PAGADA` y
+  `TASA_YA_UTILIZADA`** (capítulo 07), con su ejemplo de respuesta.
+- **Estados `aceptado_tasa_pendiente` y `rechazado`** (capítulo 03).
+- **Evento de callback `validacion_fallida`** (capítulo 08), con su ejemplo y su
+  regla de deduplicación propia.
+  > Era el **único** rechazo que podía llegar después del 202, y existía solo
+  > para el caso de una tasa verificada como impaga. Al desaparecer, **todo
+  > rechazo estructural pasa a ser síncrono**: viaja siempre en la respuesta
+  > HTTP. Eso simplifica la integración del Colegio, que ya no necesita manejar
+  > un rechazo asincrónico.
+
 ### Cambiado
 - **`docs/07`**, `MULTIPART_INVALIDO`: ahora también cubre **dos partes con el
   mismo nombre**, que antes se aceptaban quedándose con la última en silencio.
@@ -39,7 +73,22 @@ después, justamente para que no cambie el comportamiento en medio de ellas.
 - **`ejemplos/v3/`** (los doce): se corrige el **dígito verificador** de 53 CUIT.
   Los números siguen siendo los mismos ficticios de siempre, con el último
   dígito arreglado, así que un envío copiado de un ejemplo pasa la validación
-  nueva. Los doce siguen validando contra `xsd/v3/testimonio-digital.xsd`.
+  nueva. Verificado que los doce validan contra el XSD de esta versión, el que
+  ya tiene `NumeroTasa`.
+- **`docs/09-glosario.md`**, "Tasa registral": ahora dice que una tasa impaga
+  ingresa y sale provisional, y describe el reingreso por pago. "Rechazo
+  estructural" deja de mencionar la tasa y aclara que siempre es síncrono.
+- **`docs/02`** y **`docs/03`**: la tasa sale de la lista de validaciones de la
+  recepción.
+
+### Qué tiene que hacer el Colegio
+- **Nada obligatorio para seguir enviando**: `NumeroTasa` es opcional.
+- Para informar la tasa, agregar `<NumeroTasa>` después de `</Otorgamiento>`.
+- Si el sistema del Colegio maneja los códigos `TASA_*`, el estado
+  `aceptado_tasa_pendiente` o el callback `validacion_fallida`, **se puede
+  sacar ese código**: no van a llegar nunca.
+- **Revisar el dígito verificador de los CUIT** antes de enviar: desde esta
+  versión un CUIT que no cierra se rechaza con `CUIT_INVALIDO`.
 
 ---
 

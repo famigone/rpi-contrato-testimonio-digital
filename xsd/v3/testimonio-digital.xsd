@@ -258,12 +258,47 @@
     </xs:attribute>
   </xs:complexType>
 
+  <xs:simpleType name="NumeroTasaType">
+    <xs:annotation>
+      <xs:documentation>
+        Entero positivo. Hoy los números del SUR son de 5 dígitos; el tope de 12
+        es margen para que el contrato no quede corto.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:positiveInteger">
+      <xs:totalDigits value="12"/>
+    </xs:restriction>
+  </xs:simpleType>
+
   <xs:element name="TestimonioDigital">
     <xs:complexType>
       <xs:sequence>
         <xs:element name="MetadatosEnvio" type="MetadatosEnvioType"/>
         <xs:element name="EscribanoAutorizante" type="EscribanoAutorizanteType"/>
         <xs:element name="Otorgamiento" type="OtorgamientoType"/>
+
+        <xs:element name="NumeroTasa" type="NumeroTasaType" minOccurs="0">
+          <xs:annotation>
+            <xs:documentation>
+              Número de la tasa registral en el Sistema Único de Recaudación
+              (SUR) del Poder Judicial. Es el identificador que el escribano
+              obtiene al generar la tasa, antes del envío.
+
+              OPCIONAL, y uno solo por testimonio. Es de nivel testimonio y no
+              de acto: una misma tasa puede cubrir varios actos, cada uno con su
+              concepto y su monto.
+
+              LA TASA NUNCA RECHAZA EL INGRESO. La ley impide rechazar un
+              trámite por cuestiones tributarias. Si la tasa está impaga, no
+              existe o ya se usó en otro trámite, el testimonio ingresa igual y
+              el resultado es una inscripción PROVISIONAL hasta que se pague.
+              Enviarlo sin NumeroTasa tampoco rechaza nada.
+
+              El comprobante, la fecha de pago y el importe los informa el SUR:
+              no hay que declararlos en el XML.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
 
         <!-- Lista de actos: 1..N, sin tope. Tipos heterogéneos permitidos. -->
         <xs:element name="Actos">

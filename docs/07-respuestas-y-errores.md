@@ -26,7 +26,7 @@ y [08 — Notificaciones](08-notificaciones-callback.md)).
 | 403 Forbidden | Cliente autenticado pero sin permiso para esta operación | Contactar al equipo del RPI. No reintentar. |
 | 409 Conflict | `identificadorEnvio` ya usado con contenido distinto | Generar un `identificadorEnvio` nuevo y reenviar. |
 | 413 Payload Too Large | Petición excede el límite (50 MB total) | Reducir el tamaño del PDF y enviar con un `identificadorEnvio` nuevo. |
-| 422 Unprocessable Entity | XML válido pero falla una regla de negocio o la tasa | Revisar el error específico, corregir y enviar con un `identificadorEnvio` nuevo. |
+| 422 Unprocessable Entity | XML válido pero falla una regla de negocio | Revisar el error específico, corregir y enviar con un `identificadorEnvio` nuevo. |
 | 429 Too Many Requests | Rate limit del RPI alcanzado | Reintentar con el mismo `identificadorEnvio`, respetando `Retry-After`. |
 | 500 Internal Server Error | Error del lado del RPI | Reintentar con el mismo `identificadorEnvio` y backoff exponencial. |
 | 502 Bad Gateway | RPI temporalmente no disponible | Ídem. |
@@ -81,48 +81,6 @@ El campo `detalle` es opcional y varía según el código de error.
 | `SIN_PERMISO` | 403 | Cliente autenticado pero sin permiso para enviar testimonios. |
 | `LIMITE_TAMANO` | 413 | La petición supera 50 MB. |
 | `RATE_LIMIT` | 429 | Demasiadas peticiones del mismo cliente. Respetar `Retry-After`. |
-
-### Errores de negocio (422)
-
-| Código | Descripción |
-|--------|-------------|
-| `ESCRIBANO_NO_REGISTRADO` | El escribano declarado no figura en el catálogo del RPI. Requiere acción manual. |
-| `ROGANTE_NO_ENCONTRADO` | El rogante declarado no está registrado en el RPI (se resuelve por CUIT). |
-| `MATRICULA_NO_EXISTENTE` | La matrícula del inmueble no existe en el RPI. |
-| `CERTIFICACION_VENCIDA` | Una certificación registral previa está vencida: la de **dominio** (`Acto/CertificacionDominio`) o la de **inhibición** de algún transmitente (`Acto/Partes/Parte/CertificacionInhibicion`). |
-| `VERSION_CONTRATO_NO_SOPORTADA` | El RPI no soporta la versión del contrato declarada. |
-| `CODIGO_ACTO_NO_HABILITADO` | El `<Codigo>` del acto existe en el catálogo pero **no está habilitado** para testimonio digital. |
-| `MONEDA_SIN_COTIZACION` | Si moneda=USD, cotización es obligatoria. |
-| `PERSONA_HUMANA_SIN_NOMBRES` | Tipo=H requiere Nombres. |
-| `CERT_CATASTRAL_DATOS_FALTANTES` | Si Emitido=true, Numero y CodigoValidacion obligatorios. |
-| `CERT_CATASTRAL_OBS_FALTANTE` | Si TieneObservaciones=true, Observaciones obligatorio. |
-| `VISADO_SIN_NUMERO_TRAMITE` | Si Tipo=R, NumeroTramite obligatorio. |
-| `INMUEBLE_SIN_IDENTIFICACION` | Inmueble debe tener Matricula o (Tomo+Folio+Finca). |
-| `PROPORCIONES_NO_SUMAN_UNO` | Suma de proporciones de partes ADQUIRENTE debe ser 1, **por acto**. |
-| `NUMERO_ACTO_DUPLICADO` | El atributo `numero` debe ser único entre los actos del testimonio. |
-| `ROL_NO_VALIDO_PARA_ACTO` | El `rol` de la parte no corresponde al acto (ej. ACREEDOR en una compraventa, código 1028). |
-| `ACTO_SIN_ADQUIRENTE` | El acto exige al menos una parte con rol ADQUIRENTE (ej. compraventa, código 1028). |
-| `CUIT_FIRMANTE_NO_COINCIDE` | El CUIT del certificado debe coincidir con el del XML. |
-| `TASA_INEXISTENTE` | El número de tasa declarado no existe en el sistema de tasas. |
-| `TASA_NO_PAGADA` | La tasa declarada existe pero no está paga. |
-| `TASA_YA_UTILIZADA` | La tasa declarada ya fue aplicada a otro trámite. |
-
-Los errores de tasa también pueden llegar después del 202, por el callback
-`validacion_fallida`, cuando el sistema de tasas no respondió durante la recepción
-(estado `aceptado_tasa_pendiente`).
-
-### Errores del servidor (5xx)
-
-| Código | HTTP | Descripción |
-|--------|------|-------------|
-| `ERROR_INTERNO` | 500 | Error inesperado del RPI. Reintentar con backoff. |
-| `BD_NO_DISPONIBLE` | 503 | Base de datos temporalmente no disponible. |
-| `MANTENIMIENTO` | 503 | RPI en mantenimiento programado. Header `Retry-After` indica cuándo reintentar. |
-| `TIMEOUT_INTERNO` | 504 | El RPI se quedó procesando demasiado tiempo. |
-
-Un error 5xx nunca es un rechazo del testimonio: indica que el RPI no pudo
-completar el procesamiento por una causa propia.
-
 
 ---
 
@@ -186,6 +144,51 @@ bytes, así que con dos partes `xml` cuál de las dos se verificaba quedaba a
 merced del orden en que llegaran. El `detalle` trae `causa: "campo_duplicado"` y
 el nombre del campo repetido.
 
+---
+
+### Errores de negocio (422)
+
+| Código | Descripción |
+|--------|-------------|
+| `ESCRIBANO_NO_REGISTRADO` | El escribano declarado no figura en el catálogo del RPI. Requiere acción manual. |
+| `ROGANTE_NO_ENCONTRADO` | El rogante declarado no está registrado en el RPI (se resuelve por CUIT). |
+| `MATRICULA_NO_EXISTENTE` | La matrícula del inmueble no existe en el RPI. |
+| `CERTIFICACION_VENCIDA` | Una certificación registral previa está vencida: la de **dominio** (`Acto/CertificacionDominio`) o la de **inhibición** de algún transmitente (`Acto/Partes/Parte/CertificacionInhibicion`). |
+| `VERSION_CONTRATO_NO_SOPORTADA` | El RPI no soporta la versión del contrato declarada. |
+| `CODIGO_ACTO_NO_HABILITADO` | El `<Codigo>` del acto existe en el catálogo pero **no está habilitado** para testimonio digital. |
+| `MONEDA_SIN_COTIZACION` | Si moneda=USD, cotización es obligatoria. |
+| `PERSONA_HUMANA_SIN_NOMBRES` | Tipo=H requiere Nombres. |
+| `CERT_CATASTRAL_DATOS_FALTANTES` | Si Emitido=true, Numero y CodigoValidacion obligatorios. |
+| `CERT_CATASTRAL_OBS_FALTANTE` | Si TieneObservaciones=true, Observaciones obligatorio. |
+| `VISADO_SIN_NUMERO_TRAMITE` | Si Tipo=R, NumeroTramite obligatorio. |
+| `INMUEBLE_SIN_IDENTIFICACION` | Inmueble debe tener Matricula o (Tomo+Folio+Finca). |
+| `PROPORCIONES_NO_SUMAN_UNO` | Suma de proporciones de partes ADQUIRENTE debe ser 1, **por acto**. |
+| `NUMERO_ACTO_DUPLICADO` | El atributo `numero` debe ser único entre los actos del testimonio. |
+| `ROL_NO_VALIDO_PARA_ACTO` | El `rol` de la parte no corresponde al acto (ej. ACREEDOR en una compraventa, código 1028). |
+| `ACTO_SIN_ADQUIRENTE` | El acto exige al menos una parte con rol ADQUIRENTE (ej. compraventa, código 1028). |
+| `CUIT_FIRMANTE_NO_COINCIDE` | El CUIT del certificado debe coincidir con el del XML. |
+> **No hay errores de tasa.** Antes figuraban `TASA_INEXISTENTE`,
+> `TASA_NO_PAGADA` y `TASA_YA_UTILIZADA`. **Se eliminaron:** la ley impide
+> rechazar un trámite por cuestiones tributarias, así que una tasa impaga,
+> inexistente o ya usada **no rechaza el ingreso**. El testimonio entra igual y
+> la inscripción sale provisional hasta que se pague. Ver
+> [03 — La tasa en la respuesta](03-endpoint-api.md#la-tasa-en-la-respuesta).
+>
+> Con eso desaparece también el único rechazo que podía llegar después del 202:
+> **todo rechazo estructural es síncrono**.
+
+### Errores del servidor (5xx)
+
+| Código | HTTP | Descripción |
+|--------|------|-------------|
+| `ERROR_INTERNO` | 500 | Error inesperado del RPI. Reintentar con backoff. |
+| `BD_NO_DISPONIBLE` | 503 | Base de datos temporalmente no disponible. |
+| `MANTENIMIENTO` | 503 | RPI en mantenimiento programado. Header `Retry-After` indica cuándo reintentar. |
+| `TIMEOUT_INTERNO` | 504 | El RPI se quedó procesando demasiado tiempo. |
+
+Un error 5xx nunca es un rechazo del testimonio: indica que el RPI no pudo
+completar el procesamiento por una causa propia.
+
 
 ## Política de reintentos
 
@@ -227,7 +230,6 @@ operador del sistema del Colegio para que investigue.
 |-----------|------------------------------|
 | Timeout, error de red, 5xx, 429 | Sí: es el mismo envío |
 | Rechazo 4xx, después de corregir | No: es un envío nuevo |
-| Rechazo diferido (callback `validacion_fallida`), después de corregir | No: es un envío nuevo |
 | Observación registral (callback `inscripcion_provisoria`) | No aplica: se subsana por mesa de entradas (ver [02](02-flujo-end-to-end.md#observación-registral-después-de-la-eg)) |
 
 ## Ejemplos de respuestas de error
@@ -290,27 +292,3 @@ Content-Type: application/json
 }
 ```
 
-### Tasa no pagada
-
-```http
-HTTP/1.1 422 Unprocessable Entity
-Content-Type: application/json
-
-{
-  "error": {
-    "codigo": "TASA_NO_PAGADA",
-    "mensaje": "La tasa registral declarada no registra pago.",
-    "identificadorEnvio": "550e8400-e29b-41d4-a716-446655440000",
-    "timestamp": "2026-06-15T10:23:45Z"
-  }
-}
-```
-
-## Próximos pasos
-
-- Para los callbacks que el RPI envía al Colegio, andá a
-  [08 — Notificaciones de callback](08-notificaciones-callback.md).
-
----
-
-[← Índice de la documentación](README.md)
