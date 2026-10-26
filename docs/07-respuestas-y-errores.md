@@ -21,66 +21,89 @@ y [08 — Notificaciones](08-notificaciones-callback.md)).
 |--------|-------------|--------------------|
 | 200 OK | Testimonio ya recibido y aceptado previamente (idempotencia) | Usar la respuesta para sincronizar el estado local. No reenviar. |
 | 202 Accepted | Testimonio validado y aceptado | Guardar el `identificadorEnvio` y esperar callbacks. |
-| 400 Bad Request | XML mal formado o inválido (XSD), multipart inválido, hash o firma del PDF | Corregir y enviar con un `identificadorEnvio` nuevo. |
-| 401 Unauthorized | Credenciales faltantes o inválidas, o firma XML inválida | Revisar autenticación y firma. Corregir y enviar con un `identificadorEnvio` nuevo. |
-| 403 Forbidden | Cliente autenticado pero sin permiso para esta operación | Contactar al equipo del RPI. No reintentar. |
-| 409 Conflict | `identificadorEnvio` ya usado con contenido distinto | Generar un `identificadorEnvio` nuevo y reenviar. |
+| 400 Bad Request | **Todo rechazo del envío**: XML mal formado o inválido (XSD), reglas del contrato no cumplidas, multipart inválido, hash del PDF, y **cualquier problema de firma o de certificado** | Corregir y enviar con un `identificadorEnvio` nuevo. |
+| 401 Unauthorized | **Solo la clave de API**: faltante o inválida | Revisar la clave. No es un problema del envío. |
+| 403 Forbidden | *Reservado, no implementado.* Hoy no se devuelve nunca | — |
+| 409 Conflict | *Reservado, no implementado.* Un `identificadorEnvio` repetido devuelve **200** con `yaProcesadoAnteriormente: true`, sin comparar el contenido | — |
 | 413 Payload Too Large | Petición excede el límite (50 MB total) | Reducir el tamaño del PDF y enviar con un `identificadorEnvio` nuevo. |
-| 422 Unprocessable Entity | XML válido pero falla una regla de negocio | Revisar el error específico, corregir y enviar con un `identificadorEnvio` nuevo. |
+| 422 Unprocessable Entity | *Reservado, no implementado.* Las reglas del contrato que el XSD no expresa viajan en el **400**, con `motivo: "estructura_invalida"` y la lista en `info.reglas_fallidas` | Corregir y enviar con un `identificadorEnvio` nuevo. |
 | 429 Too Many Requests | Rate limit del RPI alcanzado | Reintentar con el mismo `identificadorEnvio`, respetando `Retry-After`. |
 | 500 Internal Server Error | Error del lado del RPI | Reintentar con el mismo `identificadorEnvio` y backoff exponencial. |
 | 502 Bad Gateway | RPI temporalmente no disponible | Ídem. |
 | 503 Service Unavailable | RPI en mantenimiento o dependencia no disponible | Ídem, respetando `Retry-After` si viene. |
-| 504 Gateway Timeout | Timeout del RPI procesando | Ídem. |
+| 504 Gateway Timeout | *Reservado, no implementado.* Una demora termina en 503 o en 500 | — |
 
 ## Formato del cuerpo de error
 
-Todos los errores devuelven un cuerpo JSON con esta estructura:
+El cuerpo es **plano**: `error` es un **texto**, no un objeto.
 
 ```json
 {
-  "error": {
-    "codigo": "XML_INVALIDO",
-    "mensaje": "El elemento 'Partes' debe tener al menos un hijo 'Parte'.",
-    "detalle": {
-      "linea": 42,
-      "columna": 12,
-      "elemento": "/TestimonioDigital/Actos/Acto/Partes"
-    },
-    "identificadorEnvio": "550e8400-e29b-41d4-a716-446655440000",
-    "timestamp": "2026-06-15T10:23:45Z"
-  }
+  "error": "validacion_fallida",
+  "motivo": "estructura_invalida",
+  "detalle": "El XML no cumple el contrato v3",
+  "info": {
+    "motivo": "estructura_invalida",
+    "errores": [
+      { "mensaje": "Element 'Partes': Missing child element 'Parte'.", "linea": 42 }
+    ]
+  },
+  "fechaRechazo": "2026-10-26T10:23:45.000Z"
 }
 ```
 
-El campo `detalle` es opcional y varía según el código de error.
+| Campo | Qué es |
+|---|---|
+| `error` | La familia: `validacion_fallida` para los rechazos del envío, `tamano_excedido` en el 413, `no_autorizado` en el 401, `error_interno` en el 500 |
+| `motivo` | **El dato sobre el que conviene ramificar.** Identifica el rechazo: `estructura_invalida`, `xml_malformado`, `cuit_invalido`, `firma_invalida`, `multipart_invalido`, `hash_pdf_no_coincide`, `pdf_firmante_no_coincide`, `pdf_firma_invalida`, `pdf_cadena_no_confiable`, `pdf_contenido_alterado`, `pdf_invalido`, `identificador_ausente`, `codigo_no_habilitado`, `tamano_excedido` |
+| `detalle` | El mensaje en castellano, pensado para mostrarlo o registrarlo |
+| `info` | Lo específico de cada motivo: `causa` cuando el motivo tiene variantes, y listas como `reglas_fallidas`, `cuits_invalidos`, `errores` o `firmantesPdf` |
+| `fechaRechazo` | Cuándo se rechazó |
+
+> **Una excepción, y es la única:** el **429** usa un sobre anidado,
+> `{ "error": { "codigo": "RATE_LIMIT", "mensaje": … } }`. Conviene manejar las
+> dos formas: si `error` es un objeto, leer `error.codigo`; si es un texto,
+> leer `motivo`.
+
+> **`identificadorEnvio` no viaja en el cuerpo del error.** Si hace falta
+> correlacionar, el cliente ya lo tiene: es el que envió.
 
 ## Catálogo de códigos de error
 
 ### Errores de petición (4xx)
 
-| Código | HTTP | Descripción |
-|--------|------|-------------|
-| `XML_INVALIDO` | 400 | El XML no cumple el XSD. `detalle` indica línea/columna/elemento. |
-| `XML_NO_PARSEABLE` | 400 | El XML está mal formado (no es XML válido). |
-| `CUIT_INVALIDO` | 400 | El **dígito verificador** de algún CUIT del XML no es correcto. `detalle` trae la lista completa, con el campo y la parte de cada uno. |
-| `FIRMA_INVALIDA` | 401 | La firma XML-DSig no se puede verificar. `detalle` indica causa. |
-| `FIRMA_FALTANTE` | 401 | No se encontró bloque `Signature` en el XML. |
-| `CERTIFICADO_NO_VIGENTE` | 401 | El certificado del firmante está vencido. |
-| `CERTIFICADO_REVOCADO` | 401 | El certificado del firmante está revocado. |
-| `CERTIFICADO_NO_RECONOCIDO` | 401 | La autoridad certificante no es reconocida. |
+> **Cómo leer esta tabla.** La columna `Código` es el nombre con el que este
+> documento se refiere a cada error. **Lo que viaja en la respuesta** es el
+> cuerpo de la sección anterior: `error`, `motivo` y —cuando el motivo
+> distingue variantes— `info.causa`. La última columna dice exactamente qué
+> esperar, para que el cliente pueda ramificar sobre eso y no sobre el nombre.
+>
+> Las filas marcadas ***reservado*** están documentadas pero **el servicio no
+> las devuelve hoy**. No se borran: describen comportamiento previsto, y se
+> indica qué pasa en su lugar.
+
+| Código | HTTP | Qué viaja en la respuesta | Descripción |
+|--------|------|---------------------------|-------------|
+| `XML_INVALIDO` | 400 | `motivo: "estructura_invalida"` | El XML no cumple el XSD. `detalle` indica línea/columna/elemento. |
+| `XML_NO_PARSEABLE` | 400 | `motivo: "xml_malformado"` | El XML está mal formado (no es XML válido). |
+| `CUIT_INVALIDO` | 400 | `motivo: "cuit_invalido"` | El **dígito verificador** de algún CUIT del XML no es correcto. `info.cuits_invalidos` trae la lista completa, con el campo y la parte de cada uno. |
+| `FIRMA_INVALIDA` | **400** | `motivo: "firma_invalida"` + `info.causa` | La firma del XML no se puede verificar. La `causa` dice cuál de todas: `firma_no_parseable`, `firma_no_verifica`, `digest_documento_no_coincide`, `algoritmo_no_permitido`, `firma_envuelta_no_admitida`, entre otras. |
+| `FIRMA_FALTANTE` | **400** | `motivo: "multipart_invalido"`, `causa: "falta_firma_escribano"` | Falta la parte `firma_xml_escribano` del multipart. Desde la **v3.1** la firma NO va dentro del XML: un `<ds:Signature>` adentro se rechaza con `causa: "firma_envuelta_no_admitida"`. |
+| `CERTIFICADO_NO_VIGENTE` | **400** | `motivo: "firma_invalida"`, `causa: "cadena_no_confiable"` (XML) · `motivo: "pdf_cadena_no_confiable"` (PDF) | El certificado del firmante está vencido a la fecha de recepción. |
+| `CERTIFICADO_REVOCADO` | — | ***reservado, no implementado*** | El RPI **no consulta revocación**: sin OCSP ni CRL, por decisión de diseño del **ADR-003**. Un certificado revocado pero vigente y con cadena válida hoy **pasa**. |
+| `CERTIFICADO_NO_RECONOCIDO` | **400** | `motivo: "firma_invalida"`, `causa: "cadena_no_confiable"` (XML) · `motivo: "pdf_cadena_no_confiable"` (PDF) | La cadena del firmante no ancla en una raíz confiable del RPI. |
 | `CUIT_NO_COINCIDE` | 400 | El CUIT del certificado del firmante no coincide con el del XML, o no se pudo leer. Viaja como `motivo: "firma_invalida"` con una `causa`: ver [El CUIT del firmante](#el-cuit-del-firmante-causas-de-firma_invalida). |
-| `HASH_PDF_NO_COINCIDE` | 400 | El hash declarado en el XML no coincide con el PDF recibido. |
-| `PDF_NO_FIRMADO` | 400 | El PDF no tiene firma digital. |
-| `PDF_FIRMA_INVALIDA` | 400 | El PDF tiene firma pero es inválida. |
+| `HASH_PDF_NO_COINCIDE` | 400 | `motivo: "hash_pdf_no_coincide"` | El hash declarado en el XML no coincide con el PDF recibido. |
+| `PDF_NO_FIRMADO` | 400 | `motivo: "pdf_firmante_no_coincide"` | Ninguna firma del PDF corresponde al escribano autorizante: incluye el caso del PDF sin ninguna firma. `info.firmantesPdf` trae lo que se encontró. |
+| `PDF_FIRMA_INVALIDA` | 400 | `motivo: "pdf_firma_invalida"` · `"pdf_contenido_alterado"` | La firma del escribano en el PDF no verifica, o no cubre todo el documento. |
 | `MULTIPART_INVALIDO` | 400 | La petición multipart está mal formada, falta una parte, o **trae dos partes con el mismo nombre**. |
-| `IDENTIFICADOR_INVALIDO` | 400 | El `IdentificadorEnvio` no es un UUID v4 válido. |
-| `IDENTIFICADOR_DUPLICADO_CONTENIDO_DISTINTO` | 409 | UUID ya usado para un envío con contenido distinto. |
-| `AUTENTICACION_REQUERIDA` | 401 | Falta el header de autenticación. |
-| `AUTENTICACION_INVALIDA` | 401 | El token o certificado de autenticación es inválido. |
-| `SIN_PERMISO` | 403 | Cliente autenticado pero sin permiso para enviar testimonios. |
-| `LIMITE_TAMANO` | 413 | La petición supera 50 MB. |
-| `RATE_LIMIT` | 429 | Demasiadas peticiones del mismo cliente. Respetar `Retry-After`. |
+| `IDENTIFICADOR_INVALIDO` | 400 | `motivo: "identificador_ausente"` (falta) · `"estructura_invalida"` (formato) | El `IdentificadorEnvio` falta o no tiene el formato del XSD. El formato lo valida el XSD, así que llega como error de estructura. |
+| `IDENTIFICADOR_DUPLICADO_CONTENIDO_DISTINTO` | — | ***reservado, no implementado*** | Hoy un `identificadorEnvio` repetido devuelve **200** con `yaProcesadoAnteriormente: true` y el estado del envío original, **sin comparar el contenido**. |
+| `AUTENTICACION_REQUERIDA` | 401 | `{ "error": "no_autorizado" }` | Falta la clave de API. |
+| `AUTENTICACION_INVALIDA` | 401 | `{ "error": "no_autorizado" }` | La clave de API no es válida. **Mismo cuerpo que el caso anterior**, a propósito: no se distingue "falta" de "es inválida". |
+| `SIN_PERMISO` | — | ***reservado, no implementado*** | No hay permisos por cliente: una clave válida puede enviar testimonios. |
+| `LIMITE_TAMANO` | 413 | `error: "tamano_excedido"`, `motivo: "tamano_excedido"` | La petición supera el límite. `info.campo` dice cuál parte lo superó y `info.maxBytes` el tope. |
+| `RATE_LIMIT` | 429 | `{ "error": { "codigo": "RATE_LIMIT", … } }` | Demasiadas peticiones del mismo cliente. Respetar `Retry-After`. **Es el único error cuyo cuerpo tiene el sobre `error.codigo`** y no el `error`/`motivo` del resto. |
 
 ---
 
@@ -235,16 +258,39 @@ documento: un PDF puede tener varias, y el RPI evalúa la del escribano.
 
 ---
 
-### Errores de negocio (422)
+### Errores de negocio (422) — *el 422 está reservado*
+
+> **El RPI no devuelve 422 hoy.** Las reglas del contrato que el XSD no puede
+> expresar se validan igual, pero el rechazo viaja en un **400** con
+> `motivo: "estructura_invalida"` y **la lista completa** en
+> `info.reglas_fallidas`, cada entrada con su `regla`, el `acto` donde falló y
+> un `detalle`:
+>
+> ```json
+> {
+>   "error": "validacion_fallida",
+>   "motivo": "estructura_invalida",
+>   "detalle": "Reglas condicionales del contrato no cumplidas",
+>   "info": {
+>     "motivo": "estructura_invalida",
+>     "reglas_fallidas": [
+>       { "regla": "PROPORCIONES_NO_SUMAN_UNO", "acto": 1, "detalle": { "suma": "3/4" } }
+>     ]
+>   }
+> }
+> ```
+>
+> Los códigos de abajo son los valores de `regla`, salvo los marcados.
+> Se informan **todas** las reglas que fallan, no la primera.
 
 | Código | Descripción |
 |--------|-------------|
-| `ESCRIBANO_NO_REGISTRADO` | El escribano declarado no figura en el catálogo del RPI. Requiere acción manual. |
-| `ROGANTE_NO_ENCONTRADO` | El rogante declarado no está registrado en el RPI (se resuelve por CUIT). |
-| `MATRICULA_NO_EXISTENTE` | La matrícula del inmueble no existe en el RPI. |
-| `CERTIFICACION_VENCIDA` | Una certificación registral previa está vencida: la de **dominio** (`Acto/CertificacionDominio`) o la de **inhibición** de algún transmitente (`Acto/Partes/Parte/CertificacionInhibicion`). |
-| `VERSION_CONTRATO_NO_SOPORTADA` | El RPI no soporta la versión del contrato declarada. |
-| `CODIGO_ACTO_NO_HABILITADO` | El `<Codigo>` del acto existe en el catálogo pero **no está habilitado** para testimonio digital. |
+| `ESCRIBANO_NO_REGISTRADO` | ***reservado, no implementado.*** El RPI no valida al escribano contra un catálogo en la recepción. |
+| `ROGANTE_NO_ENCONTRADO` | **No es un rechazo de la recepción.** El envío se acepta; el fallo aparece después, al sincronizar con el sistema registral, si el CUIT del escribano no está dado de alta. Se resuelve con un alta manual en el RPI. |
+| `MATRICULA_NO_EXISTENTE` | ***reservado, no implementado.*** La matrícula no se verifica contra el padrón en la recepción. |
+| `CERTIFICACION_VENCIDA` | ***reservado, no implementado.*** No se evalúa el vencimiento de las certificaciones previas. |
+| `VERSION_CONTRATO_NO_SOPORTADA` | ***reservado.*** Una versión no soportada se rechaza por el XSD, así que llega como `motivo: "estructura_invalida"`. |
+| `CODIGO_ACTO_NO_HABILITADO` | El `<Codigo>` del acto existe en el catálogo pero **no está habilitado** para testimonio digital. Viaja como `motivo: "codigo_no_habilitado"` en un **400**, no como una `regla`. |
 | `MONEDA_SIN_COTIZACION` | Si moneda=USD, cotización es obligatoria. |
 | `PERSONA_HUMANA_SIN_NOMBRES` | Tipo=H requiere Nombres. |
 | `CERT_CATASTRAL_DATOS_FALTANTES` | Si Emitido=true, Numero y CodigoValidacion obligatorios. |
@@ -270,10 +316,11 @@ documento: un PDF puede tener varias, y el RPI evalúa la del escribano.
 
 | Código | HTTP | Descripción |
 |--------|------|-------------|
-| `ERROR_INTERNO` | 500 | Error inesperado del RPI. Reintentar con backoff. |
-| `BD_NO_DISPONIBLE` | 503 | Base de datos temporalmente no disponible. |
-| `MANTENIMIENTO` | 503 | RPI en mantenimiento programado. Header `Retry-After` indica cuándo reintentar. |
-| `TIMEOUT_INTERNO` | 504 | El RPI se quedó procesando demasiado tiempo. |
+| `ERROR_INTERNO` | 500 | Error inesperado del RPI. Viaja como `error: "error_interno"`, con un `requestId` para rastrearlo. Reintentar con backoff. |
+| `BD_NO_DISPONIBLE` | 503 | Una dependencia del RPI no está disponible. Viaja como `error: "infra_error"`. |
+| `MANTENIMIENTO` | 503 | El RPI todavía no terminó de verificar sus dependencias, o una no responde. Header `Retry-After`. |
+| `VALIDACION_NO_DISPONIBLE` | 503 | **El RPI no puede validar**: le falta configuración, típicamente las raíces de confianza. El mensaje dice explícitamente que **NO** se reintente: el envío no tiene nada de malo y reintentar no va a funcionar hasta que lo arreglen en el RPI. |
+| `TIMEOUT_INTERNO` | 504 | ***reservado, no implementado.*** El RPI no devuelve 504 hoy; una demora termina en 503 o en 500. |
 
 Un error 5xx nunca es un rechazo del testimonio: indica que el RPI no pudo
 completar el procesamiento por una causa propia.
@@ -330,34 +377,40 @@ HTTP/1.1 400 Bad Request
 Content-Type: application/json
 
 {
-  "error": {
-    "codigo": "XML_INVALIDO",
-    "mensaje": "El elemento 'Partes' debe tener al menos un hijo 'Parte'.",
-    "detalle": {
-      "elemento": "/TestimonioDigital/Actos/Acto/Partes"
-    },
-    "identificadorEnvio": "550e8400-e29b-41d4-a716-446655440000",
-    "timestamp": "2026-06-15T10:23:45Z"
-  }
+  "error": "validacion_fallida",
+  "motivo": "estructura_invalida",
+  "detalle": "El XML no cumple el contrato v3",
+  "info": {
+    "motivo": "estructura_invalida",
+    "errores": [
+      {
+        "mensaje": "Element 'Partes': Missing child element(s). Expected is ( Parte ).",
+        "linea": 42
+      }
+    ]
+  },
+  "fechaRechazo": "2026-10-26T10:23:45.000Z"
 }
 ```
 
 ### Firma inválida
 
 ```http
-HTTP/1.1 401 Unauthorized
+HTTP/1.1 400 Bad Request
 Content-Type: application/json
 
 {
-  "error": {
-    "codigo": "FIRMA_INVALIDA",
-    "mensaje": "No se pudo verificar la firma XML-DSig.",
-    "detalle": {
-      "causa": "El hash del documento canonicalizado no coincide con el DigestValue."
-    },
-    "identificadorEnvio": "550e8400-e29b-41d4-a716-446655440000",
-    "timestamp": "2026-06-15T10:23:45Z"
-  }
+  "error": "validacion_fallida",
+  "motivo": "firma_invalida",
+  "detalle": "El digest del XML no coincide con el de la firma: el documento no es el que se firmó. Atención a los finales de línea (el digest es sobre los bytes crudos, sin canonicalizar).",
+  "info": {
+    "motivo": "firma_invalida",
+    "causa": "digest_documento_no_coincide",
+    "esperado": "qPr8…",
+    "calculado": "7Hs2…",
+    "bytesXml": 18432
+  },
+  "fechaRechazo": "2026-10-26T10:23:45.000Z"
 }
 ```
 
@@ -368,16 +421,15 @@ HTTP/1.1 400 Bad Request
 Content-Type: application/json
 
 {
-  "error": {
-    "codigo": "HASH_PDF_NO_COINCIDE",
-    "mensaje": "El hash SHA-256 del PDF recibido no coincide con el declarado en el XML.",
-    "detalle": {
-      "hashDeclarado": "3a7bd3e2360a3d29eea436fcfb7e44c735d117c42d1c1835420b6b9942dd4f1b",
-      "hashCalculado": "8e34a7c1f9b8e0c8de72e80e2b9bf28c1c34e2f0b7d5a3c1f8e9b8e0c8de72e80"
-    },
-    "identificadorEnvio": "550e8400-e29b-41d4-a716-446655440000",
-    "timestamp": "2026-06-15T10:23:45Z"
-  }
+  "error": "validacion_fallida",
+  "motivo": "hash_pdf_no_coincide",
+  "detalle": "El HashPDF declarado no coincide con el SHA-256 del PDF recibido",
+  "info": {
+    "motivo": "hash_pdf_no_coincide",
+    "hashDeclarado": "3a7bd3e2360a3d29eea436fcfb7e44c735d117c42d1c1835420b6b9942dd4f1b",
+    "hashCalculado": "8e34a7c1f9b8e0c8de72e80e2b9bf28c1c34e2f0b7d5a3c1f8e9b8e0c8de72e8f"
+  },
+  "fechaRechazo": "2026-10-26T10:23:45.000Z"
 }
 ```
 

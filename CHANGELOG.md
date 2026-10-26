@@ -7,6 +7,63 @@ y este contrato adhiere a [Semantic Versioning 2.0.0](https://semver.org/spec/v2
 
 ---
 
+## [3.2.2] — 2026-10-26
+
+Solo **documentación**: ningún XSD y ningún comportamiento cambian. El capítulo
+07 pasa a describir **lo que el servicio devuelve hoy**, verificado contra el
+código. Hasta ahora prometía otra cosa en varios puntos, y uno de ellos rompía
+el manejo de errores de cualquier cliente que lo siguiera al pie de la letra.
+
+### Cambiado
+- **El cuerpo del error era otro.** El capítulo lo documentaba anidado,
+  `{ "error": { "codigo", "mensaje", … } }`, y el servicio devuelve uno
+  **plano**: `error` es un **texto** y el dato sobre el que conviene ramificar
+  es **`motivo`**. Un cliente que leyera `error.codigo` obtenía `undefined` en
+  **todos** los rechazos. Se corrigió la sección de formato, con la tabla de los
+  cinco campos, y los tres ejemplos del final.
+  > La **única** excepción es el **429**, que sí usa el sobre anidado. Queda
+  > documentado, con la recomendación de manejar las dos formas.
+- **Los errores de firma y de certificado son 400, no 401.** El 401 sale
+  **únicamente** de la clave de API. Afecta a `FIRMA_INVALIDA`,
+  `FIRMA_FALTANTE`, `CERTIFICADO_NO_VIGENTE` y `CERTIFICADO_NO_RECONOCIDO`.
+- **La tabla de códigos suma una columna, "Qué viaja en la respuesta"**, con el
+  `motivo` y la `causa` de cada caso. La columna `Código` sigue siendo el nombre
+  con el que este documento se refiere al error; lo que viaja es el `motivo`.
+- **`FIRMA_FALTANTE`** describía "no se encontró bloque `Signature` en el XML",
+  que es de antes de la v3.1. Ahora es la falta de la parte
+  `firma_xml_escribano`; un `<ds:Signature>` dentro del XML se **rechaza**.
+- **La sección de 422** pasa a aclarar que **el RPI no devuelve 422**: las
+  reglas del contrato que el XSD no expresa viajan en un **400** con
+  `motivo: "estructura_invalida"` y la lista completa en `info.reglas_fallidas`.
+  Los códigos de esa sección son los valores de `regla`.
+- **`CODIGO_ACTO_NO_HABILITADO`** viaja como `motivo: "codigo_no_habilitado"`
+  en un 400, no como una regla.
+- **`ROGANTE_NO_ENCONTRADO`** no es un rechazo de la recepción: el envío se
+  acepta y el fallo aparece después, al sincronizar, si el CUIT del escribano no
+  está dado de alta.
+- **5xx**: `BD_NO_DISPONIBLE` viaja como `infra_error`; se documenta
+  `VALIDACION_NO_DISPONIBLE` (503), que existe y dice explícitamente que **no**
+  se reintente.
+
+### Reservado, no implementado
+Se marcan así, **sin borrarlos**, los códigos que el servicio no puede devolver
+hoy. Cada uno dice qué pasa en su lugar:
+
+- **`CERTIFICADO_REVOCADO`** — el RPI **no consulta revocación**: sin OCSP ni
+  CRL, por decisión de diseño del **ADR-003**. Un certificado revocado pero
+  vigente y con cadena válida hoy pasa.
+- **`IDENTIFICADOR_DUPLICADO_CONTENIDO_DISTINTO`** (409) — un
+  `identificadorEnvio` repetido devuelve 200 con `yaProcesadoAnteriormente`, sin
+  comparar el contenido.
+- **`SIN_PERMISO`** (403) — no hay permisos por cliente.
+- **`TIMEOUT_INTERNO`** (504) — una demora termina en 503 o en 500.
+- **`ESCRIBANO_NO_REGISTRADO`**, **`MATRICULA_NO_EXISTENTE`**,
+  **`CERTIFICACION_VENCIDA`** — no se verifican en la recepción.
+- **`VERSION_CONTRATO_NO_SOPORTADA`** — lo rechaza el XSD, así que llega como
+  `estructura_invalida`.
+
+---
+
 ## [3.2.1] — 2026-10-26
 
 Solo **documentación**: no cambia ningún XSD ni ningún comportamiento. Documenta
