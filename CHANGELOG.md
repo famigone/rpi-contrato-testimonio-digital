@@ -7,6 +7,37 @@ y este contrato adhiere a [Semantic Versioning 2.0.0](https://semver.org/spec/v2
 
 ---
 
+## [3.2.1] — 2026-10-26
+
+Solo **documentación**: no cambia ningún XSD ni ningún comportamiento. Documenta
+el control del CUIT del firmante, que el servicio ya hace.
+
+### Agregado
+- **`docs/07`**, sección "El CUIT del firmante — causas de `firma_invalida`":
+  el RPI verifica que quien firmó sea el escribano autorizante declarado,
+  comparando el CUIT del certificado con `EscribanoAutorizante/CUIT`. El control
+  es el mismo y **estricto** en las dos firmas, la del XML y la PAdES del PDF.
+
+  Se documentan las dos **causas** que viajan bajo `motivo: "firma_invalida"`:
+  `cuit_firmante_ilegible` (el `serialNumber` no trae un CUIT/CUIL de 11
+  dígitos) y `cuit_firmante_no_coincide` (trae otro). Son dos problemas
+  distintos: el primero es del certificado o de cómo la AC cargó el campo, el
+  segundo es que la firma no es de quien dice el XML.
+
+  Se documentan además **los formatos que se aceptan** en el `serialNumber`
+  —incluida la forma habitual de los certificados de AC-ONTI, `CUIL 20…` y
+  `CUIT 30…` sin guiones—, los que no, y **el detalle del rechazo**, que informa
+  el número leído y el esperado. El `serialNumber` crudo no se informa: puede
+  traer otro documento del firmante.
+
+### Cambiado
+- **`docs/07`**, fila `CUIT_NO_COINCIDE`: decía **401** y es **400**. En el
+  servicio el 401 sale únicamente de la API key; toda firma rechazada es un 400
+  con `motivo: "firma_invalida"`. La fila además apunta ahora a la sección
+  nueva, que es donde está el detalle.
+
+---
+
 ## [3.2.0] — 2026-10-26
 
 Dos cosas en el mismo MINOR.

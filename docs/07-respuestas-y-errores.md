@@ -69,7 +69,7 @@ El campo `detalle` es opcional y varía según el código de error.
 | `CERTIFICADO_NO_VIGENTE` | 401 | El certificado del firmante está vencido. |
 | `CERTIFICADO_REVOCADO` | 401 | El certificado del firmante está revocado. |
 | `CERTIFICADO_NO_RECONOCIDO` | 401 | La autoridad certificante no es reconocida. |
-| `CUIT_NO_COINCIDE` | 401 | El CUIT del certificado no coincide con el del XML. |
+| `CUIT_NO_COINCIDE` | 400 | El CUIT del certificado del firmante no coincide con el del XML, o no se pudo leer. Viaja como `motivo: "firma_invalida"` con una `causa`: ver [El CUIT del firmante](#el-cuit-del-firmante-causas-de-firma_invalida). |
 | `HASH_PDF_NO_COINCIDE` | 400 | El hash declarado en el XML no coincide con el PDF recibido. |
 | `PDF_NO_FIRMADO` | 400 | El PDF no tiene firma digital. |
 | `PDF_FIRMA_INVALIDA` | 400 | El PDF tiene firma pero es inválida. |
@@ -143,6 +143,95 @@ Con la firma detached esto importa más que antes: la firma cubre **un** juego d
 bytes, así que con dos partes `xml` cuál de las dos se verificaba quedaba a
 merced del orden en que llegaran. El `detalle` trae `causa: "campo_duplicado"` y
 el nombre del campo repetido.
+
+---
+
+### El CUIT del firmante — causas de `firma_invalida`
+
+El RPI verifica que **quien firmó sea el escribano autorizante declarado**:
+compara el CUIT del certificado con `EscribanoAutorizante/CUIT` del XML. El
+control es el mismo, y **estricto**, en las dos firmas: la del XML
+(`firma_xml_escribano`) y la **PAdES del PDF**.
+
+El rechazo viaja como `motivo: "firma_invalida"` con una de dos **causas**:
+
+| `causa` | Significa |
+|---|---|
+| `cuit_firmante_ilegible` | El `serialNumber` del sujeto del certificado **no trae un CUIT/CUIL de 11 dígitos**, así que no hay con qué comparar |
+| `cuit_firmante_no_coincide` | Trae un CUIT, pero **es otro** |
+
+Son dos problemas distintos: el primero es del certificado o de cómo la AC
+cargó el campo, el segundo es que la firma no es de quien dice el XML.
+
+#### De dónde se lee el CUIT, y qué formatos se aceptan
+
+Del atributo **`serialNumber`** del *subject* del certificado (OID 2.5.4.5).
+Se aceptan todas estas formas:
+
+| Ejemplo | Qué tiene |
+|---|---|
+| `CUIL 20316955240` | La forma habitual de los certificados de **AC-ONTI** |
+| `CUIT 30561986653` | Ídem, persona jurídica |
+| `cuit 30-56198665-3` | La palabra en cualquier capitalización, y con guiones |
+| `CUIT: 30561986653` | Con dos puntos, con o sin espacio |
+| `CUIL20316955240` | Sin separación entre la palabra y el número |
+| `CUIT 30 56198665 3` | Espacios como separadores |
+| `30561986653` | El número solo, sin palabra |
+| `30-56198665-3` | Ídem, con guiones |
+
+**El prefijo no importa**: un `30` de persona jurídica se lee igual que un `20`
+o un `27`.
+
+Lo que **no** se acepta:
+
+- Cualquier cosa que no deje **exactamente 11 dígitos** después de sacar la
+  palabra y los separadores. En particular, un `CUIT 123` no es un CUIT.
+- Un campo encabezado por **otra palabra de documento** (`DNI`, `LE`, `LC`,
+  `CI`, `PAS`): si el certificado dice que es un DNI, el RPI no lo toma por un
+  CUIT.
+- La palabra `CUIT`/`CUIL` **en el medio** de otro texto (por ejemplo
+  `Escribano CUIT 30561986653`). Tiene que estar al principio del campo: buscarla
+  en cualquier posición haría pasar un amarre de identidad que en realidad no se
+  verificó.
+
+#### El detalle del rechazo
+
+Informa **el número que se leyó y el que se esperaba**, los dos en
+`NN-NNNNNNNN-N`:
+
+```json
+{
+  "error": "validacion_fallida",
+  "motivo": "firma_invalida",
+  "detalle": "El CUIT del certificado firmante no coincide con el del escribano autorizante declarado",
+  "info": {
+    "motivo": "firma_invalida",
+    "causa": "cuit_firmante_no_coincide",
+    "cuitLeido": "20-31695524-0",
+    "cuitEsperado": "30-56198665-3"
+  },
+  "fechaRechazo": "2026-10-26T12:00:00.000Z"
+}
+```
+
+Y cuando no se pudo leer, `cuitLeido` es `null`:
+
+```json
+{
+  "motivo": "firma_invalida",
+  "causa": "cuit_firmante_ilegible",
+  "cuitLeido": null,
+  "cuitEsperado": "30-56198665-3"
+}
+```
+
+> **El `serialNumber` crudo no se informa.** Puede traer otro documento del
+> firmante, y para corregir el envío alcanza con saber que no se pudo leer un
+> CUIT de ahí.
+
+En la firma del **PDF** el rechazo es `motivo: "pdf_firmante_no_coincide"` y el
+detalle trae además `firmantesPdf`, con el CUIT leído de **cada** firma del
+documento: un PDF puede tener varias, y el RPI evalúa la del escribano.
 
 ---
 
