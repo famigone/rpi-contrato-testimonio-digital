@@ -19,7 +19,7 @@
 
   <EscribanoAutorizante>
     <Nombre>JUAN CARLOS PÉREZ</Nombre>
-    <CUIT>20-12345678-9</CUIT>
+    <CUIT>20-12345678-6</CUIT>
     <RegistroNumero>123</RegistroNumero>
     <Sede>NEUQUÉN</Sede>
   </EscribanoAutorizante>
@@ -41,7 +41,7 @@
           <Tipo>H</Tipo>
           <ApellidoODenominacion>MARTÍNEZ</ApellidoODenominacion>
           <Nombres>LUIS ALBERTO</Nombres>
-          <CUIT>20-16789012-3</CUIT>
+          <CUIT>20-16789012-2</CUIT>
           <TipoDocumento>DNI</TipoDocumento>
           <NumeroDocumento>16789012</NumeroDocumento>
           <EstadoCivil>CASADO</EstadoCivil>
@@ -56,7 +56,7 @@
         <Parte rol="ACREEDOR">
           <Tipo>J</Tipo>
           <ApellidoODenominacion>BANCO EJEMPLO S.A.</ApellidoODenominacion>
-          <CUIT>30-11223344-5</CUIT>
+          <CUIT>30-11223344-6</CUIT>
           <NumeroDocumento>30112233445</NumeroDocumento>
           <PEP>false</PEP>
           <InscripcionOrganismoSede>IGJ 98765 - CIUDAD AUTÓNOMA DE BUENOS AIRES</InscripcionOrganismoSede>
@@ -107,7 +107,7 @@
   </Actos>
 
   <Rogante>
-    <CUIT>20-12345678-9</CUIT>
+    <CUIT>20-12345678-6</CUIT>
     <Nombre>JUAN CARLOS PÉREZ</Nombre>
     <NumeroRegistro>123</NumeroRegistro>
     <Localidad>NEUQUÉN</Localidad>

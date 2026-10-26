@@ -63,6 +63,7 @@ El campo `detalle` es opcional y varía según el código de error.
 |--------|------|-------------|
 | `XML_INVALIDO` | 400 | El XML no cumple el XSD. `detalle` indica línea/columna/elemento. |
 | `XML_NO_PARSEABLE` | 400 | El XML está mal formado (no es XML válido). |
+| `CUIT_INVALIDO` | 400 | El **dígito verificador** de algún CUIT del XML no es correcto. `detalle` trae la lista completa, con el campo y la parte de cada uno. |
 | `FIRMA_INVALIDA` | 401 | La firma XML-DSig no se puede verificar. `detalle` indica causa. |
 | `FIRMA_FALTANTE` | 401 | No se encontró bloque `Signature` en el XML. |
 | `CERTIFICADO_NO_VIGENTE` | 401 | El certificado del firmante está vencido. |
@@ -72,7 +73,7 @@ El campo `detalle` es opcional y varía según el código de error.
 | `HASH_PDF_NO_COINCIDE` | 400 | El hash declarado en el XML no coincide con el PDF recibido. |
 | `PDF_NO_FIRMADO` | 400 | El PDF no tiene firma digital. |
 | `PDF_FIRMA_INVALIDA` | 400 | El PDF tiene firma pero es inválida. |
-| `MULTIPART_INVALIDO` | 400 | La petición multipart está mal formada o falta una parte. |
+| `MULTIPART_INVALIDO` | 400 | La petición multipart está mal formada, falta una parte, o **trae dos partes con el mismo nombre**. |
 | `IDENTIFICADOR_INVALIDO` | 400 | El `IdentificadorEnvio` no es un UUID v4 válido. |
 | `IDENTIFICADOR_DUPLICADO_CONTENIDO_DISTINTO` | 409 | UUID ya usado para un envío con contenido distinto. |
 | `AUTENTICACION_REQUERIDA` | 401 | Falta el header de autenticación. |
@@ -121,6 +122,70 @@ Los errores de tasa también pueden llegar después del 202, por el callback
 
 Un error 5xx nunca es un rechazo del testimonio: indica que el RPI no pudo
 completar el procesamiento por una causa propia.
+
+
+---
+
+### `CUIT_INVALIDO` — el dígito verificador
+
+El XSD valida la **forma** del CUIT (`\d{2}-?\d{8}-?\d{1}`, con o sin
+guiones) y el RPI valida el **dígito verificador** por módulo 11. Se revisan
+**todos** los CUIT del testimonio:
+
+- `EscribanoAutorizante/CUIT`
+- `Rogante/CUIT`
+- el `CUIT` de cada `Parte`
+- el `CUIT` de cada `Representante`
+
+**El prefijo no importa.** Un `30` de persona jurídica es tan válido como un
+`20` o un `27`: el dígito verificador no dice nada del tipo de persona, y el RPI
+no restringe el prefijo en ningún lado.
+
+Se informan **todos** los que fallan, no el primero: si hay tres mal cargados,
+el detalle trae los tres y no hace falta reenviar tres veces para descubrirlos
+de a uno.
+
+```json
+{
+  "error": "validacion_fallida",
+  "motivo": "cuit_invalido",
+  "detalle": "El dígito verificador no es correcto en 2 CUIT del testimonio",
+  "info": {
+    "motivo": "cuit_invalido",
+    "cuits_invalidos": [
+      { "campo": "EscribanoAutorizante/CUIT", "valor": "20-12345678-9" },
+      {
+        "campo": "Acto[1]/Partes/Parte[2]/CUIT",
+        "valor": "27-14567890-4",
+        "acto": 1,
+        "parte": 2,
+        "rol": "TRANSMITENTE"
+      }
+    ]
+  }
+}
+```
+
+`campo` es la ruta del dato en el XML, y para las partes se agregan el número de
+acto, la posición de la parte dentro del acto y su rol, que es como las
+identifica quien lee el documento.
+
+Un CUIT que no tenga 11 dígitos **no** da este error: eso ya lo rechaza el XSD
+por forma, y duplicar el rechazo daría dos códigos para el mismo problema.
+
+---
+
+### `MULTIPART_INVALIDO` — dos partes con el mismo nombre
+
+El multipart lleva exactamente tres partes: `xml`, `pdf` y
+`firma_xml_escribano`. **Mandar dos veces la misma se rechaza.** Antes la
+segunda sobrescribía a la primera en silencio.
+
+Con la firma detached esto importa más que antes: la firma cubre **un** juego de
+bytes, así que con dos partes `xml` cuál de las dos se verificaba quedaba a
+merced del orden en que llegaran. El `detalle` trae `causa: "campo_duplicado"` y
+el nombre del campo repetido.
+
 
 ## Política de reintentos
 

@@ -15,7 +15,7 @@
 
   <EscribanoAutorizante>
     <Nombre>JUAN CARLOS PÉREZ</Nombre>
-    <CUIT>20-12345678-9</CUIT>
+    <CUIT>20-12345678-6</CUIT>
     <RegistroNumero>123</RegistroNumero>
     <Sede>NEUQUÉN</Sede>
   </EscribanoAutorizante>
@@ -40,7 +40,7 @@
           <Tipo>H</Tipo>
           <ApellidoODenominacion>RODRÍGUEZ</ApellidoODenominacion>
           <Nombres>CARLOS ALBERTO</Nombres>
-          <CUIT>20-15234567-1</CUIT>
+          <CUIT>20-15234567-5</CUIT>
           <TipoDocumento>DNI</TipoDocumento>
           <NumeroDocumento>15234567</NumeroDocumento>
           <PEP>false</PEP>
@@ -53,7 +53,7 @@
           <Tipo>H</Tipo>
           <ApellidoODenominacion>RODRÍGUEZ</ApellidoODenominacion>
           <Nombres>ANA MARÍA</Nombres>
-          <CUIT>27-16998877-4</CUIT>
+          <CUIT>27-16998877-9</CUIT>
           <TipoDocumento>DNI</TipoDocumento>
           <NumeroDocumento>16998877</NumeroDocumento>
           <PEP>false</PEP>
@@ -66,7 +66,7 @@
           <Tipo>H</Tipo>
           <ApellidoODenominacion>GONZÁLEZ</ApellidoODenominacion>
           <Nombres>MARÍA LAURA</Nombres>
-          <CUIT>27-28456789-3</CUIT>
+          <CUIT>27-28456789-2</CUIT>
           <TipoDocumento>DNI</TipoDocumento>
           <NumeroDocumento>28456789</NumeroDocumento>
           <EstadoCivil>SOLTERA</EstadoCivil>
@@ -137,14 +137,14 @@
         <Parte rol="TRANSMITENTE">
           <Tipo>J</Tipo>
           <ApellidoODenominacion>INMOBILIARIA DEL SUR S.A.</ApellidoODenominacion>
-          <CUIT>30-70123456-7</CUIT>
+          <CUIT>30-70123456-8</CUIT>
           <NumeroDocumento>30701234567</NumeroDocumento>
           <PEP>false</PEP>
           <InscripcionOrganismoSede>IGJ NEUQUÉN</InscripcionOrganismoSede>
           <Representante>
             <Apellido>MARTÍNEZ</Apellido>
             <Nombres>JORGE LUIS</Nombres>
-            <CUIT>20-13888777-2</CUIT>
+            <CUIT>20-13888777-5</CUIT>
             <TipoDocumento>DNI</TipoDocumento>
             <NumeroDocumento>13888777</NumeroDocumento>
             <PEP>false</PEP>
@@ -171,7 +171,7 @@
           <Tipo>H</Tipo>
           <ApellidoODenominacion>FERNÁNDEZ</ApellidoODenominacion>
           <Nombres>PABLO ANDRÉS</Nombres>
-          <CUIT>20-29555444-6</CUIT>
+          <CUIT>20-29555444-5</CUIT>
           <TipoDocumento>DNI</TipoDocumento>
           <NumeroDocumento>29555444</NumeroDocumento>
           <EstadoCivil>CASADO</EstadoCivil>
@@ -255,7 +255,7 @@
   </Actos>
 
   <Rogante>
-    <CUIT>20-12345678-9</CUIT>
+    <CUIT>20-12345678-6</CUIT>
     <Nombre>JUAN CARLOS PÉREZ</Nombre>
     <NumeroRegistro>123</NumeroRegistro>
     <Localidad>NEUQUÉN</Localidad>
