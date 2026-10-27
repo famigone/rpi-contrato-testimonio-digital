@@ -54,13 +54,22 @@ llegue al Colegio en la misma respuesta HTTP:
 1. El XML está bien formado y cumple el XSD.
 2. **Idempotencia**: si ya recibió un envío con ese `IdentificadorEnvio`,
    devuelve el resultado anterior sin reprocesar (ver [Idempotencia](#idempotencia)).
-3. La firma XML-DSig es válida y el certificado del firmante es vigente, no está
-   revocado y corresponde al escribano autorizante declarado.
+3. La firma XML-DSig es válida, el certificado del firmante es vigente, su
+   cadena ancla en una raíz confiable del RPI y su CUIT corresponde al
+   escribano autorizante declarado.
 4. El PDF está firmado, su firma es válida, y su hash SHA-256 coincide con el
    declarado en el XML (`MetadatosEnvio/HashPDF`).
-5. Reglas de negocio: el código de acto está habilitado, las partes y datos
-   corresponden al acto, el escribano y el rogante están registrados, las
-   certificaciones están vigentes.
+5. Reglas de negocio: el código de acto está habilitado, y las partes y datos
+   corresponden al acto.
+
+> **Lo que el RPI NO verifica al recibir**, aunque sería razonable suponer que
+> sí: la **revocación** de los certificados (no se consulta OCSP ni CRL, por
+> decisión de diseño del ADR-003: un certificado revocado pero vigente y con
+> cadena válida pasa), que el **escribano y el rogante estén registrados** en el
+> sistema registral (el rogante se resuelve después, al sincronizar: si no
+> existe, el problema aparece ahí y no en la respuesta), y la **vigencia de las
+> certificaciones** declaradas. El catálogo completo, con lo implementado y lo
+> reservado, está en [07 — Respuestas y errores](07-respuestas-y-errores.md).
 6. Persiste el testimonio y almacena el PDF.
 7. Responde **HTTP 202 Accepted**.
 
