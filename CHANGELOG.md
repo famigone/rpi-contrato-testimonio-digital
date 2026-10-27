@@ -7,6 +7,55 @@ y este contrato adhiere a [Semantic Versioning 2.0.0](https://semver.org/spec/v2
 
 ---
 
+## [3.2.3] — 2026-10-27
+
+**Una sola forma de leer los errores**, y el **202** que el documento prometía
+desde el principio. Los dos son cambios del servicio que este capítulo ya
+describía o debía describir: no hay nada nuevo que el Colegio tenga que
+implementar, y lo que había que implementar para tolerar las excepciones se
+puede sacar.
+
+### Cambiado
+- **El 429 y el 503 de mantenimiento ya no usan el sobre anidado.** Salen
+  **planos**, como todos los demás: `error` y `motivo` son textos. La v3.2.2
+  documentaba el 429 como "la única excepción" y pedía manejar las dos formas
+  —`if (typeof error === "object")`—; esa rama ya no hace falta y se puede
+  borrar. El 503 de mantenimiento era la **segunda** excepción, y no estaba
+  documentada: es justo el error que se ve si un envío cae en los primeros
+  segundos de un despliegue del RPI.
+- **`motivo` viaja también en los 5xx**, repitiendo a `error`. Así leer `motivo`
+  alcanza para **toda** respuesta de error, sin un caso especial.
+- **`fechaRechazo` solo en los rechazos** (4xx menos el 429). Un 429 o un 5xx no
+  rechazan nada: el envío se reintenta igual, y un campo con ese nombre invitaba
+  a la lectura contraria. La hora de esas respuestas va en el header `Date`.
+- **El `202 Accepted` ya se devuelve de verdad.** El contrato lo promete desde
+  el principio —y los capítulos 02, 03 y 08 están escritos sobre él— pero el
+  servicio respondía **200** tanto a una aceptación nueva como a una reentrega.
+  Ahora: **202** para la aceptación nueva, **200** para la reentrega
+  idempotente, con su `yaProcesadoAnteriormente: true`. **Quien ramificaba por
+  el código ya no necesita mirar el cuerpo para distinguir los dos casos.**
+- **Capítulo 02**: la lista de validaciones del paso 4 prometía tres controles
+  que el RPI **no hace** al recibir: la **revocación** del certificado (sin OCSP
+  ni CRL, ADR-003), que el **escribano y el rogante estén registrados**, y la
+  **vigencia de las certificaciones**. Se corrigió la lista y se agregó una nota
+  con lo que no se verifica, para que nadie lo dé por supuesto.
+- **Política de reintentos**: decía que reusar el identificador con contenido
+  distinto devuelve **409**. No: el RPI **no compara el contenido**, devuelve
+  **200** con el estado del envío original, y el envío corregido no entra. El
+  409 está reservado, como ya decía la tabla de 4xx.
+
+### Agregado
+- Dos ejemplos de respuesta en el capítulo 07: el **429** y el **503 de
+  mantenimiento**, que son los que cambiaron de forma.
+- La tabla de 5xx suma la columna **"Qué viaja en la respuesta"**, con el
+  `requestId`.
+
+### Corregido
+- Dos filas de la tabla de 4xx (`CUIT_NO_COINCIDE` y `MULTIPART_INVALIDO`) les
+  faltaba una celda desde la v3.2.2 y se renderizaban corridas.
+
+---
+
 ## [3.2.2] — 2026-10-26
 
 Solo **documentación**: ningún XSD y ningún comportamiento cambian. El capítulo

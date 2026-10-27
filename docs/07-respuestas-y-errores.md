@@ -58,12 +58,18 @@ El cuerpo es **plano**: `error` es un **texto**, no un objeto.
 | `motivo` | **El dato sobre el que conviene ramificar.** Identifica el rechazo: `estructura_invalida`, `xml_malformado`, `cuit_invalido`, `firma_invalida`, `multipart_invalido`, `hash_pdf_no_coincide`, `pdf_firmante_no_coincide`, `pdf_firma_invalida`, `pdf_cadena_no_confiable`, `pdf_contenido_alterado`, `pdf_invalido`, `identificador_ausente`, `codigo_no_habilitado`, `tamano_excedido` |
 | `detalle` | El mensaje en castellano, pensado para mostrarlo o registrarlo |
 | `info` | Lo específico de cada motivo: `causa` cuando el motivo tiene variantes, y listas como `reglas_fallidas`, `cuits_invalidos`, `errores` o `firmantesPdf` |
-| `fechaRechazo` | Cuándo se rechazó |
+| `fechaRechazo` | Cuándo se rechazó. **Solo en los rechazos** (4xx menos el 429): un 429 o un 5xx no rechazan nada, y un campo con ese nombre invitaría justo a la lectura equivocada. La hora de esas respuestas viaja en el header HTTP `Date` |
+| `requestId` | Solo en los **5xx**: el identificador con el que el RPI puede rastrear ese error en sus registros. Conviene incluirlo al reportar un problema |
 
-> **Una excepción, y es la única:** el **429** usa un sobre anidado,
-> `{ "error": { "codigo": "RATE_LIMIT", "mensaje": … } }`. Conviene manejar las
-> dos formas: si `error` es un objeto, leer `error.codigo`; si es un texto,
-> leer `motivo`.
+**Los tres que están siempre son `error`, `motivo` y `detalle`.** Un cliente que
+lea `motivo` y muestre `detalle` cubre todas las respuestas de error del
+servicio, incluidas las 429 y las 5xx.
+
+> **Sin excepciones.** Hasta la v3.2.2 el **429** y el **503 de mantenimiento**
+> usaban un sobre anidado, `{ "error": { "codigo": …, "mensaje": … } }`, y este
+> documento pedía manejar las dos formas. Ya no: **`error` y `motivo` son
+> siempre textos, en todas las respuestas de error**, y el cliente ramifica
+> por `motivo` sin preguntarse de qué forma vino el cuerpo.
 
 > **`identificadorEnvio` no viaja en el cuerpo del error.** Si hace falta
 > correlacionar, el cliente ya lo tiene: es el que envió.
@@ -92,18 +98,18 @@ El cuerpo es **plano**: `error` es un **texto**, no un objeto.
 | `CERTIFICADO_NO_VIGENTE` | **400** | `motivo: "firma_invalida"`, `causa: "cadena_no_confiable"` (XML) · `motivo: "pdf_cadena_no_confiable"` (PDF) | El certificado del firmante está vencido a la fecha de recepción. |
 | `CERTIFICADO_REVOCADO` | — | ***reservado, no implementado*** | El RPI **no consulta revocación**: sin OCSP ni CRL, por decisión de diseño del **ADR-003**. Un certificado revocado pero vigente y con cadena válida hoy **pasa**. |
 | `CERTIFICADO_NO_RECONOCIDO` | **400** | `motivo: "firma_invalida"`, `causa: "cadena_no_confiable"` (XML) · `motivo: "pdf_cadena_no_confiable"` (PDF) | La cadena del firmante no ancla en una raíz confiable del RPI. |
-| `CUIT_NO_COINCIDE` | 400 | El CUIT del certificado del firmante no coincide con el del XML, o no se pudo leer. Viaja como `motivo: "firma_invalida"` con una `causa`: ver [El CUIT del firmante](#el-cuit-del-firmante-causas-de-firma_invalida). |
+| `CUIT_NO_COINCIDE` | 400 | `motivo: "firma_invalida"` + `info.causa` | El CUIT del certificado del firmante no coincide con el del XML, o no se pudo leer. Las dos causas, en [El CUIT del firmante](#el-cuit-del-firmante-causas-de-firma_invalida). |
 | `HASH_PDF_NO_COINCIDE` | 400 | `motivo: "hash_pdf_no_coincide"` | El hash declarado en el XML no coincide con el PDF recibido. |
 | `PDF_NO_FIRMADO` | 400 | `motivo: "pdf_firmante_no_coincide"` | Ninguna firma del PDF corresponde al escribano autorizante: incluye el caso del PDF sin ninguna firma. `info.firmantesPdf` trae lo que se encontró. |
 | `PDF_FIRMA_INVALIDA` | 400 | `motivo: "pdf_firma_invalida"` · `"pdf_contenido_alterado"` | La firma del escribano en el PDF no verifica, o no cubre todo el documento. |
-| `MULTIPART_INVALIDO` | 400 | La petición multipart está mal formada, falta una parte, o **trae dos partes con el mismo nombre**. |
+| `MULTIPART_INVALIDO` | 400 | `motivo: "multipart_invalido"` + `info.causa` | La petición multipart está mal formada, falta una parte, o **trae dos partes con el mismo nombre**. |
 | `IDENTIFICADOR_INVALIDO` | 400 | `motivo: "identificador_ausente"` (falta) · `"estructura_invalida"` (formato) | El `IdentificadorEnvio` falta o no tiene el formato del XSD. El formato lo valida el XSD, así que llega como error de estructura. |
 | `IDENTIFICADOR_DUPLICADO_CONTENIDO_DISTINTO` | — | ***reservado, no implementado*** | Hoy un `identificadorEnvio` repetido devuelve **200** con `yaProcesadoAnteriormente: true` y el estado del envío original, **sin comparar el contenido**. |
 | `AUTENTICACION_REQUERIDA` | 401 | `{ "error": "no_autorizado" }` | Falta la clave de API. |
 | `AUTENTICACION_INVALIDA` | 401 | `{ "error": "no_autorizado" }` | La clave de API no es válida. **Mismo cuerpo que el caso anterior**, a propósito: no se distingue "falta" de "es inválida". |
 | `SIN_PERMISO` | — | ***reservado, no implementado*** | No hay permisos por cliente: una clave válida puede enviar testimonios. |
 | `LIMITE_TAMANO` | 413 | `error: "tamano_excedido"`, `motivo: "tamano_excedido"` | La petición supera el límite. `info.campo` dice cuál parte lo superó y `info.maxBytes` el tope. |
-| `RATE_LIMIT` | 429 | `{ "error": { "codigo": "RATE_LIMIT", … } }` | Demasiadas peticiones del mismo cliente. Respetar `Retry-After`. **Es el único error cuyo cuerpo tiene el sobre `error.codigo`** y no el `error`/`motivo` del resto. |
+| `RATE_LIMIT` | 429 | `error: "rate_limit"`, `motivo: "rate_limit"` | Demasiadas peticiones del mismo cliente. Respetar `Retry-After`. `info` trae `limitePorHora`, `rafagaMaxima` y `reintentarEnSegundos`. **No lleva `fechaRechazo`**: no es un rechazo del envío. |
 
 ---
 
@@ -314,13 +320,16 @@ documento: un PDF puede tener varias, y el RPI evalúa la del escribano.
 
 ### Errores del servidor (5xx)
 
-| Código | HTTP | Descripción |
-|--------|------|-------------|
-| `ERROR_INTERNO` | 500 | Error inesperado del RPI. Viaja como `error: "error_interno"`, con un `requestId` para rastrearlo. Reintentar con backoff. |
-| `BD_NO_DISPONIBLE` | 503 | Una dependencia del RPI no está disponible. Viaja como `error: "infra_error"`. |
-| `MANTENIMIENTO` | 503 | El RPI todavía no terminó de verificar sus dependencias, o una no responde. Header `Retry-After`. |
-| `VALIDACION_NO_DISPONIBLE` | 503 | **El RPI no puede validar**: le falta configuración, típicamente las raíces de confianza. El mensaje dice explícitamente que **NO** se reintente: el envío no tiene nada de malo y reintentar no va a funcionar hasta que lo arreglen en el RPI. |
-| `TIMEOUT_INTERNO` | 504 | ***reservado, no implementado.*** El RPI no devuelve 504 hoy; una demora termina en 503 o en 500. |
+| Código | HTTP | Qué viaja en la respuesta | Descripción |
+|--------|------|---------------------------|-------------|
+| `ERROR_INTERNO` | 500 | `error` y `motivo`: `"error_interno"` + `requestId` | Error inesperado del RPI. Reintentar con backoff, informando el `requestId`. |
+| `BD_NO_DISPONIBLE` | 503 | `error` y `motivo`: `"infra_error"` + `requestId` | Una dependencia del RPI no está disponible. |
+| `MANTENIMIENTO` | 503 | `error` y `motivo`: `"mantenimiento"` + header `Retry-After` | El RPI todavía no terminó de verificar sus dependencias, o una no responde. Es lo que se ve en los primeros segundos de un despliegue. `info.causa` dice qué dependencia, y `info.reintentarEnSegundos` repite el `Retry-After`. |
+| `VALIDACION_NO_DISPONIBLE` | 503 | `error` y `motivo`: `"validacion_no_disponible"` + `requestId` | **El RPI no puede validar**: le falta configuración, típicamente las raíces de confianza. El mensaje dice explícitamente que **NO** se reintente: el envío no tiene nada de malo y reintentar no va a funcionar hasta que lo arreglen en el RPI. |
+| `TIMEOUT_INTERNO` | 504 | ***reservado, no implementado*** | El RPI no devuelve 504 hoy; una demora termina en 503 o en 500. |
+
+> En los 5xx `motivo` repite a `error`. Está a propósito: así el cliente lee
+> `motivo` en **toda** respuesta de error, sin un caso especial para los 5xx.
 
 Un error 5xx nunca es un rechazo del testimonio: indica que el RPI no pudo
 completar el procesamiento por una causa propia.
@@ -335,8 +344,11 @@ idéntico devuelve el mismo error.
 
 - El rechazo es definitivo para ese `IdentificadorEnvio`.
 - El envío corregido es un envío nuevo y **lleva un `IdentificadorEnvio` nuevo**.
-- Si se reusa el identificador con contenido distinto, el RPI responde 409
-  (`IDENTIFICADOR_DUPLICADO_CONTENIDO_DISTINTO`).
+- **Si se reusa el identificador, el RPI no compara el contenido**: responde
+  **200** con `yaProcesadoAnteriormente: true` y el estado del envío original,
+  y el envío corregido **no entra**. El 409 que antes se documentaba acá
+  (`IDENTIFICADOR_DUPLICADO_CONTENIDO_DISTINTO`) está reservado y no se
+  devuelve: ver la tabla de 4xx.
 
 ### Problemas transitorios — reintentar el mismo envío
 
@@ -411,6 +423,49 @@ Content-Type: application/json
     "bytesXml": 18432
   },
   "fechaRechazo": "2026-10-26T10:23:45.000Z"
+}
+```
+
+### Rate limit alcanzado
+
+Sin `fechaRechazo`: el envío no tiene nada de malo y se reintenta **el mismo**.
+
+```http
+HTTP/1.1 429 Too Many Requests
+Content-Type: application/json
+Retry-After: 6
+
+{
+  "error": "rate_limit",
+  "motivo": "rate_limit",
+  "detalle": "Demasiadas peticiones. Reintentar respetando el header Retry-After.",
+  "info": {
+    "limitePorHora": 600,
+    "rafagaMaxima": 60,
+    "reintentarEnSegundos": 6
+  }
+}
+```
+
+### El RPI todavía está arrancando
+
+Lo que se ve si un envío cae en los primeros segundos de un despliegue del RPI.
+Tampoco lleva `fechaRechazo`: se reintenta el mismo envío.
+
+```http
+HTTP/1.1 503 Service Unavailable
+Content-Type: application/json
+Retry-After: 30
+
+{
+  "error": "mantenimiento",
+  "motivo": "mantenimiento",
+  "detalle": "El servicio todavía no verificó sus dependencias. Reintentar respetando el header Retry-After.",
+  "info": {
+    "arranque": "verificando",
+    "causa": null,
+    "reintentarEnSegundos": 30
+  }
 }
 ```
 
