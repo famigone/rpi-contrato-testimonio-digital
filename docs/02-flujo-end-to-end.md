@@ -184,8 +184,21 @@ regla es:
   resultado del envío original sin reprocesarlo: el estado actual si fue
   aceptado, o el mismo error si fue rechazado.
 - **Envío distinto → identificador nuevo.** Un envío corregido después de un
-  rechazo es un envío distinto. Si se reusa el identificador con contenido
-  distinto, el RPI responde `409 IDENTIFICADOR_DUPLICADO_CONTENIDO_DISTINTO`.
+  rechazo es un envío distinto, y necesita un identificador nuevo.
+
+**Qué pasa si se reusa el identificador con contenido distinto**: el RPI **no
+compara el contenido**, así que el envío nuevo no entra y la respuesta es la del
+original.
+
+| El envío original fue… | La respuesta al reenvío |
+|---|---|
+| **aceptado** | **200** con el estado actual de ese envío (una reentrega) |
+| **rechazado** | **el rechazo original**, con su mismo código y `motivo` |
+
+> Acá se documentaba un `409 IDENTIFICADOR_DUPLICADO_CONTENIDO_DISTINTO` para
+> ese caso. **El RPI no devuelve 409**: ese código quedó reservado y nunca se
+> implementó, porque comparar el contenido de dos envíos exigiría guardar y
+> volver a validar el primero. Lo que hay es lo de la tabla.
 
 Esto permite reintentar sin riesgo de duplicación, y obliga a que cada corrección
 sea un envío identificable.

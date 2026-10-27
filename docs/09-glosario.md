@@ -338,7 +338,10 @@ UUID v4 generado por el sistema del Colegio para identificar unívocamente
 cada envío. Regla: **mismo envío, mismo identificador** (reintentos por timeout,
 error de red o 5xx); **envío distinto, identificador nuevo** (por ejemplo, un
 envío corregido después de un rechazo). Reusar un identificador con contenido
-distinto devuelve 409.
+distinto **no** hace entrar el contenido nuevo: el RPI responde lo que
+corresponde al envío original —su estado si fue aceptado, su rechazo si fue
+rechazado— sin comparar nada (ver
+[02 — Idempotencia](02-flujo-end-to-end.md#idempotencia)).
 
 ### XML-DSig
 

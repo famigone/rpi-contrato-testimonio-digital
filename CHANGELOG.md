@@ -7,6 +7,81 @@ y este contrato adhiere a [Semantic Versioning 2.0.0](https://semver.org/spec/v2
 
 ---
 
+## [3.2.5] — 2026-10-27
+
+El capítulo 03 **decía otra cosa que el servicio**, y en los dos sentidos: unos
+campos que el servicio no mandaba y un rechazo que el servicio no hacía. Esta
+versión documenta lo que el servicio hace desde hoy y cierra dos pendientes.
+
+### Agregado
+- **`ROGANTE_NO_ENCONTRADO` (400, `motivo: "rogante_no_encontrado"`).** El
+  escribano autorizante tiene que estar registrado en el RPI como rogante. Si no
+  está, el envío se **rechaza en la recepción**, con el CUIT buscado en `info`.
+  Antes el envío se aceptaba con un 202 y moría horas después en la
+  sincronización: sin Entrada General, sin reintento y **sin que nadie se
+  enterara**, porque los rechazos no generan callback —viajan en la respuesta
+  HTTP, que en ese caso había dicho que todo estaba bien—. Es un rechazo que el
+  Colegio **no corrige en el XML**: hay que pedirle el alta al RPI.
+  - Si el RPI **no puede verificarlo** (padrón no disponible), la respuesta es
+    **503 con `Retry-After`**, no un rechazo: el envío no tiene nada de malo.
+- **La regla del identificador rechazado, explícita en el 03.** Un
+  `IdentificadorEnvio` rechazado **queda cerrado**: el reenvío devuelve el
+  rechazo original —mismo código, mismo `motivo`, mismo `info` y la
+  `fechaRechazo` de la primera vez— sin reprocesar, **cualquiera sea el
+  contenido**, incluido el contenido corregido. Estaba prometido en una línea y
+  el servicio no lo implementaba: un reenvío con el mismo identificador y el
+  contenido corregido **se aceptaba**, y dos documentos distintos terminaban
+  compartiendo la clave con la que el Colegio y el RPI hablan de un envío.
+- **`motivo` en el 401.** Era el último error del canal que no lo traía —el
+  tercer caso después del 429 y del 503 de mantenimiento, que se unificaron en
+  la v3.2.3— y el capítulo afirmaba que `error`, `motivo` y `detalle` están
+  siempre. Un campo de más: el cuerpo del 401 no cambia en nada más, sigue
+  siendo el mismo para "falta la clave" y para "la clave no es válida".
+- **`Retry-After` en el 503 de dependencia no disponible** (`BD_NO_DISPONIBLE`).
+  Antes solo lo llevaba el de mantenimiento, y sin el header cada cliente
+  inventa su propia espera.
+- **`yaProcesadoAnteriormente` documentado** en el 200. Viaja siempre y vale
+  siempre `true`; es **redundante con el código de respuesta** y queda por
+  compatibilidad. La señal es el código: 202 aceptación nueva, 200 reentrega.
+  Un campo que el cliente recibe y el contrato no nombra es exactamente lo que
+  hizo invisible el bug del 202 hasta la v3.2.3.
+
+### Cambiado
+- **La autenticación ya no está pendiente: es Bearer token.** Era la opción 1 de
+  las dos que listaba el capítulo, y es la que el servicio implementa. Se
+  documenta el 401, que el token es un secreto del que el RPI solo guarda el
+  hash, y que puede haber varios tokens válidos a la vez para rotarlos sin
+  cortar el servicio (cada uno con su propia cuota de rate limit).
+- **El 409 `IDENTIFICADOR_DUPLICADO_CONTENIDO_DISTINTO` ya no se promete en
+  ningún capítulo.** Seguía en el 02 y en el glosario. El RPI **no devuelve
+  409**: reusar un identificador devuelve lo que corresponde al envío original
+  (su estado si fue aceptado, su rechazo si fue rechazado), sin comparar el
+  contenido.
+- **El párrafo de los nombres del multipart**, que la v3.2.4 dejó atrasado en el
+  03: el rechazo por parte faltante también nombra el nombre desconocido que
+  llegó, y una parte de más puede dejar afuera a una de las tres
+  (`causa: "sobran_partes"`).
+- **Los estados que devuelve la reentrega hoy**: `aceptado` o `ingresado`. Los
+  otros tres son resultados de la calificación registral, que el RPI todavía no
+  recibe. La lista de estados no cambia: es la del ciclo de vida completo.
+
+### Quitado
+- **`entradaGeneral.fechaPresentacion`, por ahora, de la respuesta de
+  recepción.** El RPI no tiene de dónde leerla con certeza: la cola de ingreso
+  no guarda fecha propia y la única disponible es la del **proceso** que asigna
+  la Entrada General. Como de esa fecha depende la **prioridad registral**, el
+  RPI prefiere no informar una que podría estar corrida un día hábil. Los otros
+  tres campos (`numero`, `anio`, `numeroPresentacion`) sí viajan. En los
+  callbacks del capítulo 08 el campo se mantiene —ahí el dato lo emite el
+  sistema registral— con la misma advertencia.
+
+> **Nada de esto cambia el XSD ni el namespace.** El Colegio no tiene que tocar
+> el XML. Lo que sí conviene revisar del lado del cliente: manejar el rechazo
+> `rogante_no_encontrado` (avisar al RPI, no reintentar) y **no reusar un
+> `IdentificadorEnvio` rechazado**.
+
+---
+
 ## [3.2.4] — 2026-10-27
 
 Solo **documentación** de un mensaje de rechazo que mejora en el servicio: el
