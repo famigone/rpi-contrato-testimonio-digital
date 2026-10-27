@@ -7,6 +7,32 @@ y este contrato adhiere a [Semantic Versioning 2.0.0](https://semver.org/spec/v2
 
 ---
 
+## [3.2.4] — 2026-10-27
+
+Solo **documentación** de un mensaje de rechazo que mejora en el servicio: el
+caso de las **partes de más** en el multipart.
+
+### Agregado
+- **`info.causa: "sobran_partes"`** en `MULTIPART_INVALIDO`. El RPI lee **como
+  máximo tres partes**, y una cuarta no se ignora sin consecuencias: consume el
+  lugar de una de las tres y la que venga última no llega a leerse. Hasta ahora
+  ese envío se rechazaba por `faltan_campos`, **nombrando una parte que el
+  Colegio sí había mandado** — el peor mensaje posible, porque manda a buscar
+  donde no está el problema. Ahora el rechazo dice que sobran partes, cuál no se
+  leyó y cuáles se descartaron.
+- La sección de `MULTIPART_INVALIDO` pasa a tener la **tabla de causas**
+  completa, con qué trae `info` en cada una.
+- Si falta una parte y además llegó una con nombre desconocido, el rechazo lo
+  menciona: casi siempre es la **misma** parte con el nombre mal escrito (`XML`
+  en mayúsculas, el nombre del archivo en lugar del campo).
+
+> Sigue siendo cierto que **si las tres partes llegan, un nombre desconocido se
+> ignora y el envío entra** (es lo que deja libre el `firma_xml_aplicacion`
+> reservado). Lo que cambia es el mensaje cuando eso deja afuera a una de las
+> tres.
+
+---
+
 ## [3.2.3] — 2026-10-27
 
 **Una sola forma de leer los errores**, y el **202** que el documento prometía

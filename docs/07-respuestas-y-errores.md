@@ -102,7 +102,7 @@ servicio, incluidas las 429 y las 5xx.
 | `HASH_PDF_NO_COINCIDE` | 400 | `motivo: "hash_pdf_no_coincide"` | El hash declarado en el XML no coincide con el PDF recibido. |
 | `PDF_NO_FIRMADO` | 400 | `motivo: "pdf_firmante_no_coincide"` | Ninguna firma del PDF corresponde al escribano autorizante: incluye el caso del PDF sin ninguna firma. `info.firmantesPdf` trae lo que se encontró. |
 | `PDF_FIRMA_INVALIDA` | 400 | `motivo: "pdf_firma_invalida"` · `"pdf_contenido_alterado"` | La firma del escribano en el PDF no verifica, o no cubre todo el documento. |
-| `MULTIPART_INVALIDO` | 400 | `motivo: "multipart_invalido"` + `info.causa` | La petición multipart está mal formada, falta una parte, o **trae dos partes con el mismo nombre**. |
+| `MULTIPART_INVALIDO` | 400 | `motivo: "multipart_invalido"` + `info.causa` | La petición multipart está mal formada, falta una parte, **trae dos partes con el mismo nombre**, o **trae partes de más** y por eso una de las tres no se leyó. Las causas, en [`MULTIPART_INVALIDO`](#multipart_invalido--las-causas). |
 | `IDENTIFICADOR_INVALIDO` | 400 | `motivo: "identificador_ausente"` (falta) · `"estructura_invalida"` (formato) | El `IdentificadorEnvio` falta o no tiene el formato del XSD. El formato lo valida el XSD, así que llega como error de estructura. |
 | `IDENTIFICADOR_DUPLICADO_CONTENIDO_DISTINTO` | — | ***reservado, no implementado*** | Hoy un `identificadorEnvio` repetido devuelve **200** con `yaProcesadoAnteriormente: true` y el estado del envío original, **sin comparar el contenido**. |
 | `AUTENTICACION_REQUERIDA` | 401 | `{ "error": "no_autorizado" }` | Falta la clave de API. |
@@ -162,16 +162,56 @@ por forma, y duplicar el rechazo daría dos códigos para el mismo problema.
 
 ---
 
-### `MULTIPART_INVALIDO` — dos partes con el mismo nombre
+### `MULTIPART_INVALIDO` — las causas
 
 El multipart lleva exactamente tres partes: `xml`, `pdf` y
-`firma_xml_escribano`. **Mandar dos veces la misma se rechaza.** Antes la
-segunda sobrescribía a la primera en silencio.
+`firma_xml_escribano`. Los nombres son **exactos y en minúsculas**.
 
-Con la firma detached esto importa más que antes: la firma cubre **un** juego de
-bytes, así que con dos partes `xml` cuál de las dos se verificaba quedaba a
-merced del orden en que llegaran. El `detalle` trae `causa: "campo_duplicado"` y
-el nombre del campo repetido.
+| `info.causa` | Cuándo | Qué más trae `info` |
+|---|---|---|
+| `campo_duplicado` | Dos partes con el **mismo nombre** | `campo`: el nombre repetido |
+| `sobran_partes` | Llegaron **más partes de las tres**, y por eso alguna de las tres **no se leyó** | `faltantes`, `partesIgnoradas`, `topesAlcanzados` |
+| `falta_firma_escribano` | No llegó la parte `firma_xml_escribano` | `faltantes` y, si hubo, `partesIgnoradas` |
+| `faltan_campos` | No llegó `xml` o `pdf` | Ídem |
+| *(el mensaje de busboy)* | El sobre está mal formado, o el `Content-Type` falta o no es `multipart/form-data` | — |
+
+**Dos partes con el mismo nombre se rechazan.** Antes la segunda sobrescribía a
+la primera en silencio. Con la firma detached esto importa más que antes: la
+firma cubre **un** juego de bytes, así que con dos partes `xml` cuál de las dos
+se verificaba quedaba a merced del orden en que llegaran.
+
+#### `sobran_partes` — una parte de más puede dejar afuera a una de las tres
+
+El RPI lee **como máximo tres partes**. Una cuarta no se ignora sin
+consecuencias: **consume el lugar** de una de las tres, y la que venga última no
+llega a leerse. El rechazo lo dice con esta causa, nombrando la que no se leyó
+y las que se descartaron:
+
+```json
+{
+  "error": "validacion_fallida",
+  "motivo": "multipart_invalido",
+  "detalle": "El multipart trae más partes de las tres esperadas (xml, pdf, firma_xml_escribano), y por eso la parte \"firma_xml_escribano\" no llegó a leerse. Llegaron también, y se descartaron, \"comentario\". Enviar exactamente las tres partes, con esos nombres y en minúsculas.",
+  "info": {
+    "motivo": "multipart_invalido",
+    "causa": "sobran_partes",
+    "faltantes": ["firma_xml_escribano"],
+    "partesIgnoradas": ["comentario"],
+    "topesAlcanzados": ["archivos"]
+  },
+  "fechaRechazo": "2026-10-27T10:23:45.000Z"
+}
+```
+
+**Si las tres partes llegan, un nombre desconocido se ignora y el envío entra**
+—es lo que deja libre el `firma_xml_aplicacion` reservado—, pero el RPI lo
+registra. No conviene apoyarse en eso: según el orden de las partes, lo que un
+día se ignora, al otro deja afuera a una de las tres.
+
+> **Si falta una parte y además llegó una con un nombre desconocido**, el
+> rechazo lo menciona aunque la causa siga siendo `faltan_campos`: casi siempre
+> es la **misma** parte con el nombre mal escrito (`XML` en mayúsculas, el
+> nombre del archivo en lugar del campo).
 
 ---
 
