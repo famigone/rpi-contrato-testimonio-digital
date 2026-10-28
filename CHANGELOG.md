@@ -7,6 +7,72 @@ y este contrato adhiere a [Semantic Versioning 2.0.0](https://semver.org/spec/v2
 
 ---
 
+## [3.4.0] — 2026-10-28
+
+**`NumeroTasa` pasa a ser obligatorio.** El escribano informa el número de la
+tasa registral siempre, aunque la tasa esté impaga.
+
+> ### ⚠ Es un cambio INCOMPATIBLE, aceptado como MINOR por excepción
+>
+> Un envío sin `NumeroTasa` era **válido en la v3.3.0** y desde la v3.4.0 **se
+> rechaza** con 400 `estructura_invalida`. Por las reglas de versionado de este
+> contrato (ADR-002) eso es un MAJOR: endurecer la cardinalidad de un elemento
+> rompe a cualquiera que ya estuviera enviando sin él.
+>
+> Se publica como **MINOR por excepción**, con una razón concreta y acotada en
+> el tiempo: **no hay integraciones en producción**. El canal del Colegio está
+> en pruebas, el único cliente es el sistema del Colegio de Escribanos y se le
+> comunica el cambio junto con esta versión. Pasar a v4.0.0 obligaría a un salto
+> de versión del namespace y del `VersionContrato` por un elemento, sin ningún
+> integrador que lo necesite.
+>
+> **Esta excepción no crea precedente:** una vez que haya envíos reales en
+> producción, un cambio de esta clase es MAJOR.
+>
+> **Qué tiene que hacer el Colegio:** agregar `<NumeroTasa>` a los envíos, entre
+> `</Otorgamiento>` y `<Actos>`. Las minutas de prueba que no lo traen se van a
+> rechazar y hay que regenerarlas.
+
+### Cambiado
+- **`NumeroTasa` es obligatorio** (`minOccurs="1"`), entero positivo de hasta 12
+  dígitos, uno por testimonio, entre `Otorgamiento` y `Actos`. Era opcional
+  desde la v3.2.0.
+  - **El número es un requisito de FORMA; el pago no condiciona el ingreso.** La
+    ley impide rechazar un trámite por cuestiones tributarias, así que una tasa
+    **impaga, inexistente o ya usada en otro trámite sigue sin rechazar nada**:
+    el testimonio ingresa y la inscripción sale provisional hasta que se pague.
+    Lo que se rechaza es que **falte el número**, que es un defecto del
+    documento: sin él el Registro no tiene qué consultar al SUR ni qué registrar
+    en el asiento.
+  - La falta del elemento la rechaza el **XSD**, antes de cualquier regla de
+    negocio: **400** con `motivo: "estructura_invalida"`. El capítulo 07 muestra
+    el detalle exacto, incluida una advertencia que importa para programar
+    contra esto: **el mensaje del validador nombra `Actos`, no `NumeroTasa`**
+    (señala el elemento que apareció donde esperaba otro), así que conviene
+    detectar el caso buscando `NumeroTasa` en el mensaje.
+- **`sin_codigo` deja de ser un estado posible** para un envío nuevo. Era el
+  estado de la tasa de un testimonio que no declaraba número; ahora un envío así
+  no llega a tener estado de tasa. El estado sigue existiendo en el RPI para los
+  envíos que entraron antes de esta versión.
+- **Los 12 ejemplos** de `ejemplos/v3/` traen `NumeroTasa`.
+
+### Documentación
+- **02** — "La tasa registral no es una validación" pasa a distinguir las dos
+  cosas que se confundían: informar el número (obligatorio) y haberlo pagado
+  (no condiciona el ingreso).
+- **03** — la tabla de `tasa.estado` en el 202 queda con un solo valor posible,
+  `sin_verificar`, y dice por qué `sin_codigo` ya no aparece.
+- **04** — sección nueva **`NumeroTasa`**, con la cardinalidad, el tipo, la
+  posición y la distinción entre forma y pago. El elemento existía desde la
+  v3.2.0 y este capítulo nunca lo había documentado.
+- **07** — sección nueva **"Falta el NumeroTasa"**, con la respuesta completa, la
+  advertencia sobre el mensaje del validador y la conducta (corregir y reenviar
+  con identificador nuevo). La nota "no hay errores de tasa" se precisa: no hay
+  errores por el **estado** de la tasa; la **falta del número** sí se rechaza.
+- **09** — "Tasa registral" dice que el número es obligatorio.
+
+---
+
 ## [3.3.0] — 2026-10-28
 
 El capítulo 03 **decía otra cosa que el servicio**, y en los dos sentidos: unos

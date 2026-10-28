@@ -216,13 +216,18 @@ matrícula.
 
 Tributo que se abona para el ingreso de un documento al Registro. Se identifica
 con un número que el escribano gestiona en el Sistema Único de Recaudación antes
-del envío, y se informa en el XML como `NumeroTasa` (opcional, uno por
-testimonio).
+del envío, y se informa en el XML como `NumeroTasa` (**obligatorio** desde la
+v3.4.0, uno por testimonio).
 
-**La tasa nunca rechaza un ingreso.** La ley impide rechazar un trámite por
-cuestiones tributarias. Una tasa impaga, inexistente o ya usada en otro trámite
-**ingresa igual**, y el resultado es una **inscripción provisional** hasta que se
-pague.
+**El número es obligatorio; el pago no condiciona el ingreso.** Son dos cosas
+distintas:
+
+- *Informar* el número es un requisito de forma. El envío que no trae
+  `NumeroTasa` se rechaza con 400 `estructura_invalida`, y lo rechaza el XSD.
+- *Haberla pagado* no es requisito. La ley impide rechazar un trámite por
+  cuestiones tributarias: una tasa impaga, inexistente o ya usada en otro
+  trámite **ingresa igual**, y el resultado es una **inscripción provisional**
+  hasta que se pague.
 
 El pago posterior se presenta como un reingreso: una nueva presentación de la
 misma EG informando el número de tasa pagado, porque hace falta inscribir un

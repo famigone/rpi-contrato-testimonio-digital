@@ -306,6 +306,48 @@ documento: un PDF puede tener varias, y el RPI evalúa la del escribano.
 
 ---
 
+### Falta el NumeroTasa
+
+Desde la **v3.4.0** `NumeroTasa` es obligatorio (ver
+[04 — NumeroTasa](04-formato-xml.md#numerotasa)). Lo exige el **XSD**, así que el
+envío que no lo trae se rechaza con **400** y `motivo: "estructura_invalida"`,
+antes de cualquier regla de negocio:
+
+```json
+{
+  "error": "validacion_fallida",
+  "motivo": "estructura_invalida",
+  "detalle": "El XML no cumple el contrato v3",
+  "info": {
+    "motivo": "estructura_invalida",
+    "errores": [
+      {
+        "mensaje": "Schemas validity error : Element '{https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v3}Actos': This element is not expected. Expected is ( {https://contrato.rpi.jusneuquen.gov.ar/testimonio-digital/v3}NumeroTasa ).",
+        "linea": 31
+      }
+    ]
+  },
+  "fechaRechazo": "2026-11-03T10:22:41.118Z"
+}
+```
+
+> **El mensaje nombra `Actos`, pero lo que falta es `NumeroTasa`.** Es cómo
+> informa el validador de XSD un elemento ausente en una secuencia: señala el
+> elemento que **sí** apareció donde esperaba otro (`Actos`, el que sigue a
+> `NumeroTasa`) y dice cuál esperaba (`Expected is ( ... NumeroTasa )`). La
+> `linea` apunta al `<Actos>`, no al lugar donde habría que escribir el número.
+> Para detectar este caso conviene buscar `NumeroTasa` en el mensaje, no leer el
+> nombre del elemento señalado.
+
+La conducta es la de cualquier rechazo estructural: corregir el XML —agregar el
+número que devuelve el SUR al generar la tasa— y enviar con un
+`identificadorEnvio` **nuevo**.
+
+**Que la tasa esté impaga no es este caso.** Si el número viene y la tasa no está
+pagada, el envío se acepta (202) y la inscripción sale provisional.
+
+---
+
 ### `ROGANTE_NO_ENCONTRADO` — el alta la hace el RPI
 
 El escribano autorizante tiene que estar registrado en el RPI como **rogante**:
@@ -387,12 +429,17 @@ alta del escribano en el padrón del RPI. La conducta es:
 | `ROL_NO_VALIDO_PARA_ACTO` | El `rol` de la parte no corresponde al acto (ej. ACREEDOR en una compraventa, código 1028). |
 | `ACTO_SIN_ADQUIRENTE` | El acto exige al menos una parte con rol ADQUIRENTE (ej. compraventa, código 1028). |
 | `CUIT_FIRMANTE_NO_COINCIDE` | El CUIT del certificado debe coincidir con el del XML. |
-> **No hay errores de tasa.** Antes figuraban `TASA_INEXISTENTE`,
-> `TASA_NO_PAGADA` y `TASA_YA_UTILIZADA`. **Se eliminaron:** la ley impide
-> rechazar un trámite por cuestiones tributarias, así que una tasa impaga,
-> inexistente o ya usada **no rechaza el ingreso**. El testimonio entra igual y
-> la inscripción sale provisional hasta que se pague. Ver
+> **No hay errores por el ESTADO de la tasa.** Antes figuraban
+> `TASA_INEXISTENTE`, `TASA_NO_PAGADA` y `TASA_YA_UTILIZADA`. **Se eliminaron:**
+> la ley impide rechazar un trámite por cuestiones tributarias, así que una tasa
+> impaga, inexistente o ya usada **no rechaza el ingreso**. El testimonio entra
+> igual y la inscripción sale provisional hasta que se pague. Ver
 > [03 — La tasa en la respuesta](03-endpoint-api.md#la-tasa-en-la-respuesta).
+>
+> Sí se rechaza que **falte el número** de la tasa, que es otra cosa: un defecto
+> de forma del documento, no el estado de un pago. Lo rechaza el XSD, así que
+> llega como `estructura_invalida` y no como un error propio (ver
+> [Falta el NumeroTasa](#falta-el-numerotasa)).
 >
 > Con eso desaparece también el único rechazo que podía llegar después del 202:
 > **todo rechazo estructural es síncrono**.

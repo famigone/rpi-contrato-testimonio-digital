@@ -27,6 +27,8 @@
     <FolioProtocolo>00000123</FolioProtocolo>
   </Otorgamiento>
 
+  <NumeroTasa>15853</NumeroTasa>
+
   <!-- Lista de N actos. En v2.0 ambos son Compraventa (único tipo en el choice),
        pero la estructura ya admite tipos heterogéneos. -->
   <Actos>
