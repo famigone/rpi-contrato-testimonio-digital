@@ -7,11 +7,16 @@ y este contrato adhiere a [Semantic Versioning 2.0.0](https://semver.org/spec/v2
 
 ---
 
-## [3.2.5] — 2026-10-27
+## [3.3.0] — 2026-10-28
 
 El capítulo 03 **decía otra cosa que el servicio**, y en los dos sentidos: unos
 campos que el servicio no mandaba y un rechazo que el servicio no hacía. Esta
 versión documenta lo que el servicio hace desde hoy y cierra dos pendientes.
+
+Es **MINOR y no PATCH** aunque no cambie el XSD: agrega un rechazo que el
+Colegio puede recibir (`rogante_no_encontrado`) y una regla que el RPI ahora
+hace cumplir (el identificador rechazado queda cerrado). Eso es funcionalidad
+nueva compatible, no una aclaración de documentación.
 
 ### Agregado
 - **`ROGANTE_NO_ENCONTRADO` (400, `motivo: "rogante_no_encontrado"`).** El
