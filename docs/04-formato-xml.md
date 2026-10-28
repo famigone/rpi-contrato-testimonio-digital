@@ -35,6 +35,9 @@ El XML del testimonio digital tiene esta estructura raíz:
     <!-- Lugar, fecha, número de escritura, folio del protocolo -->
   </Otorgamiento>
 
+  <!-- Número de la tasa registral en el SUR. OBLIGATORIO desde la v3.4.0. -->
+  <NumeroTasa>15851</NumeroTasa>
+
   <!-- ── Lista de actos: 1..N, de tipos heterogéneos ── -->
   <Actos>
     <Acto numero="1">
@@ -235,6 +238,36 @@ Datos del acto notarial en sí:
   <FolioProtocolo>00000123</FolioProtocolo>
 </Otorgamiento>
 ```
+
+### NumeroTasa
+
+El número de la tasa registral en el **Sistema Único de Recaudación (SUR)** del
+Poder Judicial. Es el identificador que el escribano obtiene al generar la tasa,
+antes del envío.
+
+```xml
+<NumeroTasa>15851</NumeroTasa>
+```
+
+| Regla | Valor |
+|---|---|
+| Cardinalidad | **Obligatorio**, exactamente uno por testimonio (desde la **v3.4.0**; antes era opcional) |
+| Tipo | Entero positivo, hasta 12 dígitos (`xs:positiveInteger` con `totalDigits="12"`). Hoy los números del SUR son de 5 dígitos; el tope es margen |
+| Nivel | **Testimonio**, no acto: una misma tasa puede cubrir varios actos, cada uno con su concepto y su monto |
+| Posición | Entre `Otorgamiento` y `Actos` |
+
+**Obligatorio aunque la tasa esté impaga.** Son dos cosas distintas:
+
+- *informar* el número es un **requisito de forma**: sin él el Registro no tiene
+  qué consultar al SUR ni qué registrar en el asiento. Falta el elemento → el
+  XSD rechaza el envío con **400 `estructura_invalida`** (ver
+  [07 — Falta el NumeroTasa](07-respuestas-y-errores.md#falta-el-numerotasa));
+- *haberla pagado* **no** es requisito: una tasa impaga, inexistente o ya usada
+  en otro trámite ingresa igual y la inscripción sale **provisional** hasta que
+  se pague. La ley impide rechazar un trámite por cuestiones tributarias.
+
+El comprobante, la fecha de pago y el importe **no se declaran en el XML**: los
+informa el SUR cuando el RPI consulta el número.
 
 ### Actos / Acto
 

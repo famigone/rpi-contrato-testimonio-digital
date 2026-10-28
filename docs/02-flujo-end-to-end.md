@@ -76,17 +76,26 @@ llegue al Colegio en la misma respuesta HTTP:
 Si alguna validación falla, el RPI responde con un error 4xx y el testimonio
 **no ingresa** (ver [Qué pasa si algo falla](#qué-pasa-si-algo-falla)).
 
-### La tasa registral no es una validación
+### La tasa registral: el número es obligatorio, el pago no rechaza
 
-**La tasa nunca rechaza un ingreso.** La ley impide rechazar un trámite por
-cuestiones tributarias. Una tasa impaga, inexistente o ya usada en otro trámite
-**ingresa igual**, y el resultado es una **inscripción provisional** hasta que
-se pague.
+Hay que separar dos cosas que suenan parecido:
 
-El escribano puede informar un `NumeroTasa` —uno solo por testimonio, opcional—
-y el RPI lo verifica contra el Sistema Único de Recaudación. Sea cual sea el
-resultado, la respuesta es 202 y el testimonio sigue su curso. El estado de la
-tasa viaja en la respuesta a título informativo.
+- **El número de la tasa es obligatorio.** Desde la **v3.4.0**, `NumeroTasa`
+  —uno solo por testimonio— tiene que venir en el XML **siempre**, aunque la
+  tasa esté impaga. Es un requisito de forma, como el `HashPDF`: sin el número,
+  el Registro no tiene qué consultar al Sistema Único de Recaudación ni qué
+  registrar en el asiento. El envío que no lo trae se rechaza con **400
+  `estructura_invalida`**, y lo rechaza el XSD, antes de cualquier regla de
+  negocio (ver [07 — Falta el NumeroTasa](07-respuestas-y-errores.md#falta-el-numerotasa)).
+- **El estado del pago nunca rechaza un ingreso.** La ley impide rechazar un
+  trámite por cuestiones tributarias. Una tasa impaga, inexistente o ya usada en
+  otro trámite **ingresa igual**, y el resultado es una **inscripción
+  provisional** hasta que se pague.
+
+O sea: *informar* la tasa es obligatorio; *haberla pagado*, no. El RPI verifica
+el número contra el SUR, y sea cual sea el resultado la respuesta es 202 y el
+testimonio sigue su curso. El estado de la tasa viaja en la respuesta a título
+informativo.
 
 El pago posterior se presenta como un reingreso: una nueva presentación de la
 misma EG con el número de tasa pagado, porque hace falta inscribir un asiento

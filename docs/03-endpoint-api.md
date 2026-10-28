@@ -219,17 +219,24 @@ que el sistema del Colegio incluyó en el XML.
 
 `tasa` informa el `NumeroTasa` recibido y su estado **en el momento de
 responder**. La verificación contra el Sistema Único de Recaudación es
-posterior al 202, así que ese estado es:
+posterior al 202, así que en un 202 el estado es **siempre el mismo**:
 
 | `tasa.estado` | Cuándo |
 |---|---|
-| `sin_codigo` | El XML no trajo `NumeroTasa`. |
-| `sin_verificar` | Trajo número; todavía no se consultó al sistema de tasas. |
+| `sin_verificar` | Trajo número; todavía no se consultó al sistema de tasas. **Es el único estado posible en un 202.** |
+
+> **`sin_codigo` ya no existe para un envío nuevo.** Era el estado de un
+> testimonio que no declaraba `NumeroTasa`, y desde la **v3.4.0** el número es
+> obligatorio: un envío sin él no llega a tener estado de tasa, se rechaza con
+> 400 `estructura_invalida` (ver
+> [07 — Falta el NumeroTasa](07-respuestas-y-errores.md#falta-el-numerotasa)).
+> El estado sigue existiendo en el RPI para los envíos que entraron antes.
 
 **Ningún estado de la tasa cambia el código de respuesta ni impide el ingreso.**
 Si la tasa resulta impaga, inexistente o ya usada, el testimonio ingresa igual y
 la inscripción sale provisional: la ley impide rechazar por cuestiones
-tributarias.
+tributarias. Lo que se rechaza es que **falte el número**, que es un defecto del
+documento y no una cuestión tributaria.
 
 El estado verificado **no se informa por esta vía**. El escribano lo conoce por
 el resultado de la calificación (una provisional por tasa impaga). Más adelante
