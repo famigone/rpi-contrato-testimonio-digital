@@ -21,10 +21,10 @@ y [08 — Notificaciones](08-notificaciones-callback.md)).
 |--------|-------------|--------------------|
 | 200 OK | Testimonio ya recibido y aceptado previamente (idempotencia) | Usar la respuesta para sincronizar el estado local. No reenviar. |
 | 202 Accepted | Testimonio validado y aceptado | Guardar el `identificadorEnvio` y esperar callbacks. |
-| 400 Bad Request | **Todo rechazo del envío**: XML mal formado o inválido (XSD), reglas del contrato no cumplidas, multipart inválido, hash del PDF, y **cualquier problema de firma o de certificado** | Corregir y enviar con un `identificadorEnvio` nuevo. |
+| 400 Bad Request | **Todo rechazo del envío**: XML mal formado o inválido (XSD), reglas del contrato no cumplidas, multipart inválido, hash del PDF, **cualquier problema de firma o de certificado**, y el **escribano no registrado como rogante** | Corregir y enviar con un `identificadorEnvio` nuevo. El del rogante no se corrige en el XML: ver [`ROGANTE_NO_ENCONTRADO`](#rogante_no_encontrado--el-alta-la-hace-el-rpi). |
 | 401 Unauthorized | **Solo la clave de API**: faltante o inválida | Revisar la clave. No es un problema del envío. |
 | 403 Forbidden | *Reservado, no implementado.* Hoy no se devuelve nunca | — |
-| 409 Conflict | *Reservado, no implementado.* Un `identificadorEnvio` repetido devuelve **200** con `yaProcesadoAnteriormente: true`, sin comparar el contenido | — |
+| 409 Conflict | *Reservado, no implementado.* Un `identificadorEnvio` repetido no se compara con nada: si el original fue **aceptado** devuelve **200**, y si fue **rechazado** devuelve el rechazo original | — |
 | 413 Payload Too Large | Petición excede el límite (50 MB total) | Reducir el tamaño del PDF y enviar con un `identificadorEnvio` nuevo. |
 | 422 Unprocessable Entity | *Reservado, no implementado.* Las reglas del contrato que el XSD no expresa viajan en el **400**, con `motivo: "estructura_invalida"` y la lista en `info.reglas_fallidas` | Corregir y enviar con un `identificadorEnvio` nuevo. |
 | 429 Too Many Requests | Rate limit del RPI alcanzado | Reintentar con el mismo `identificadorEnvio`, respetando `Retry-After`. |
@@ -58,7 +58,7 @@ El cuerpo es **plano**: `error` es un **texto**, no un objeto.
 | `motivo` | **El dato sobre el que conviene ramificar.** Identifica el rechazo: `estructura_invalida`, `xml_malformado`, `cuit_invalido`, `firma_invalida`, `multipart_invalido`, `hash_pdf_no_coincide`, `pdf_firmante_no_coincide`, `pdf_firma_invalida`, `pdf_cadena_no_confiable`, `pdf_contenido_alterado`, `pdf_invalido`, `identificador_ausente`, `codigo_no_habilitado`, `tamano_excedido` |
 | `detalle` | El mensaje en castellano, pensado para mostrarlo o registrarlo |
 | `info` | Lo específico de cada motivo: `causa` cuando el motivo tiene variantes, y listas como `reglas_fallidas`, `cuits_invalidos`, `errores` o `firmantesPdf` |
-| `fechaRechazo` | Cuándo se rechazó. **Solo en los rechazos** (4xx menos el 429): un 429 o un 5xx no rechazan nada, y un campo con ese nombre invitaría justo a la lectura equivocada. La hora de esas respuestas viaja en el header HTTP `Date` |
+| `fechaRechazo` | Cuándo se rechazó. **Solo en los rechazos** (4xx menos el 429): un 429 o un 5xx no rechazan nada, y un campo con ese nombre invitaría justo a la lectura equivocada. La hora de esas respuestas viaja en el header HTTP `Date`. En el reenvío de un identificador ya rechazado es la fecha del rechazo **original**, que puede ser de días antes: el envío se rechazó una sola vez |
 | `requestId` | Solo en los **5xx**: el identificador con el que el RPI puede rastrear ese error en sus registros. Conviene incluirlo al reportar un problema |
 
 **Los tres que están siempre son `error`, `motivo` y `detalle`.** Un cliente que
@@ -104,9 +104,11 @@ servicio, incluidas las 429 y las 5xx.
 | `PDF_FIRMA_INVALIDA` | 400 | `motivo: "pdf_firma_invalida"` · `"pdf_contenido_alterado"` | La firma del escribano en el PDF no verifica, o no cubre todo el documento. |
 | `MULTIPART_INVALIDO` | 400 | `motivo: "multipart_invalido"` + `info.causa` | La petición multipart está mal formada, falta una parte, **trae dos partes con el mismo nombre**, o **trae partes de más** y por eso una de las tres no se leyó. Las causas, en [`MULTIPART_INVALIDO`](#multipart_invalido--las-causas). |
 | `IDENTIFICADOR_INVALIDO` | 400 | `motivo: "identificador_ausente"` (falta) · `"estructura_invalida"` (formato) | El `IdentificadorEnvio` falta o no tiene el formato del XSD. El formato lo valida el XSD, así que llega como error de estructura. |
-| `IDENTIFICADOR_DUPLICADO_CONTENIDO_DISTINTO` | — | ***reservado, no implementado*** | Hoy un `identificadorEnvio` repetido devuelve **200** con `yaProcesadoAnteriormente: true` y el estado del envío original, **sin comparar el contenido**. |
-| `AUTENTICACION_REQUERIDA` | 401 | `{ "error": "no_autorizado" }` | Falta la clave de API. |
-| `AUTENTICACION_INVALIDA` | 401 | `{ "error": "no_autorizado" }` | La clave de API no es válida. **Mismo cuerpo que el caso anterior**, a propósito: no se distingue "falta" de "es inválida". |
+| `IDENTIFICADOR_DUPLICADO_CONTENIDO_DISTINTO` | — | ***reservado, no implementado*** | Si el envío original fue **aceptado**, un `identificadorEnvio` repetido devuelve **200** con el estado del envío original, **sin comparar el contenido**. Si fue **rechazado**, ver la fila siguiente. |
+| `IDENTIFICADOR_RECHAZADO` | el del rechazo original | el `motivo` del rechazo original | El `identificadorEnvio` ya fue **rechazado** y queda cerrado: el reenvío devuelve el rechazo original —mismo código, mismo `motivo`, mismo `info` y la `fechaRechazo` de la primera vez— sin reprocesar, **cualquiera sea el contenido**. Para corregir hace falta un identificador nuevo. Ver [03 — El identificador rechazado queda cerrado](03-endpoint-api.md#el-identificador-rechazado-queda-cerrado). |
+| `ROGANTE_NO_ENCONTRADO` | **400** | `motivo: "rogante_no_encontrado"` + `info.cuitEscribano` | El escribano autorizante no está registrado en el RPI como rogante, así que el testimonio no puede ingresar al registro. **No se corrige en el XML**: ver [`ROGANTE_NO_ENCONTRADO`](#rogante_no_encontrado--el-alta-la-hace-el-rpi). |
+| `AUTENTICACION_REQUERIDA` | 401 | `error` y `motivo`: `"no_autorizado"` | Falta la clave de API. **No lleva `fechaRechazo`**: no se llegó a mirar el envío. |
+| `AUTENTICACION_INVALIDA` | 401 | `error` y `motivo`: `"no_autorizado"` | La clave de API no es válida. **Mismo cuerpo que el caso anterior**, a propósito: no se distingue "falta" de "es inválida", así el 401 no dice nada sobre qué claves existen. |
 | `SIN_PERMISO` | — | ***reservado, no implementado*** | No hay permisos por cliente: una clave válida puede enviar testimonios. |
 | `LIMITE_TAMANO` | 413 | `error: "tamano_excedido"`, `motivo: "tamano_excedido"` | La petición supera el límite. `info.campo` dice cuál parte lo superó y `info.maxBytes` el tope. |
 | `RATE_LIMIT` | 429 | `error: "rate_limit"`, `motivo: "rate_limit"` | Demasiadas peticiones del mismo cliente. Respetar `Retry-After`. `info` trae `limitePorHora`, `rafagaMaxima` y `reintentarEnSegundos`. **No lleva `fechaRechazo`**: no es un rechazo del envío. |
@@ -304,6 +306,43 @@ documento: un PDF puede tener varias, y el RPI evalúa la del escribano.
 
 ---
 
+### `ROGANTE_NO_ENCONTRADO` — el alta la hace el RPI
+
+El escribano autorizante tiene que estar registrado en el RPI como **rogante**:
+es con quien se arma el ingreso al registro. Si no está, el testimonio no puede
+ingresar y el envío se rechaza con **400** y `motivo: "rogante_no_encontrado"`.
+El `info` trae el `cuitEscribano` que se buscó.
+
+**Este rechazo no se corrige en el XML.** El XML está bien; lo que falta es el
+alta del escribano en el padrón del RPI. La conducta es:
+
+1. Avisar al RPI con el CUIT que devolvió el rechazo.
+2. Esperar el alta, que la hace el RPI.
+3. Enviar de nuevo **con un `identificadorEnvio` nuevo** — el rechazado quedó
+   cerrado (ver [03](03-endpoint-api.md#el-identificador-rechazado-queda-cerrado)).
+
+```json
+{
+  "error": "validacion_fallida",
+  "motivo": "rogante_no_encontrado",
+  "detalle": "El escribano autorizante (CUIT 20-12345678-9, PEREZ, JUAN) no está registrado como rogante en el RPI, así que el testimonio no puede ingresar al registro. El alta la hace el RPI: hay que coordinarla y después reenviar con un IdentificadorEnvio NUEVO, porque el identificador rechazado queda cerrado.",
+  "info": {
+    "motivo": "rogante_no_encontrado",
+    "cuitEscribano": "20-12345678-9",
+    "nombreEscribano": "PEREZ, JUAN"
+  },
+  "fechaRechazo": "2026-06-15T10:23:45Z"
+}
+```
+
+> **Si el RPI no puede verificarlo, no rechaza.** Cuando el padrón no está
+> disponible, la respuesta es **503** con `Retry-After` y no un 400: el envío no
+> tiene nada de malo y se reintenta **el mismo**. La diferencia importa, porque
+> un rechazo cerraría ese `identificadorEnvio` para siempre por una falla del
+> RPI.
+
+---
+
 ### Errores de negocio (422) — *el 422 está reservado*
 
 > **El RPI no devuelve 422 hoy.** Las reglas del contrato que el XSD no puede
@@ -363,7 +402,7 @@ documento: un PDF puede tener varias, y el RPI evalúa la del escribano.
 | Código | HTTP | Qué viaja en la respuesta | Descripción |
 |--------|------|---------------------------|-------------|
 | `ERROR_INTERNO` | 500 | `error` y `motivo`: `"error_interno"` + `requestId` | Error inesperado del RPI. Reintentar con backoff, informando el `requestId`. |
-| `BD_NO_DISPONIBLE` | 503 | `error` y `motivo`: `"infra_error"` + `requestId` | Una dependencia del RPI no está disponible. |
+| `BD_NO_DISPONIBLE` | 503 | `error` y `motivo`: `"infra_error"` + `requestId` + header `Retry-After` | Una dependencia del RPI no está disponible. El envío **no tiene nada de malo**: se reintenta el mismo, respetando el `Retry-After`. |
 | `MANTENIMIENTO` | 503 | `error` y `motivo`: `"mantenimiento"` + header `Retry-After` | El RPI todavía no terminó de verificar sus dependencias, o una no responde. Es lo que se ve en los primeros segundos de un despliegue. `info.causa` dice qué dependencia, y `info.reintentarEnSegundos` repite el `Retry-After`. |
 | `VALIDACION_NO_DISPONIBLE` | 503 | `error` y `motivo`: `"validacion_no_disponible"` + `requestId` | **El RPI no puede validar**: le falta configuración, típicamente las raíces de confianza. El mensaje dice explícitamente que **NO** se reintente: el envío no tiene nada de malo y reintentar no va a funcionar hasta que lo arreglen en el RPI. |
 | `TIMEOUT_INTERNO` | 504 | ***reservado, no implementado*** | El RPI no devuelve 504 hoy; una demora termina en 503 o en 500. |
@@ -382,13 +421,22 @@ completar el procesamiento por una causa propia.
 Un 4xx indica que el envío tiene que **cambiar** antes de reenviarse. Reenviarlo
 idéntico devuelve el mismo error.
 
-- El rechazo es definitivo para ese `IdentificadorEnvio`.
+- El rechazo es definitivo para ese `IdentificadorEnvio`: **queda cerrado**.
 - El envío corregido es un envío nuevo y **lleva un `IdentificadorEnvio` nuevo**.
-- **Si se reusa el identificador, el RPI no compara el contenido**: responde
-  **200** con `yaProcesadoAnteriormente: true` y el estado del envío original,
-  y el envío corregido **no entra**. El 409 que antes se documentaba acá
+- **Si se reusa el identificador rechazado, el RPI devuelve el rechazo
+  original** —mismo código, mismo `motivo` y la `fechaRechazo` de la primera
+  vez— **sin mirar el contenido**, así venga corregido. El envío corregido **no
+  entra**, y la respuesta es la misma que la primera vez, así que un cliente que
+  reintenta en un bucle va a ver siempre ese error. Ver
+  [03](03-endpoint-api.md#el-identificador-rechazado-queda-cerrado).
+- El 409 que antes se documentaba acá
   (`IDENTIFICADOR_DUPLICADO_CONTENIDO_DISTINTO`) está reservado y no se
   devuelve: ver la tabla de 4xx.
+
+> **Ojo con la confusión fácil**: el 200 con `yaProcesadoAnteriormente` es para
+> un identificador **aceptado** que se reenvía (una reentrega), no para uno
+> rechazado. Aceptado → 200 con el estado actual; rechazado → el rechazo
+> original.
 
 ### Problemas transitorios — reintentar el mismo envío
 

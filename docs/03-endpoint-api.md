@@ -46,17 +46,31 @@ POST /rpi-td/api/v1/testimonios
 
 ## Autenticación
 
-> ⚠️ **Pendiente de definición**. Las dos opciones más probables son:
->
-> - **Bearer token** estático provisto por el RPI al Colegio, enviado en el
->   header `Authorization: Bearer <token>`.
-> - **mTLS** con certificado cliente del Colegio.
->
-> Se definirá según los estándares de seguridad del Poder Judicial y se
-> documentará en una versión posterior de este documento.
+**Bearer token** estático, provisto por el RPI al Colegio:
 
-Mientras se cierra la decisión, asumir que la petición lleva un header de
-autenticación que el RPI valida antes de procesar el contenido.
+```
+Authorization: Bearer <token>
+```
+
+El RPI lo valida **antes** de procesar el contenido: una petición sin
+credenciales o con un token que no reconoce se va en **401** sin tocar el
+multipart y sin consumir cuota del rate limit.
+
+Qué implica para quien integra:
+
+- **El token es un secreto.** Va en la configuración del sistema del Colegio,
+  no en el código ni en un repositorio. El RPI guarda solo su hash, así que un
+  token perdido no se recupera: se reemplaza.
+- **Puede haber más de uno a la vez** (por ejemplo, para rotarlo sin cortar el
+  servicio): el RPI acepta varios tokens válidos y cada uno tiene su propia
+  cuota de rate limit, así que la rotación no mezcla contadores.
+- El token de **homologación** y el de **producción** son distintos.
+
+> Acá figuraba la decisión como pendiente, entre Bearer y mTLS. Quedó Bearer y
+> es lo que el servicio implementa. Si en algún momento el Poder Judicial exige
+> mTLS, se agrega como capa de transporte **además** de este header y se
+> publica una versión nueva de este capítulo; el cuerpo de la petición no
+> cambiaría.
 
 ## Formato de la petición
 
@@ -73,11 +87,20 @@ La petición debe contener exactamente **tres partes**:
 > ⚠️ **Los nombres de campo son exactos y en minúsculas**: `xml`, `pdf` y
 > `firma_xml_escribano`. El RPI los compara carácter por carácter y **distingue
 > mayúsculas de minúsculas**: una parte con `name="XML"` o
-> `name="Firma_XML_Escribano"` **no** se toma como la parte equivalente. Las
-> partes con un nombre que no sea uno de esos tres se descartan en silencio, y
-> el envío se rechaza con `MULTIPART_INVALIDO` (400) por **parte faltante**: el
-> rechazo nombra la parte que falta, no el nombre mal escrito que se envió.
-> El `filename` de cada parte, en cambio, el RPI no lo lee nunca.
+> `name="Firma_XML_Escribano"` **no** se toma como la parte equivalente, y el
+> envío se rechaza con `MULTIPART_INVALIDO` (400) por **parte faltante**. El
+> rechazo nombra la parte que falta **y también el nombre desconocido que
+> llegó** (`info.partesIgnoradas`), que casi siempre es la misma parte mal
+> escrita. El `filename` de cada parte, en cambio, el RPI no lo lee nunca.
+>
+> **Las partes de más no son gratis.** El RPI acepta hasta tres partes de
+> archivo, y una parte con nombre desconocido **ocupa uno de los tres lugares**
+> aunque después se descarte: si llegan cuatro, la última no se lee. Si por eso
+> falta una de las tres esperadas, el rechazo lo dice con
+> `info.causa: "sobran_partes"` en lugar de culpar a una parte que el Colegio sí
+> había mandado. Si las tres llegaron y sobraba algo, el envío **se acepta** y
+> lo de más se ignora. Las causas, en
+> [07 — `MULTIPART_INVALIDO`](07-respuestas-y-errores.md#multipart_invalido--las-causas).
 
 #### Parte 1 — `xml`
 
@@ -229,18 +252,62 @@ Content-Type: application/json
   "entradaGeneral": {
     "numero": 12345,
     "anio": 2026,
-    "numeroPresentacion": 1,
-    "fechaPresentacion": "2026-06-15"
+    "numeroPresentacion": 1
   },
-  "mensaje": "Testimonio ya recibido anteriormente. Devolviendo estado actual."
+  "mensaje": "Testimonio ya recibido anteriormente. Devolviendo estado actual.",
+  "yaProcesadoAnteriormente": true
 }
 ```
 
 `entradaGeneral` aparece solo cuando ya fue asignada.
 
-Si el original **fue rechazado**, el reenvío idéntico devuelve **el mismo error**
-que la primera vez. Para corregir, hay que hacer un envío nuevo con un
-`identificadorEnvio` nuevo (ver [02 — Idempotencia](02-flujo-end-to-end.md#idempotencia)).
+`recibidoEn` es la fecha de la recepción **original**, la misma que devolvió el
+202, no la del reenvío.
+
+`yaProcesadoAnteriormente` viaja siempre en el 200 y siempre vale `true`. Es
+**redundante con el código de respuesta** y está por compatibilidad: el RPI
+devolvía 200 en los dos casos hasta la v3.2.3, y ese campo era lo único que
+los distinguía. **La señal es el código**: 202 es una aceptación nueva, 200 es
+una reentrega. No conviene escribir lógica nueva sobre este campo.
+
+> ⚠️ **`fechaPresentacion` todavía no viaja.** El objeto `entradaGeneral` de
+> esta respuesta trae `numero`, `anio` y `numeroPresentacion`, y por ahora no
+> la fecha. El RPI no tiene una fuente de la que leerla con certeza: la cola de
+> ingreso no guarda fecha propia y la única disponible es la del **proceso**
+> que asigna la Entrada General. Como de esa fecha depende la prioridad
+> registral, el RPI prefiere no informar una que podría estar corrida un día
+> hábil. Se agrega cuando quede confirmada, y la fecha de la EG llega igual en
+> el callback `entrada_general_asignada` ([08](08-notificaciones-callback.md)).
+
+### El identificador rechazado queda cerrado
+
+**Si el envío original fue rechazado, ese `identificadorEnvio` está cerrado.**
+Un reenvío con el mismo identificador devuelve **el rechazo original** —mismo
+código HTTP, mismo `motivo`, mismo `info` y la `fechaRechazo` de la primera
+vez— **sin volver a procesar nada**.
+
+El único campo que cambia es `detalle`: en lugar de repetir el texto del
+rechazo original, explica que ese identificador está cerrado, de cuándo es el
+rechazo y qué hacer. Lo que hacía entendible el rechazo —la causa, el campo, la
+parte que faltaba— sigue viajando en `info`, tal como la primera vez.
+
+Eso vale **cualquiera sea el contenido del reenvío**, incluido el contenido
+corregido:
+
+| Lo que se reenvía con un identificador rechazado | Qué devuelve el RPI |
+|---|---|
+| El mismo XML y el mismo PDF | El rechazo original |
+| El XML corregido, el PDF corregido, las firmas nuevas | **El rechazo original**, igual |
+
+**Para corregir hay que hacer un envío nuevo, con un `identificadorEnvio`
+nuevo.** Es coherente con lo que el identificador significa: es la clave con la
+que el Colegio y el RPI hablan de *un* envío, y un documento corregido es otro
+envío. Si el identificador se reusara, dos documentos distintos compartirían la
+clave y lo que el RPI tiene archivado como el envío X dejaría de ser lo que el
+Colegio llama X.
+
+Ver [02 — Idempotencia](02-flujo-end-to-end.md#idempotencia) y el catálogo de
+errores en [07](07-respuestas-y-errores.md).
 
 ### Estados del testimonio
 
@@ -256,6 +323,15 @@ que la primera vez. Para corregir, hay que hacer un envío nuevo con un
 > caso de una tasa verificada como impaga después del 202. **Ya no existen:** la
 > tasa no rechaza, así que no hay rechazos posteriores al 202 y todo rechazo
 > estructural es síncrono.
+
+**Cuáles devuelve esta respuesta hoy.** La reentrega informa `aceptado` o
+`ingresado`: son los dos que el RPI conoce por sí mismo —si la Entrada General
+está asignada o no—. Los tres restantes son resultados de la **calificación
+registral**, que el RPI todavía no recibe del sistema registral; cuando los
+reciba, los va a informar por esta misma vía y por los callbacks de
+[08](08-notificaciones-callback.md). Mientras tanto, el Colegio no los va a ver
+en una reentrega, pero conviene que el cliente los acepte sin romperse: la
+lista de estados es la del ciclo de vida completo y no cambia por eso.
 
 ### Casos de error
 

@@ -75,6 +75,15 @@ observaciones.
 }
 ```
 
+> ⚠️ **`fechaPresentacion` está pendiente de confirmación.** Es el mismo objeto
+> `entradaGeneral` que usa la respuesta de recepción, y ahí el RPI **todavía no
+> informa la fecha**, por los motivos que explica
+> [03](03-endpoint-api.md#caso-de-idempotencia-200-ok): de esa fecha depende la
+> prioridad registral y el RPI no quiere informar una que podría estar corrida
+> un día hábil. En los callbacks el dato sí tiene fuente —el evento lo emite el
+> sistema registral al asignar la EG—, así que se mantiene en este capítulo.
+> Los callbacks todavía no están implementados (Fase 4).
+
 ### Ejemplo: `entrada_general_asignada`
 
 ```json
