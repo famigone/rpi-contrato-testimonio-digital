@@ -283,8 +283,8 @@ una reentrega. No conviene escribir lógica nueva sobre este campo.
 > ingreso no guarda fecha propia y la única disponible es la del **proceso**
 > que asigna la Entrada General. Como de esa fecha depende la prioridad
 > registral, el RPI prefiere no informar una que podría estar corrida un día
-> hábil. Se agrega cuando quede confirmada, y la fecha de la EG llega igual en
-> el callback `entrada_general_asignada` ([08](08-notificaciones-callback.md)).
+> hábil. Se agrega cuando quede confirmada, y la EG llega igual en la novedad
+> `entrada_general_asignada` ([08](08-novedades.md)).
 
 ### El identificador rechazado queda cerrado
 
@@ -335,8 +335,8 @@ errores en [07](07-respuestas-y-errores.md).
 `ingresado`: son los dos que el RPI conoce por sí mismo —si la Entrada General
 está asignada o no—. Los tres restantes son resultados de la **calificación
 registral**, que el RPI todavía no recibe del sistema registral; cuando los
-reciba, los va a informar por esta misma vía y por los callbacks de
-[08](08-notificaciones-callback.md). Mientras tanto, el Colegio no los va a ver
+reciba, los va a informar por esta misma vía y por las novedades de
+[08](08-novedades.md). Mientras tanto, el Colegio no los va a ver
 en una reentrega, pero conviene que el cliente los acepte sin romperse: la
 lista de estados es la del ciclo de vida completo y no cambia por eso.
 

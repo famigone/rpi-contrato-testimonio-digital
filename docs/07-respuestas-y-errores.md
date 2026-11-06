@@ -12,8 +12,8 @@ Antes del catálogo, la distinción que define qué hacer:
 
 Los rechazos de este capítulo ocurren **antes** de que el testimonio tenga Entrada
 General. Las observaciones del calificador, que ocurren después, no son errores de
-la API: llegan por callback (ver [02 — Qué pasa si algo falla](02-flujo-end-to-end.md#qué-pasa-si-algo-falla)
-y [08 — Notificaciones](08-notificaciones-callback.md)).
+la API: llegan como novedades del trámite (ver [02 — Qué pasa si algo falla](02-flujo-end-to-end.md#qué-pasa-si-algo-falla)
+y [08 — Novedades](08-novedades.md)).
 
 ## Códigos HTTP de respuesta
 

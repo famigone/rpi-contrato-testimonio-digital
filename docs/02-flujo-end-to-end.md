@@ -120,9 +120,9 @@ El calificador evalúa el testimonio. El resultado posible es:
 
 ### 7. El RPI notifica al Colegio
 
-Cada resultado se notifica por callback. El sistema del Colegio actualiza su base
-interna y muestra el resultado al escribano. Detalles en
-[08 — Notificaciones de callback](08-notificaciones-callback.md).
+Cada resultado queda disponible como una **novedad** que el sistema del Colegio
+consulta. El Colegio actualiza su base interna y muestra el resultado al
+escribano. Detalles en [08 — Novedades del trámite registral](08-novedades.md).
 
 ## Qué pasa si algo falla
 
