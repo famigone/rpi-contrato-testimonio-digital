@@ -111,9 +111,9 @@ que el Colegio consulta y acusa.
   el momento que corre el plazo de la inscripción provisional.
 - **Con qué se firma el documento de resultado**: la firma de la funcionaria, un
   sello del organismo, o una forma mixta. Nada de lo que describe el capítulo
-  cambia con lo que se decida. Mientras no haya decisión, el PDF de homologación
-  lleva la marca visible `DOCUMENTO DE PRUEBA – SIN FIRMA DIGITAL` y **no tiene
-  validez registral**.
+  cambia con lo que se decida. Mientras no haya decisión **el documento sale sin
+  firma de ninguna clase**, con la marca visible
+  `DOCUMENTO DE PRUEBA – SIN FIRMA DIGITAL`, y **no tiene validez registral**.
 - **Qué hace el canal digital con el resultado de una presentación que entró por
   mesa de entradas** (la subsanación en papel, que es como se subsana hoy). El
   RPI propone entregarlo por este canal igual, con `numeroPresentacion`

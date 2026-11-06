@@ -411,7 +411,8 @@ Las cuatro novedades de salida traen un objeto `documento`:
 
 > ### Lo que el documento contiene, y por qué el JSON no lo repite
 >
-> El documento es un **PDF firmado** que transcribe, palabra por palabra, el
+> El documento es un PDF —firmado, cuando se decida con qué; hoy **sin firma**
+> y marcado, ver el aviso de abajo— que transcribe, palabra por palabra, el
 > texto que el registrador redactó: las planchas de inscripción y los volantes,
 > uno por página, igual que en papel. Ese texto **es el contenido jurídico del
 > resultado**.
@@ -427,10 +428,12 @@ Las cuatro novedades de salida traen un objeto `documento`:
 >
 > El documento incluye además un **bloque de vinculación** con el
 > `identificadorEnvio` y las huellas SHA-256 del XML y del PDF del testimonio
-> original. Como ese bloque queda dentro del PDF firmado, el resultado queda
-> atado de forma verificable a ese testimonio exacto, y el testimonio del
-> escribano **nunca se modifica**. Es el equivalente digital de abrochar la
-> plancha al testimonio.
+> original. Ese bloque va dentro del documento, así que cuando el documento se
+> firme el resultado va a quedar atado de forma verificable a ese testimonio
+> exacto — y el testimonio del escribano **nunca se modifica**. Es el
+> equivalente digital de abrochar la plancha al testimonio. Hasta que haya
+> firma, el bloque identifica el testimonio pero no lo garantiza
+> criptográficamente.
 
 > ### ⚠️ Con qué se firma el documento es una decisión legal PENDIENTE
 >
@@ -446,10 +449,11 @@ Las cuatro novedades de salida traen un objeto `documento`:
 > con la primera opción, que un resultado pase un rato en estado "pendiente de
 > firma" antes de generar su novedad.
 >
-> **Mientras no haya decisión**, en homologación y en las pruebas el PDF se firma
-> con un certificado de prueba y lleva una marca visible en cada página:
-> `DOCUMENTO DE PRUEBA – SIN FIRMA DIGITAL`. Un documento con esa marca **no
-> tiene validez registral** y no debe entregarse al escribano.
+> **Mientras no haya decisión, el documento sale SIN FIRMA**, con una marca
+> visible en cada página: `DOCUMENTO DE PRUEBA – SIN FIRMA DIGITAL`. No es un
+> certificado de prueba ni una firma provisoria: no lleva firma digital de
+> ninguna clase. Un documento con esa marca **no tiene validez registral** y no
+> debe entregarse al escribano.
 
 ### `GET /api/v1/documentos/{referencia}`
 
