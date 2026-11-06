@@ -37,17 +37,30 @@ que el Colegio consulta y acusa.
 - **`GET /api/v1/eventos`** — las novedades pendientes de acuse del canal, en
   orden y hasta 100 por llamada, con `hayMas` para saber si quedó algo afuera.
   Misma autenticación que el envío (`Authorization: Bearer <token>`).
-- **`POST /api/v1/eventos/acuse`** — `{"hasta": N}` marca recibidas las
-  novedades con secuencia ≤ N. Es acumulativo e idempotente.
+- **`POST /api/v1/eventos/acuse`** — `{"secuencias": [41, 42, 43]}` marca
+  recibidas las novedades enumeradas. Idempotente.
   - **Es un `POST` y no un parámetro del `GET`**: una consulta no puede cambiar
     datos, porque los proxies la repiten y los clientes la reintentan solos, y
     un `GET` que además marcara recibido convertiría cada reintento en una
     pérdida silenciosa de novedades.
+  - **Y el cuerpo es una LISTA, no un `{"hasta": N}`.** Un tope decía "todo lo
+    que sea ≤ N" e incluía novedades que el Colegio **nunca recibió**: la lista
+    se sirve ordenada por secuencia y una novedad puede quedar disponible con
+    una secuencia menor que otra ya entregada, así que el tope la marcaba
+    recibida sin haberse entregado, en silencio. Enumerando, lo único que se
+    marca recibido es lo que el Colegio dijo que recibió.
+- **`GET /api/v1/documentos/{referencia}`** — descarga el PDF del resultado. La
+  `referencia` es un UUID opaco que viene en la novedad. **404** si no existe o
+  si es de otro canal, nunca 403. Cada descarga queda registrada con fecha,
+  hora, canal y clave, incluidos los intentos fallidos.
 - **`GET /api/v1/testimonios/{identificadorEnvio}`** — el estado actual de un
   envío (`aceptado`, `con_entrada_general`, `con_resultado`), para reconciliar
   o consultar puntualmente. **No consume novedades.**
 - **`devuelto_sin_inscribir`** e **`inscripcion_complementaria`** como tipos de
   novedad.
+- **El presupuesto de pedidos queda documentado**: es **uno por clave para todo
+  `/api/v1`**, compartido con el envío — 600 por hora con ráfaga de 60. A la
+  cadencia sugerida son 24 por hora, un 4 % del presupuesto.
 
 ### Cambiado
 - **El capítulo 08 pasa a llamarse
@@ -59,8 +72,16 @@ que el Colegio consulta y acusa.
   de la política de reintentos del RPI y de que el endpoint receptor estuviera
   disponible.
 - **El alcance es por canal:** cada token ve únicamente las novedades de los
-  testimonios que se enviaron con su canal. Un `identificadorEnvio` de otro
-  canal responde **404**, no 403, para no confirmar que existe.
+  testimonios que se enviaron con su canal. Un `identificadorEnvio` o una
+  `referencia` de otro canal responden **404**, no 403, para no confirmar que
+  existen.
+- **`inscripcion_provisoria` pasa a llamarse `inscripcion_provisional`**, que es
+  como la nombra el circuito registral: así se llama el volante que emite el
+  registro y la figura que fija la resolución de su plazo. Se corrige antes de
+  que haya integraciones contra el nombre viejo.
+- **`entradaGeneral` es explícitamente el mismo objeto que en el capítulo 03**
+  (`numero`, `anio` de cuatro dígitos, `numeroPresentacion`). No hay dos formas
+  de la EG en el contrato.
 
 ### Quitado
 - **El callback `rechazo_registral`.** Nombraba un rechazo por causal grave, y
@@ -88,6 +109,16 @@ que el Colegio consulta y acusa.
   verificable del lado del RPI es la **descarga del documento**, que queda
   registrada con fecha, hora y canal. Falta la confirmación formal de que ese es
   el momento que corre el plazo de la inscripción provisional.
+- **Con qué se firma el documento de resultado**: la firma de la funcionaria, un
+  sello del organismo, o una forma mixta. Nada de lo que describe el capítulo
+  cambia con lo que se decida. Mientras no haya decisión, el PDF de homologación
+  lleva la marca visible `DOCUMENTO DE PRUEBA – SIN FIRMA DIGITAL` y **no tiene
+  validez registral**.
+- **Qué hace el canal digital con el resultado de una presentación que entró por
+  mesa de entradas** (la subsanación en papel, que es como se subsana hoy). El
+  RPI propone entregarlo por este canal igual, con `numeroPresentacion`
+  incrementado: es el mismo trámite y el mismo escribano, y no entregarlo
+  dejaría al Colegio con la provisional y sin su desenlace.
 - **Un PDF con todas las planchas, o uno por titular.**
 
 ---

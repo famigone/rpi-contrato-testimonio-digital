@@ -45,7 +45,7 @@ acusa lo que recibió.
          │                                                  │
          │  (procesa las novedades de su lado)              │
          │                                                  │
-         │  POST /api/v1/eventos/acuse  { "hasta": 43 }     │
+         │  POST /eventos/acuse {"secuencias":[41,42,43]}   │
          ├─────────────────────────────────────────────────►│
          │  { "acusados": 3 }                               │
          │◄─────────────────────────────────────────────────┤
@@ -60,9 +60,8 @@ Tres reglas que conviene tener claras antes de leer el detalle:
    consulta no cambia datos: los proxies la repiten y los clientes la reintentan
    solos, y si la consulta además marcara recibido, cada reintento perdería
    novedades en silencio.
-3. **El acuse es acumulativo e idempotente.** `{"hasta": 43}` acusa todo lo que
-   tenga secuencia menor o igual a 43. Mandarlo dos veces deja el mismo estado
-   que mandarlo una.
+3. **El acuse lleva la LISTA de lo que se recibió**, no un tope. Mandarlo dos
+   veces deja el mismo estado que mandarlo una.
 
 ### Con qué frecuencia consultar
 
@@ -82,8 +81,21 @@ token** estático, provisto por el RPI al Colegio.
 Authorization: Bearer <token>
 ```
 
-Sin el header, o con un token que el RPI no reconoce, los tres endpoints
+Sin el header, o con un token que el RPI no reconoce, los cuatro endpoints
 responden **401**.
+
+### Comparten el límite de pedidos con el envío
+
+**Sí: el presupuesto es uno por clave, para todo `/api/v1`.** Son **600 pedidos
+por hora** con una ráfaga de hasta **60**; pasado el límite, **429** con
+`Retry-After`.
+
+A la cadencia sugerida no es una restricción: una consulta más un acuse cada
+cinco minutos son **24 pedidos por hora**, un 4 % del presupuesto. Lo que sí
+conviene tener en cuenta es que **un consultador descontrolado gastaría la cuota
+de los envíos**, porque la bolsa es la misma. Si el Colegio necesita una cadencia
+mucho más alta, conviene acordarla antes y no descubrirla con un 429 en medio de
+un envío.
 
 ### Alcance: cada token ve lo que se envió con él
 
@@ -145,7 +157,7 @@ está pendiente porque el Colegio lo acusa.
         },
         "fechaSalida": "2026-06-16",
         "documento": {
-          "referencia": "eg/2026/12345/1/definitiva",
+          "referencia": "3f9a1c04-7b2e-4d81-9f55-0a6c2e8b1d33",
           "sha256": "a511656d1e38560b9f2c...",
           "paginas": 2
         }
@@ -165,20 +177,27 @@ está pendiente porque el Colegio lo acusa.
 | `datos` | objeto | Depende del `tipo` |
 | `hayMas` | booleano | `true` si quedaron novedades afuera por el límite de 100 |
 
+**`entradaGeneral` es el MISMO objeto que devuelve la recepción** en
+[03](03-endpoint-api.md): `numero`, `anio` (cuatro dígitos) y
+`numeroPresentacion`, con los mismos nombres y los mismos tipos. No hay dos
+formas de la EG en este contrato, y un cliente puede usar el mismo tipo de dato
+para las dos.
+
 Cuando no hay nada pendiente, la respuesta es `{"eventos": [], "hayMas": false}`
 con **200**, no 204 ni 404.
 
 > **Sobre `secuencia`.** Es creciente dentro de una respuesta y sirve para
 > acusar, pero **no es un cursor que el Colegio deba persistir ni comparar entre
 > respuestas**. Puede haber saltos (números que nunca se ven) y una novedad con
-> secuencia menor puede aparecer en una respuesta posterior. Lo único que hay
-> que hacer con ella es mandarla en el acuse.
+> secuencia menor puede aparecer en una respuesta posterior — que es exactamente
+> por lo que el acuse lleva una lista y no un tope. Lo único que hay que hacer
+> con ella es devolverla en el acuse.
 
 ---
 
 ## `POST /api/v1/eventos/acuse`
 
-Marca como recibidas las novedades hasta la secuencia indicada.
+Marca como recibidas **las novedades que el Colegio enumera**.
 
 ### Pedido
 
@@ -188,12 +207,27 @@ Host: [URL_DEL_RPI]
 Authorization: Bearer <token>
 Content-Type: application/json
 
-{ "hasta": 43 }
+{ "secuencias": [41, 42, 43] }
 ```
 
 | Campo | Tipo | Obligatorio | Significado |
 |---|---|---|---|
-| `hasta` | entero ≥ 1 | sí | Acusa todas las novedades del canal con secuencia ≤ este valor |
+| `secuencias` | lista de 1 a 100 enteros ≥ 1 | sí | Las secuencias que se recibieron y procesaron |
+
+Los duplicados se aceptan y se colapsan. Una lista vacía, un elemento que no sea
+un entero ≥ 1, o más de 100 elementos, dan **400**.
+
+> ### Por qué una lista y no un `{"hasta": N}`
+>
+> Un tope parece más cómodo y pierde novedades. "Acusá todo lo que sea ≤ N"
+> incluye novedades que el Colegio **nunca recibió**: la lista se sirve ordenada
+> por secuencia, y una novedad puede quedar disponible con una secuencia menor
+> que otra que ya se entregó. Con un tope, esa novedad se marcaba recibida sin
+> haberse entregado nunca, en silencio y sin que ningún error lo delatara.
+>
+> Enumerando, lo único que se marca recibido es lo que el Colegio dijo que
+> recibió. Si una novedad no está en la lista, sigue pendiente y vuelve en la
+> próxima consulta.
 
 ### Respuesta — 200 OK
 
@@ -202,13 +236,14 @@ Content-Type: application/json
 ```
 
 `acusados` es cuántas novedades pasaron a estado recibido con esta llamada.
-Puede ser **0** y no es un error: significa que ya estaban acusadas.
+Puede ser **menos que el largo de la lista**, o **0**, y no es un error:
+significa que esas ya estaban acusadas.
 
 ### Qué acusar
 
-Lo normal es acusar la **secuencia más alta que se procesó con éxito**. Si el
-Colegio procesó las novedades 41 y 42 pero falló con la 43, tiene que acusar
-`{"hasta": 42}`: la 43 vuelve en la próxima consulta.
+Las que se procesaron con éxito, y solo esas. Si el Colegio recibió 41, 42 y 43
+pero falló con la 43, acusa `{"secuencias": [41, 42]}`: la 43 vuelve en la
+próxima consulta.
 
 > ⚠️ **Acusar es irreversible.** Una novedad acusada no vuelve a aparecer en la
 > lista. Si el Colegio pierde una novedad ya acusada, la recupera con
@@ -224,7 +259,7 @@ Colegio procesó las novedades 41 y 42 pero falló con la 43, tiene que acusar
 |---|---|---|
 | `entrada_general_asignada` | El registro asignó la Entrada General: el testimonio ingresó con su prioridad | No |
 | `inscripcion_definitiva` | El trámite salió inscripto definitivamente | Sí |
-| `inscripcion_provisoria` | El trámite salió observado: hay observaciones a subsanar dentro de un plazo | Sí |
+| `inscripcion_provisional` | El trámite salió observado: hay observaciones a subsanar dentro de un plazo | Sí |
 | `devuelto_sin_inscribir` | El trámite salió sin inscribir | Sí |
 | `inscripcion_complementaria` | Apareció un documento adicional de una Entrada General ya informada | Sí |
 
@@ -273,7 +308,7 @@ escribano: confirma que el trámite entró con su prioridad registral.
     "entradaGeneral": { "numero": 12345, "anio": 2026, "numeroPresentacion": 1 },
     "fechaSalida": "2026-06-16",
     "documento": {
-      "referencia": "eg/2026/12345/1/definitiva",
+      "referencia": "3f9a1c04-7b2e-4d81-9f55-0a6c2e8b1d33",
       "sha256": "a511656d1e38560b9f2c...",
       "paginas": 2
     }
@@ -281,12 +316,12 @@ escribano: confirma que el trámite entró con su prioridad registral.
 }
 ```
 
-### `inscripcion_provisoria`
+### `inscripcion_provisional`
 
 ```json
 {
   "secuencia": 57,
-  "tipo": "inscripcion_provisoria",
+  "tipo": "inscripcion_provisional",
   "identificadorEnvio": "550e8400-e29b-41d4-a716-446655440000",
   "ocurridoEn": "2026-06-16T11:15:00-03:00",
   "datos": {
@@ -294,7 +329,7 @@ escribano: confirma que el trámite entró con su prioridad registral.
     "fechaSalida": "2026-06-16",
     "vencimiento": "2026-09-22",
     "documento": {
-      "referencia": "eg/2026/12345/1/provisional",
+      "referencia": "a1d7e820-55c3-4e9a-bb14-7f2d9c604e18",
       "sha256": "d312fb8a768744fb10e7...",
       "paginas": 3
     }
@@ -306,12 +341,34 @@ escribano: confirma que el trámite entró con su prioridad registral.
 prioridad. **Las observaciones a subsanar están en el documento**, no en el
 JSON: ver la nota de abajo.
 
-**Cómo se subsana.** El testimonio conserva su Entrada General y su prioridad si
-se subsana antes del vencimiento. La subsanación se presenta por mesa de
-entradas citando la Entrada General, y el registro la incorpora como una
-**presentación nueva sobre la misma Entrada General** — que después genera sus
-propias novedades, con `numeroPresentacion` incrementado. La subsanación por
-testimonio digital está prevista para una versión futura del contrato.
+**Cómo se subsana** · ⚠️ **a confirmar con Registración.** El testimonio conserva
+su Entrada General y su prioridad si se subsana antes del vencimiento. La
+subsanación se presenta **por mesa de entradas, en papel**, citando la Entrada
+General, y el registro la incorpora como una **presentación nueva sobre la misma
+Entrada General**. La subsanación por testimonio digital está prevista para una
+versión futura del contrato.
+
+Lo que falta confirmar no es el circuito en papel sino **qué hace el canal
+digital con el resultado de una presentación que no entró por él**: la
+subsanación llega por ventanilla, y su resultado —el que de verdad le importa al
+escribano, porque dice si quedó inscripto— sale sobre la misma EG. El RPI
+propone entregarlo por este canal igual, con `numeroPresentacion` incrementado:
+es el mismo trámite y el mismo escribano, y no entregarlo dejaría al Colegio con
+la provisional y sin su desenlace. **Queda a confirmación de Registración y del
+Colegio.**
+
+> ### Cómo el RPI ve las presentaciones posteriores
+>
+> Es un detalle de implementación, y se cuenta porque es la razón por la que la
+> promesa de arriba se puede cumplir. El canal digital conoce la presentación
+> que entró por él; las siguientes no tienen ningún registro suyo. Lo que las
+> hace visibles es la **Entrada General**: una vez asignada, el RPI enumera
+> todas las presentaciones de esa EG por año y número, no solo la propia. En el
+> sistema registral esa búsqueda cae sobre el índice natural de la tabla
+> (`año, número, presentación`), así que es una lectura acotada y no un barrido.
+>
+> Una EG puede llegar a tener varias presentaciones —se verificaron casos de
+> hasta cinco—, y cada una produce su propia novedad.
 
 ### `devuelto_sin_inscribir`
 
@@ -325,7 +382,7 @@ testimonio digital está prevista para una versión futura del contrato.
     "entradaGeneral": { "numero": 12346, "anio": 2026, "numeroPresentacion": 1 },
     "fechaSalida": "2026-06-18",
     "documento": {
-      "referencia": "eg/2026/12346/1/sin-inscribir",
+      "referencia": "c48b3f16-90da-4b77-8e02-15ab7c3d9f41",
       "sha256": "b8bb283add7f57f6c41a...",
       "paginas": 2
     }
@@ -348,7 +405,7 @@ Las cuatro novedades de salida traen un objeto `documento`:
 
 | Campo | Significado |
 |---|---|
-| `referencia` | Identificador opaco para descargarlo. **No construirlo a mano**: usar el que viene en la novedad |
+| `referencia` | Identificador **opaco** para descargarlo, un UUID. No tiene estructura que se pueda interpretar ni construir: se usa tal como viene |
 | `sha256` | Huella del PDF, para verificar la descarga |
 | `paginas` | Cuántas páginas tiene |
 
@@ -375,7 +432,59 @@ Las cuatro novedades de salida traen un objeto `documento`:
 > escribano **nunca se modifica**. Es el equivalente digital de abrochar la
 > plancha al testimonio.
 
-**La descarga queda registrada** del lado del RPI, con fecha, hora y canal.
+> ### ⚠️ Con qué se firma el documento es una decisión legal PENDIENTE
+>
+> Hoy el resultado en papel lo firma a mano la funcionaria que lo expide. El
+> equivalente digital todavía no está definido, y las opciones en evaluación son
+> tres: que **la funcionaria** lo firme con su certificado, que el RPI aplique un
+> **sello del organismo**, o una forma **mixta** donde la funcionaria expide
+> desde el sistema y el servicio sella dejando constancia de quién expidió.
+>
+> **Qué significa para el Colegio, en concreto:** la forma del documento, la
+> novedad y la descarga **no cambian** con lo que se decida — la decisión está
+> aislada en un paso propio del diseño. Lo que puede cambiar es *quién* firma y,
+> con la primera opción, que un resultado pase un rato en estado "pendiente de
+> firma" antes de generar su novedad.
+>
+> **Mientras no haya decisión**, en homologación y en las pruebas el PDF se firma
+> con un certificado de prueba y lleva una marca visible en cada página:
+> `DOCUMENTO DE PRUEBA – SIN FIRMA DIGITAL`. Un documento con esa marca **no
+> tiene validez registral** y no debe entregarse al escribano.
+
+### `GET /api/v1/documentos/{referencia}`
+
+```http
+GET /api/v1/documentos/3f9a1c04-7b2e-4d81-9f55-0a6c2e8b1d33 HTTP/1.1
+Host: [URL_DEL_RPI]
+Authorization: Bearer <token>
+Accept: application/pdf
+```
+
+Respuesta **200** con el PDF:
+
+```
+Content-Type: application/pdf
+Content-Disposition: attachment; filename="eg-12345-2026-1-definitiva.pdf"
+Content-Length: 16668
+```
+
+| Código | Cuándo |
+|---|---|
+| 200 | El PDF |
+| 401 | Falta el `Authorization`, o el token no se reconoce |
+| 404 | La referencia no existe, **o el documento es de otro canal** |
+| 503 | El documento existe pero no se pudo recuperar del almacenamiento. Transitorio: reintentar |
+
+**El 404 cubre los dos casos a propósito.** Una referencia de otro canal se
+contesta igual que una inexistente: un 403 confirmaría que existe.
+
+**Verificar la descarga** comparando el SHA-256 del PDF recibido con el `sha256`
+que trajo la novedad. Si no coinciden, reintentar; no procesar el documento.
+
+**Cada descarga queda registrada** del lado del RPI —fecha, hora, canal, clave
+y resultado, incluidos los intentos fallidos—. Ese registro es el que sostiene
+el argumento del momento con efectos legales: si la descarga es el hecho que
+corre el plazo, tiene que haber constancia de cuándo ocurrió.
 
 > ⚠️ **Pendiente de acuerdo con el Colegio**: si el resultado se entrega como un
 > PDF con todas las planchas o como un PDF por titular. Este capítulo describe
@@ -414,7 +523,7 @@ Authorization: Bearer <token>
     "tipo": "inscripcion_definitiva",
     "fechaSalida": "2026-06-16",
     "documento": {
-      "referencia": "eg/2026/12345/1/definitiva",
+      "referencia": "3f9a1c04-7b2e-4d81-9f55-0a6c2e8b1d33",
       "sha256": "a511656d1e38560b9f2c...",
       "paginas": 2
     }
@@ -445,16 +554,17 @@ token**, responde 404 con el formato de error de
 
 ## Errores
 
-Los tres endpoints usan el formato de error del capítulo
-[07](07-respuestas-y-errores.md).
+Los cuatro endpoints usan el formato de error del capítulo
+[07](07-respuestas-y-errores.md). La descarga del documento responde el PDF en
+el caso bueno, y este formato en los malos.
 
 | Código | Cuándo |
 |---|---|
-| 400 | `hasta` ausente, no entero o menor que 1 (solo en el acuse) |
+| 400 | `secuencias` ausente, vacía, con un elemento que no sea entero ≥ 1, o con más de 100 (solo en el acuse) |
 | 401 | Falta el `Authorization`, o el token no se reconoce |
-| 404 | El `identificadorEnvio` no existe o no es del canal del token |
-| 429 | Demasiados pedidos. Respetar `Retry-After` |
-| 503 | El RPI no puede responder en este momento. Es transitorio: reintentar |
+| 404 | El `identificadorEnvio` o la `referencia` no existen, **o no son del canal del token** |
+| 429 | Demasiados pedidos: se agotó el presupuesto compartido de `/api/v1`. Respetar `Retry-After` |
+| 503 | El RPI no puede responder en este momento, o no pudo recuperar el documento del almacenamiento. Es transitorio: reintentar |
 
 Un 5xx o un timeout **no pierde novedades**: si no se acusó, siguen pendientes.
 
@@ -462,13 +572,24 @@ Un 5xx o un timeout **no pierde novedades**: si no se acusó, siguen pendientes.
 
 ## Pendiente de acuerdo
 
+Cinco, y las dos primeras son legales y no técnicas.
+
 1. **El momento con efectos legales.** Con este diseño, el momento verificable
    es la **descarga del documento**, que el RPI registra. Falta la confirmación
    formal de que ese es el momento que corre el plazo de la inscripción
-   provisional. Es una definición legal, no técnica.
-2. **Un PDF con todas las planchas, o uno por titular.**
-3. **La cadencia de consulta**, si el Colegio necesita comprometer una distinta
-   de los 5 minutos sugeridos.
+   provisional.
+2. **Con qué se firma el documento de resultado**: la firma de la funcionaria,
+   un sello del organismo, o una forma mixta. Nada de lo que este capítulo
+   describe cambia con lo que se decida; ver el aviso en *El documento de
+   resultado*.
+3. **Qué hace el canal digital con el resultado de una presentación que entró
+   por mesa de entradas** (la subsanación en papel). El RPI propone entregarlo
+   por este canal igual, con `numeroPresentacion` incrementado. — Registración y
+   el Colegio.
+4. **Un PDF con todas las planchas, o uno por titular.** — El Colegio.
+5. **La cadencia de consulta**, si el Colegio necesita comprometer una distinta
+   de los 5 minutos sugeridos, teniendo en cuenta que el presupuesto de pedidos
+   es compartido con el envío.
 
 ---
 
