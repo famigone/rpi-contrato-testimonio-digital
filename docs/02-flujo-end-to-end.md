@@ -154,11 +154,14 @@ El testimonio ingresó y el calificador lo observó: llega el callback
 `inscripcion_provisoria` con las observaciones y el plazo para subsanar.
 
 - El testimonio **conserva su EG y su prioridad** mientras se subsana en término.
-- **Por ahora, la subsanación se presenta por mesa de entradas**, citando la EG,
-  como cualquier documento observado. El registro la incorpora como una nueva
-  presentación sobre la misma EG.
-- La subsanación por testimonio digital está prevista para una versión futura del
-  contrato.
+- **La subsanación de un trámite que ingresó por testimonio digital es por
+  testimonio digital.** Lo que entró por este canal no se subsana por mesa de
+  entradas física. El registro la incorpora como una **presentación nueva sobre
+  la misma EG**, igual que en papel.
+- **Todavía no está disponible.** Está prevista para una versión futura del
+  contrato: falta que el envío pueda declarar de qué EG es subsanación. Hasta
+  entonces, un trámite digital observado no tiene cómo subsanarse por este
+  canal, y qué hacer en el intervalo lo definen el RPI y el Colegio.
 
 Una escritura rectificatoria o complementaria **no es una subsanación**: es un
 documento nuevo, que se envía como un testimonio nuevo con su propio ingreso.

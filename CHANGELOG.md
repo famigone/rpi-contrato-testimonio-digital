@@ -58,9 +58,22 @@ que el Colegio consulta y acusa.
   o consultar puntualmente. **No consume novedades.**
 - **`devuelto_sin_inscribir`** e **`inscripcion_complementaria`** como tipos de
   novedad.
+- **`datos.documentoAnterior` en `inscripcion_definitiva`**, opcional: aparece
+  cuando la definitiva no agrega asientos porque la provisional ya entregó las
+  planchas. Su documento remite al anterior en lugar de volver a transcribir el
+  asiento, y el campo trae la `referencia` y el `sha256` de ese documento.
 - **El presupuesto de pedidos queda documentado**: es **uno por clave para todo
   `/api/v1`**, compartido con el envío — 600 por hora con ráfaga de 60. A la
   cadencia sugerida son 24 por hora, un 4 % del presupuesto.
+
+### Corregido
+- **La subsanación de un trámite digital es por el canal digital, no por mesa de
+  entradas** (capítulos 02 y 08). Las dos versiones anteriores del texto decían
+  que la subsanación se presenta en papel citando la EG; el equipo del RPI
+  confirmó que lo que ingresa por testimonio digital **no puede subsanarse por
+  mesa de entradas física**. Como la subsanación digital todavía no existe en el
+  contrato, los dos capítulos ahora remiten a una versión futura en lugar de
+  describir un circuito en papel que no corresponde.
 
 ### Cambiado
 - **El capítulo 08 pasa a llamarse
@@ -114,11 +127,12 @@ que el Colegio consulta y acusa.
   cambia con lo que se decida. Mientras no haya decisión **el documento sale sin
   firma de ninguna clase**, con la marca visible
   `DOCUMENTO DE PRUEBA – SIN FIRMA DIGITAL`, y **no tiene validez registral**.
-- **Qué hace el canal digital con el resultado de una presentación que entró por
-  mesa de entradas** (la subsanación en papel, que es como se subsana hoy). El
-  RPI propone entregarlo por este canal igual, con `numeroPresentacion`
-  incrementado: es el mismo trámite y el mismo escribano, y no entregarlo
-  dejaría al Colegio con la provisional y sin su desenlace.
+- **La subsanación por testimonio digital.** Lo que ingresa por este canal no se
+  subsana por mesa de entradas física, así que hasta que un envío pueda declarar
+  de qué Entrada General es subsanación, un trámite digital observado no tiene
+  por dónde volver. Las novedades ya están listas para entregar el resultado de
+  una presentación posterior —el RPI enumera todas las presentaciones de la EG—;
+  lo que falta es el envío.
 - **Un PDF con todas las planchas, o uno por titular.**
 
 ---

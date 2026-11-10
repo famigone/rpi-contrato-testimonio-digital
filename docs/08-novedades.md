@@ -316,6 +316,26 @@ escribano: confirma que el trámite entró con su prioridad registral.
 }
 ```
 
+**`documentoAnterior`: cuando la definitiva no agrega asientos.** Si la
+inscripción provisional ya entregó las planchas y la definitiva posterior no
+trae ninguna nueva, el documento de la definitiva **no vuelve a transcribir el
+asiento**: dice que el trámite cerró como inscripción definitiva y remite al
+documento donde está el texto. Solo en ese caso, `datos` trae además:
+
+```json
+"documentoAnterior": {
+  "referencia": "3f9a1c04-7b2e-4d81-9f55-0a6c2e8b1d33",
+  "sha256": "a511656d1e38560b9f2c..."
+}
+```
+
+La `referencia` se descarga como cualquier otra
+([`GET /api/v1/documentos/{referencia}`](#get-apiv1documentosreferencia)), y es
+—casi siempre— un documento que el Colegio ya bajó: el `sha256` permite
+comprobarlo sin volver a pedirlo. **Un mismo asiento no se entrega dos veces en
+dos documentos distintos**, con dos huellas distintas, y de ahí la remisión en
+lugar de la copia.
+
 ### `inscripcion_provisional`
 
 ```json
@@ -341,21 +361,22 @@ escribano: confirma que el trámite entró con su prioridad registral.
 prioridad. **Las observaciones a subsanar están en el documento**, no en el
 JSON: ver la nota de abajo.
 
-**Cómo se subsana** · ⚠️ **a confirmar con Registración.** El testimonio conserva
-su Entrada General y su prioridad si se subsana antes del vencimiento. La
-subsanación se presenta **por mesa de entradas, en papel**, citando la Entrada
-General, y el registro la incorpora como una **presentación nueva sobre la misma
-Entrada General**. La subsanación por testimonio digital está prevista para una
-versión futura del contrato.
+**Cómo se subsana.** El testimonio conserva su Entrada General y su prioridad si
+se subsana antes del vencimiento, y el registro incorpora la subsanación como una
+**presentación nueva sobre la misma Entrada General**. Para un trámite que
+ingresó por este canal, **la subsanación es también por este canal**: lo que
+entró por testimonio digital no se subsana por mesa de entradas física.
 
-Lo que falta confirmar no es el circuito en papel sino **qué hace el canal
-digital con el resultado de una presentación que no entró por él**: la
-subsanación llega por ventanilla, y su resultado —el que de verdad le importa al
-escribano, porque dice si quedó inscripto— sale sobre la misma EG. El RPI
-propone entregarlo por este canal igual, con `numeroPresentacion` incrementado:
-es el mismo trámite y el mismo escribano, y no entregarlo dejaría al Colegio con
-la provisional y sin su desenlace. **Queda a confirmación de Registración y del
-Colegio.**
+**Todavía no está disponible**, y es lo que falta para cerrar el circuito: el
+envío de subsanación necesita poder declarar de qué Entrada General viene, y eso
+es una versión futura del contrato. Mientras no exista, un trámite digital
+observado no tiene cómo subsanarse por este canal.
+
+Del lado de las novedades, en cambio, no falta nada: cuando la subsanación
+exista, su resultado llega como una novedad más sobre la misma EG, con
+`numeroPresentacion` incrementado —es el mismo trámite y el mismo escribano—,
+porque el RPI enumera **todas** las presentaciones de la EG y no solo la que
+entró por él. Ver el recuadro de abajo.
 
 > ### Cómo el RPI ve las presentaciones posteriores
 >
@@ -586,10 +607,11 @@ Cinco, y las dos primeras son legales y no técnicas.
    un sello del organismo, o una forma mixta. Nada de lo que este capítulo
    describe cambia con lo que se decida; ver el aviso en *El documento de
    resultado*.
-3. **Qué hace el canal digital con el resultado de una presentación que entró
-   por mesa de entradas** (la subsanación en papel). El RPI propone entregarlo
-   por este canal igual, con `numeroPresentacion` incrementado. — Registración y
-   el Colegio.
+3. **La subsanación por testimonio digital.** Lo que ingresa por este canal no
+   se subsana por mesa de entradas física, así que hasta que un envío pueda
+   declarar de qué Entrada General es subsanación, un trámite digital observado
+   no tiene por dónde volver. Las novedades ya están listas para entregar su
+   resultado; lo que falta es el envío. — Registración y el Colegio.
 4. **Un PDF con todas las planchas, o uno por titular.** — El Colegio.
 5. **La cadencia de consulta**, si el Colegio necesita comprometer una distinta
    de los 5 minutos sugeridos, teniendo en cuenta que el presupuesto de pedidos
