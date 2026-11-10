@@ -316,11 +316,13 @@ escribano: confirma que el trámite entró con su prioridad registral.
 }
 ```
 
-**`documentoAnterior`: cuando la definitiva no agrega asientos.** Si la
-inscripción provisional ya entregó las planchas y la definitiva posterior no
-trae ninguna nueva, el documento de la definitiva **no vuelve a transcribir el
-asiento**: dice que el trámite cerró como inscripción definitiva y remite al
-documento donde está el texto. Solo en ese caso, `datos` trae además:
+**`documentoAnterior`: cuando la definitiva no agrega asientos.** Si un
+documento anterior de la misma Entrada General ya entregó las planchas y esta
+definitiva no trae ninguna nueva, el documento de la definitiva **no vuelve a
+transcribir el asiento**: dice que el trámite cerró como inscripción definitiva
+y remite al documento donde está el texto. Es un caso poco frecuente —no se
+llega a él por una inscripción provisional, que no entrega planchas— y el campo
+solo aparece cuando ocurre:
 
 ```json
 "documentoAnterior": {
@@ -351,7 +353,7 @@ lugar de la copia.
     "documento": {
       "referencia": "a1d7e820-55c3-4e9a-bb14-7f2d9c604e18",
       "sha256": "d312fb8a768744fb10e7...",
-      "paginas": 3
+      "paginas": 2
     }
   }
 }
@@ -360,6 +362,13 @@ lugar de la copia.
 `vencimiento` es la fecha hasta la cual la inscripción provisional mantiene la
 prioridad. **Las observaciones a subsanar están en el documento**, no en el
 JSON: ver la nota de abajo.
+
+**El documento de una provisional es el volante, y nada más.** No trae planchas:
+mientras el trámite está observado no hay asiento que entregar, y no existe la
+inscripción parcial —si un testimonio tiene varios actos y uno está observado,
+sale todo provisional—. Lo que se inscriba se asienta cuando el trámite cierra,
+y llega con la `inscripcion_definitiva`. Por eso el documento son dos páginas:
+el volante y el bloque de vinculación.
 
 **Cómo se subsana.** El testimonio conserva su Entrada General y su prioridad si
 se subsana antes del vencimiento, y el registro incorpora la subsanación como una
@@ -435,8 +444,9 @@ Las cuatro novedades de salida traen un objeto `documento`:
 > El documento es un PDF —firmado, cuando se decida con qué; hoy **sin firma**
 > y marcado, ver el aviso de abajo— que transcribe, palabra por palabra, el
 > texto que el registrador redactó: las planchas de inscripción y los volantes,
-> uno por página, igual que en papel. Ese texto **es el contenido jurídico del
-> resultado**.
+> uno por página, igual que en papel —la definitiva lleva sus planchas y la
+> provisional su volante solo, como el papel—. Ese texto **es el contenido
+> jurídico del resultado**.
 >
 > Por eso este capítulo **no promete campos estructurados** con las matrículas
 > inscriptas ni con las observaciones codificadas. La versión anterior los

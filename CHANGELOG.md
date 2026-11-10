@@ -67,6 +67,12 @@ que el Colegio consulta y acusa.
   cadencia sugerida son 24 por hora, un 4 % del presupuesto.
 
 ### Corregido
+- **El documento de una inscripción provisional es el volante, y nada más**
+  (capítulo 08). El texto anterior daba por hecho que una provisional podía
+  traer "las planchas de lo que sí se inscribió"; Registración confirmó que en
+  el papel no es así, y que no existe la inscripción parcial por acto. El
+  ejemplo de `inscripcion_provisional` pasa a dos páginas, y la explicación de
+  `documentoAnterior` ya no se apoya en una provisional que entregue planchas.
 - **La subsanación de un trámite digital es por el canal digital, no por mesa de
   entradas** (capítulos 02 y 08). Las dos versiones anteriores del texto decían
   que la subsanación se presenta en papel citando la EG; el equipo del RPI
