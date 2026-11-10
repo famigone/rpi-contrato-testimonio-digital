@@ -67,6 +67,17 @@ que el Colegio consulta y acusa.
   cadencia sugerida son 24 por hora, un 4 % del presupuesto.
 
 ### Corregido
+- **El capítulo 02 pasa al modelo de consulta** (y era el último que faltaba).
+  Seguía describiendo *callbacks* del RPI hacia el Colegio, con los tipos
+  viejos: el diagrama de secuencia, el paso 5, el paso 6, el paso 7, la
+  observación registral, el rechazo registral y la tabla de tiempos. Ahora dice
+  lo que el servicio hace —el RPI encola, el Colegio consulta y acusa— y usa los
+  tipos del capítulo 08. En particular, `rechazo_registral` deja de figurar como
+  tercer resultado de la calificación: lo que existe es el **devuelto sin
+  inscribir**, que es una salida con su documento y no un rechazo del envío.
+- **El capítulo 07 dejó de decir que la observación registral se subsana por
+  mesa de entradas** (tabla "¿Mismo `IdentificadorEnvio`?"), y la fila del 202
+  ya no dice "esperar callbacks".
 - **El documento de una inscripción provisional es el volante, y nada más**
   (capítulo 08). El texto anterior daba por hecho que una provisional podía
   traer "las planchas de lo que sí se inscribió"; Registración confirmó que en
