@@ -59,9 +59,11 @@ que el Colegio consulta y acusa.
 - **`devuelto_sin_inscribir`** e **`inscripcion_complementaria`** como tipos de
   novedad.
 - **`datos.documentoAnterior` en `inscripcion_definitiva`**, opcional: aparece
-  cuando la definitiva no agrega asientos porque la provisional ya entregó las
-  planchas. Su documento remite al anterior en lugar de volver a transcribir el
-  asiento, y el campo trae la `referencia` y el `sha256` de ese documento.
+  cuando la definitiva no agrega asientos porque un documento anterior de la
+  misma Entrada General ya entregó las planchas —no una provisional, que no
+  entrega ninguna—. Su documento remite al anterior en lugar de volver a
+  transcribir el asiento, y el campo trae la `referencia` y el `sha256` de ese
+  documento.
 - **El presupuesto de pedidos queda documentado**: es **uno por clave para todo
   `/api/v1`**, compartido con el envío — 600 por hora con ráfaga de 60. A la
   cadencia sugerida son 24 por hora, un 4 % del presupuesto.
@@ -84,6 +86,24 @@ que el Colegio consulta y acusa.
   el papel no es así, y que no existe la inscripción parcial por acto. El
   ejemplo de `inscripcion_provisional` pasa a dos páginas, y la explicación de
   `documentoAnterior` ya no se apoya en una provisional que entregue planchas.
+- **El glosario pasa al modelo de consulta** (capítulo 09), y era el último
+  lugar de la documentación que seguía nombrando *callbacks*. Entradas nuevas:
+  **Devuelto sin inscribir** y **Novedad**. **Rechazo registral** pasa a decir
+  que el término ya no se usa en el contrato y remite al devuelto sin inscribir
+  —se deja la entrada para quien venga de una versión anterior—, y
+  **Callback / Webhook** aclara que este contrato no los usa. Se corrigieron
+  además tres datos que no coincidían con el capítulo 08: el tipo de novedad se
+  llama `inscripcion_provisional` y no `inscripcion_provisoria`, el vencimiento
+  de la provisional viaja en `vencimiento` y no en un `fechaVencimientoVIP` que
+  no existe, y `fechaPresentacion` **no se informa**, aunque la entrada
+  *Presentación* decía que sí. La entrada *Subsanación* dejó de decir que se
+  presenta por mesa de entradas.
+- **El resumen del README** decía que el RPI notifica "vía callback HTTP". Ahora
+  nombra la consulta y el acuse.
+- **El `mensaje` del 202 ya no habla de callbacks** (capítulo 03): pasa a
+  "Testimonio validado y aceptado. La Entrada General se informa en la novedad
+  entrada_general_asignada." Es el texto literal que devuelve el servicio, y se
+  cambia en los dos lados.
 - **La subsanación de un trámite digital es por el canal digital, no por mesa de
   entradas** (capítulos 02 y 08). Las dos versiones anteriores del texto decían
   que la subsanación se presenta en papel citando la EG; el equipo del RPI

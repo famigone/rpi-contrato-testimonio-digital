@@ -141,7 +141,7 @@ Para quien tiene urgencia y quiere ir directo:
 - **Validación**: el XML debe validar contra `xsd/v3/testimonio-digital.xsd`.
 - **Firma**: el XML debe estar firmado con XML-DSig por el certificado del escribano autorizante.
 - **Respuesta**: HTTP 202 con un `identificadorEnvio` (UUID) para trazabilidad.
-- **Notificaciones**: el RPI te notifica los cambios de estado del testimonio vía callback HTTP.
+- **Novedades**: el RPI no te llama. Lo que pasa con el trámite queda en cola y se consulta con `GET /api/v1/eventos`, acusando lo leído con `POST /api/v1/eventos/acuse` (ver [docs/08-novedades.md](docs/08-novedades.md)).
 
 ---
 

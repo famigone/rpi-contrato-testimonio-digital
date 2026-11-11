@@ -204,7 +204,7 @@ Content-Type: application/json
   "identificadorEnvio": "550e8400-e29b-41d4-a716-446655440000",
   "estado": "aceptado",
   "recibidoEn": "2026-06-15T10:23:45Z",
-  "mensaje": "Testimonio validado y aceptado. La Entrada General se notificará por callback.",
+  "mensaje": "Testimonio validado y aceptado. La Entrada General se informa en la novedad entrada_general_asignada.",
   "tasa": {
     "numero": 15851,
     "estado": "sin_verificar"
