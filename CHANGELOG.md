@@ -7,7 +7,7 @@ y este contrato adhiere a [Semantic Versioning 2.0.0](https://semver.org/spec/v2
 
 ---
 
-## [3.5.0] — 2026-11-06
+## [3.5.0] — 2026-11-12
 
 **El capítulo 08 cambia de mecanismo: de aviso a consulta.** El RPI deja de
 hacer `POST` a una URL del Colegio y pasa a ofrecer una **lista de novedades**
@@ -32,6 +32,20 @@ que el Colegio consulta y acusa.
 > firma de los avisos, consulta `GET /api/v1/eventos` cada pocos minutos y acusa
 > con `POST /api/v1/eventos/acuse`. Lo que ya hubiera construido del
 > vocabulario de eventos se conserva.
+
+> ### Qué de esta versión está operativo al publicarla
+>
+> La consulta, el acuse y la consulta puntual de un envío están implementados.
+> Las cuatro **novedades de resultado** —`inscripcion_definitiva`,
+> `inscripcion_provisional`, `devuelto_sin_inscribir`,
+> `inscripcion_complementaria`— y la **descarga del documento** se habilitan
+> **después de las pruebas del egreso con Registración**. Hasta entonces la
+> lista entrega `entrada_general_asignada` únicamente.
+>
+> Se publica así a propósito: la forma de pedir, de acusar y de leer los datos
+> no cambia cuando el egreso entre en servicio, así que el Colegio puede
+> implementar los cinco tipos de una vez en lugar de esperar y hacerlo dos
+> veces.
 
 ### Agregado
 - **`GET /api/v1/eventos`** — las novedades pendientes de acuse del canal, en

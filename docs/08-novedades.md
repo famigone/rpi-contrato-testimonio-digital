@@ -11,6 +11,26 @@ Colegio consulta.
 El Colegio **no necesita exponer ningún endpoint**: consulta cuando quiere y
 acusa lo que recibió.
 
+> ### ⚠️ Qué entrega hoy el canal, y qué se habilita después
+>
+> La consulta, el acuse y la consulta puntual de un envío están
+> **implementados**: `GET /api/v1/eventos` responde, y el Colegio puede
+> integrar contra este capítulo desde ahora.
+>
+> Lo que todavía **no fluye** son las cuatro **novedades de resultado**
+> —`inscripcion_definitiva`, `inscripcion_provisional`,
+> `devuelto_sin_inscribir`, `inscripcion_complementaria`— y, con ellas, la
+> descarga del documento: **se habilitan después de las pruebas del egreso con
+> Registración**, que son las que validan la clasificación del resultado y el
+> contenido del documento contra lo que el registro expide en papel. Mientras
+> eso no pase, la lista trae `entrada_general_asignada` únicamente, y no hay
+> referencias de documento que pedir.
+>
+> **Qué cambia para el Colegio cuando se habiliten:** qué tipos aparecen en la
+> lista. No cambia cómo se pide, cómo se acusa, ni la forma de los datos — por
+> eso conviene implementar los cinco tipos de una vez, y no esperar. Este aviso
+> se saca cuando el egreso entre en servicio.
+
 > ### ⚠️ Cambio respecto de la versión anterior de este capítulo
 >
 > La versión anterior describía **callbacks**: el RPI hacía `POST` a una URL del
@@ -266,6 +286,10 @@ próxima consulta.
 **Las validaciones de la recepción no generan novedades**: su resultado viaja en
 la respuesta HTTP del envío (202 o error 4xx). Ver
 [07](07-respuestas-y-errores.md).
+
+De los cinco tipos, hoy se emite **solo `entrada_general_asignada`**: los cuatro
+de resultado se habilitan después de las pruebas del egreso con Registración
+(ver el aviso al principio del capítulo).
 
 > **`rechazo_registral` ya no existe como tipo.** En la versión anterior
 > nombraba un rechazo por causal grave. El circuito registral real no emite esa

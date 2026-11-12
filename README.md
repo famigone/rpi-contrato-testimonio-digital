@@ -14,7 +14,7 @@ a lo definido acá.
 
 | Campo | Valor |
 |-------|-------|
-| Versión del contrato | 3.0.0 (borrador para revisión) |
+| Versión del contrato | 3.5.0 |
 | Estado | En proceso de homologación |
 | XSD vigente | [`xsd/v3/testimonio-digital.xsd`](xsd/v3/testimonio-digital.xsd), namespace `.../testimonio-digital/v3` |
 | Modelo de acto | **El tipo de acto es un DATO** (`<Codigo>`), no un elemento del esquema |
