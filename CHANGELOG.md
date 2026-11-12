@@ -33,6 +33,34 @@ que el Colegio consulta y acusa.
 > con `POST /api/v1/eventos/acuse`. Lo que ya hubiera construido del
 > vocabulario de eventos se conserva.
 
+> ### ⚠ Se publica sin la discusión pública de 7 días ni segundo revisor
+>
+> [GOVERNANCE.md](GOVERNANCE.md) pide, para una MINOR, un issue de propuesta,
+> **siete días de discusión pública** y la revisión del mantenedor **más al
+> menos un revisor**. Esta versión se publica sin la ventana de discusión y sin
+> el segundo revisor, por excepción y con las razones a la vista:
+>
+> - **El Colegio de Escribanos es el único integrador.** La discusión pública
+>   de siete días existe para que los consumidores alcancen a revisar; acá el
+>   consumidor es uno solo y se le consultó directamente.
+> - **No hay integraciones en producción.** El canal está en pruebas, así que no
+>   hay nadie a quien una publicación apresurada pueda romperle algo que esté
+>   funcionando.
+> - **El cambio es retro-compatible.** El XSD no cambia, el namespace sigue en
+>   `/v3` y `VersionContrato` sigue siendo `3.0`: un envío de la v3.4.0 es
+>   válido sin tocarlo. Lo que se reemplaza es un mecanismo que nunca se
+>   implementó.
+>
+> **Cómo se comunicó, que es lo que la ventana de discusión venía a garantizar:**
+> se avisó al Colegio **por correo**, y la versión se presenta en la **reunión
+> del 13 de noviembre de 2026**.
+>
+> **Esta excepción no crea precedente, y se cierra acá.** A partir de la próxima
+> versión —**subsanación por testimonio digital** y **UIF**, que tocan el XML y
+> por lo tanto el formato del envío— se sigue el proceso completo de GOVERNANCE:
+> issue, los siete días, PR y los dos revisores. La razón es la misma que
+> sostiene la excepción de hoy: lo que viene sí puede romper envíos.
+
 > ### Qué de esta versión está operativo al publicarla
 >
 > La consulta, el acuse y la consulta puntual de un envío están implementados.
