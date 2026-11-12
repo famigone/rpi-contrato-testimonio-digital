@@ -97,6 +97,21 @@ puede tener observaciones. Se incluye **dentro de cada inmueble**. Es opcional
 en el XSD; su exigencia depende de la familia del acto (la exigen, por ejemplo,
 las transmisiones y las hipotecas; no la llevan las cancelaciones).
 
+### Devuelto sin inscribir
+
+Resultado de la calificación cuando el trámite **no se inscribe**. Es uno de los
+tres resultados posibles de una salida registral, junto con la
+[inscripción definitiva](#inscripción-definitiva) y la
+[inscripción provisoria](#inscripción-provisoria). Tiene Entrada General —ya
+había ingresado— y tiene documento: el volante que lo dice. Se informa en la
+novedad `devuelto_sin_inscribir`
+([08](08-novedades.md#devuelto_sin_inscribir)).
+
+No es un rechazo del envío: los rechazos del envío son los 4xx de la recepción
+([rechazo estructural](#rechazo-estructural)) y llegan en la respuesta HTTP.
+Ver también [rechazo registral](#rechazo-registral), el término que esta figura
+reemplaza.
+
 ### EG / Entrada General
 
 Número que el RPI asigna a cada trámite cuando ingresa al registro. Es el
@@ -106,7 +121,8 @@ identificador del trámite dentro del RPI. Tiene un número y un año (ej:
 
 Con la Entrada General, el trámite obtiene su **prioridad registral**. En el
 flujo de testimonio digital, la EG se asigna **después** de que el RPI acepta el
-testimonio (HTTP 202) y se notifica con el callback `entrada_general_asignada`.
+testimonio (HTTP 202) y se informa en la novedad `entrada_general_asignada`
+([08](08-novedades.md#tipos-de-novedad)).
 
 La asignación de la EG es la frontera entre los dos tipos de problema que puede
 tener un testimonio: lo que se detecta antes es un
@@ -123,8 +139,8 @@ matrícula del inmueble. Tiene plena eficacia legal.
 Estado del trámite cuando hay observaciones que el escribano debe subsanar
 antes de la inscripción definitiva. El trámite se anota provisoriamente
 mientras se subsanan los defectos. Tiene una vigencia limitada durante la cual
-se mantiene el orden de prelación; el vencimiento se informa en el callback
-(`fechaVencimientoVIP`).
+se mantiene el orden de prelación; el vencimiento se informa en la novedad
+`inscripcion_provisional`, en el campo `vencimiento`.
 
 ### Matrícula
 
@@ -147,14 +163,48 @@ de longitud fija (2, 2, 3, 4 y 4 caracteres) según la convención del RPI. Se
 incluye **dentro de cada inmueble**. Como la certificación catastral, es
 opcional en el XSD y su exigencia depende de la familia del acto.
 
+### Novedad
+
+Hecho del trámite registral que el RPI deja disponible para que el sistema del
+Colegio lo consulte: la asignación de la Entrada General y cada resultado de la
+calificación. Las novedades se piden con `GET /api/v1/eventos` y se acusan con
+`POST /api/v1/eventos/acuse`; el RPI **no llama** al sistema del Colegio. Cada
+novedad tiene una `secuencia` creciente y un `tipo`. Ver
+[08 — Novedades del trámite registral](08-novedades.md).
+
+Las validaciones de la recepción no generan novedades: su resultado viaja en la
+respuesta HTTP del envío.
+
 ### Observación registral
 
 Defecto que el calificador encuentra en un trámite que **ya ingresó** (tiene
 Entrada General). Da lugar a una
-[inscripción provisoria](#inscripción-provisoria) y se notifica con el callback
-`inscripcion_provisoria`. El trámite conserva su EG y su prioridad mientras se
+[inscripción provisoria](#inscripción-provisoria) y se informa en la novedad
+`inscripcion_provisional`. El trámite conserva su EG y su prioridad mientras se
 subsana en término. No confundir con el
 [rechazo estructural](#rechazo-estructural).
+
+### Plancha
+
+**Asiento de inscripción**: el texto que el registrador redacta cuando un acto
+queda inscripto. En papel se abrocha al testimonio, y por eso la plancha —no un
+campo estructurado— es el contenido jurídico del resultado. Tiene número y
+texto propios, y una clave de verificación.
+
+En el flujo digital las planchas se **transcriben palabra por palabra** en el
+[documento de resultado](08-novedades.md#el-documento-de-resultado), una por
+página. Las trae la novedad `inscripcion_definitiva` —o la
+`inscripcion_complementaria`, si después aparece un asiento más—, y un
+testimonio de varios actos puede producir varias. **Una
+[inscripción provisoria](#inscripción-provisoria) no trae ninguna**: mientras el
+trámite está observado no hay asiento que entregar, y lo que se inscriba se
+asienta cuando el trámite cierra.
+
+**Cada plancha se entrega una sola vez.** Si un documento anterior de la misma
+Entrada General ya la entregó y la salida nueva no agrega asientos, el documento
+nuevo **remite** a ese en lugar de volver a transcribirla (campo
+`documentoAnterior` de la novedad): el mismo asiento no viaja en dos documentos
+con dos huellas distintas.
 
 ### Plataforma Digital (PD)
 
@@ -170,8 +220,9 @@ acompañamiento de minuta digital. Convive con el canal del testimonio digital.
 
 Cada ingreso de documentación sobre una misma Entrada General, numerado en
 orden: la presentación 1 es el ingreso del trámite; las siguientes son
-subsanaciones de observaciones. En los callbacks se informa como
-`numeroPresentacion` y `fechaPresentacion` dentro de `entradaGeneral`.
+subsanaciones de observaciones. En las novedades se informa como
+`numeroPresentacion` dentro de `entradaGeneral`; la fecha de la presentación
+**todavía no viaja** ([08](08-novedades.md#entrada_general_asignada)).
 
 ### Rechazo estructural
 
@@ -184,9 +235,15 @@ prioridad: se corrige y se envía de nuevo con un `IdentificadorEnvio` nuevo. Ve
 
 ### Rechazo registral
 
-Cuando el calificador determina que un trámite **ya ingresado** tiene defectos
-graves que no pueden subsanarse (por ejemplo, matrícula que no corresponde) y
-rechaza la inscripción. Se notifica con el callback `rechazo_registral`.
+**Este término ya no se usa en el contrato.** Nombraba un rechazo del
+calificador por causal grave, con una novedad `rechazo_registral` propia. El
+circuito registral real no emite esa figura por este canal: lo que existe es el
+[devuelto sin inscribir](#devuelto-sin-inscribir), que es una salida con su
+documento y no un rechazo del envío. Se deja la entrada para quien venga de una
+versión anterior del contrato.
+
+Los rechazos que sí existen son los de la recepción, antes de la EG: ver
+[rechazo estructural](#rechazo-estructural).
 
 ### Rogante
 
@@ -200,8 +257,10 @@ notificaciones formales del trámite. Debe estar registrado en el RPI.
 Presentación de lo necesario para corregir una
 [observación registral](#observación-registral). Se incorpora como una nueva
 [presentación](#presentación) sobre la misma Entrada General, conservando la
-prioridad. Por ahora se presenta por mesa de entradas, citando la EG; la
-subsanación por testimonio digital está prevista para una versión futura. Una
+prioridad. Para un trámite que ingresó por este canal **la subsanación es
+también por este canal**, y todavía no está disponible: el envío de subsanación
+necesita poder declarar de qué Entrada General viene, y eso es una versión
+futura del contrato ([08](08-novedades.md#inscripcion_provisional)). Una
 escritura rectificatoria o complementaria no es una subsanación: es un
 documento nuevo con su propio ingreso.
 
@@ -257,6 +316,19 @@ Documento que el RPI emite cuando un trámite queda inscripto provisoriamente,
 detallando las observaciones que deben subsanarse (volante de subsanación).
 Por extensión, se usa "VIP" para referirse al estado de inscripción provisoria
 en sí.
+
+### Volante
+
+Documento que el RPI emite cuando una salida **no es una inscripción
+definitiva**, y que dice qué pasó con el trámite. El de una
+[inscripción provisoria](#inscripción-provisoria) detalla las observaciones a
+subsanar y lleva el vencimiento —es el VIP, la entrada de arriba—; el de un
+[devuelto sin inscribir](#devuelto-sin-inscribir) dice que no se inscribió.
+
+Como las [planchas](#plancha), el volante se transcribe palabra por palabra en
+el [documento de resultado](08-novedades.md#el-documento-de-resultado). **El
+documento de una provisional es el volante, y nada más**: el volante y el bloque
+de vinculación, dos páginas.
 
 ## Términos notariales
 
@@ -369,8 +441,10 @@ el PDF que llega al RPI es exactamente el que el escribano firmó.
 ### Callback / Webhook
 
 Endpoint HTTP que un sistema expone para recibir notificaciones de otro
-sistema. En este contrato, el sistema del Colegio expone un callback que el
-RPI invoca para notificar cambios de estado del testimonio.
+sistema. **Este contrato no los usa.** Las versiones anteriores describían al
+Colegio exponiendo un callback que el RPI invocaba; desde la 3.5.0 el RPI encola
+y el Colegio consulta. Ver [novedad](#novedad) y
+[08](08-novedades.md).
 
 ### multipart/form-data
 

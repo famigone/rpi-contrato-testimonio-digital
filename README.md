@@ -14,7 +14,7 @@ a lo definido acá.
 
 | Campo | Valor |
 |-------|-------|
-| Versión del contrato | 3.0.0 (borrador para revisión) |
+| Versión del contrato | 3.5.0 |
 | Estado | En proceso de homologación |
 | XSD vigente | [`xsd/v3/testimonio-digital.xsd`](xsd/v3/testimonio-digital.xsd), namespace `.../testimonio-digital/v3` |
 | Modelo de acto | **El tipo de acto es un DATO** (`<Codigo>`), no un elemento del esquema |
@@ -60,7 +60,7 @@ Orden recomendado para integraciones nuevas:
 5. **[Firma digital](docs/05-firma-digital.md)** — cómo firmar el XML con XML-DSig.
 6. **[Adjunto PDF](docs/06-adjunto-pdf.md)** — cómo viaja el PDF junto al XML.
 7. **[Respuestas y errores](docs/07-respuestas-y-errores.md)** — códigos HTTP, reintentos.
-8. **[Notificaciones de callback](docs/08-notificaciones-callback.md)** — qué te devuelve el RPI cuando inscribe.
+8. **[Novedades del trámite registral](docs/08-novedades.md)** — cómo te enterás de lo que pasó con el trámite.
 9. **[Glosario](docs/09-glosario.md)** — términos del dominio registral y notarial.
 10. **[Campos del formulario](docs/10-campos-del-formulario.md)** — tabla plana de todos los campos para armar el formulario del escribano.
 11. **[Artefacto de campos por acto](docs/11-artefacto-campos-por-acto.md)** — cómo consumir `artefacto-campos-por-acto.json` para generar el formulario dinámicamente por acto.
@@ -87,7 +87,7 @@ Orden recomendado para integraciones nuevas:
 │   ├── 05-firma-digital.md
 │   ├── 06-adjunto-pdf.md
 │   ├── 07-respuestas-y-errores.md
-│   ├── 08-notificaciones-callback.md
+│   ├── 08-novedades.md
 │   ├── 09-glosario.md
 │   ├── 10-campos-del-formulario.md
 │   └── 11-artefacto-campos-por-acto.md   ← guía de integración del artefacto (editor del escribano)
@@ -141,7 +141,7 @@ Para quien tiene urgencia y quiere ir directo:
 - **Validación**: el XML debe validar contra `xsd/v3/testimonio-digital.xsd`.
 - **Firma**: el XML debe estar firmado con XML-DSig por el certificado del escribano autorizante.
 - **Respuesta**: HTTP 202 con un `identificadorEnvio` (UUID) para trazabilidad.
-- **Notificaciones**: el RPI te notifica los cambios de estado del testimonio vía callback HTTP.
+- **Novedades**: el RPI no te llama. Lo que pasa con el trámite queda en cola y se consulta con `GET /api/v1/eventos`, acusando lo leído con `POST /api/v1/eventos/acuse` (ver [docs/08-novedades.md](docs/08-novedades.md)).
 
 ---
 

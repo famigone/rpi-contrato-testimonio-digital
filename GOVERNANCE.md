@@ -84,10 +84,18 @@ Cambios que **agregan funcionalidad de manera retro-compatible**:
 - Agregar un campo opcional al XML.
 - Ampliar el rango de valores aceptados en un campo existente.
 - Agregar un nuevo código de error.
-- Agregar un nuevo tipo de evento de callback.
+- Agregar un nuevo **tipo de novedad** ([capítulo 08](docs/08-novedades.md)).
+- Agregar un campo nuevo a una novedad existente, o a la respuesta de
+  `GET /api/v1/eventos`.
 
 **Criterio de retro-compatibilidad**: un cliente que cumplía con la versión
 anterior debe seguir funcionando sin cambios contra la versión nueva.
+
+Para los dos ítems de novedades, eso supone una condición del lado del
+cliente: que **ignore lo que no conoce** —un `tipo` de novedad que no espera,
+un campo que no mira— en lugar de fallar. Un cliente que rechaza lo
+desconocido convierte en incompatible cualquier agregado, y entonces no hay
+forma de sumar un resultado registral nuevo sin una MAJOR.
 
 **Proceso**:
 
@@ -105,7 +113,14 @@ Cambios **incompatibles** con versiones anteriores:
 - Cambiar el tipo o formato de un campo existente de manera incompatible.
 - Cambiar la estructura general del XML.
 - Cambiar el mecanismo de autenticación de manera incompatible.
-- Cambiar el formato de los callbacks.
+- Cambiar de manera incompatible el formato de los endpoints de consulta: la
+  respuesta de `GET /api/v1/eventos`, el cuerpo de
+  `POST /api/v1/eventos/acuse` o la descarga de documentos.
+- **Quitar un tipo de novedad**, o cambiarle el significado a uno existente.
+- Cambiar la **semántica del acuse** o de la `secuencia`: que una novedad deje
+  de entregarse hasta que el Colegio la acuse es lo que hace que una caída no
+  pierda novedades, y un cliente escrito contra esa garantía deja de ser
+  correcto si cambia.
 - Cambiar el namespace XML.
 
 **Proceso especial para cambios MAJOR**:
@@ -138,8 +153,9 @@ Los clientes pueden migrar a su ritmo durante el período de coexistencia. Al
 finalizar el período:
 
 - La versión anterior se marca como **deprecada**.
-- Los envíos contra la versión deprecada generan una advertencia (en el
-  callback o en headers de respuesta).
+- Los envíos contra la versión deprecada generan una advertencia en los
+  **headers de la respuesta**. No viaja por las novedades: una novedad informa
+  qué pasó con un trámite, no cómo se envió.
 - Después de un período adicional de deprecación, se desactiva.
 
 El cronograma completo (publicación → deprecación → desactivación) se anuncia
@@ -198,7 +214,11 @@ acuerdo explícito antes de mergear:
 
 - Cambio de URL del endpoint en producción.
 - Cambio del mecanismo de autenticación.
-- Cambio del formato o autenticación de los callbacks.
+- Cambio del formato o de la autenticación de los endpoints de consulta
+  (`/api/v1/eventos`, el acuse y la descarga de documentos).
+- Cambio del **presupuesto de pedidos por clave**, que es uno para todo
+  `/api/v1` y lo comparten la consulta y el envío: bajarlo puede dejar al
+  integrador sin cuota para enviar.
 - Deprecación de campos que el integrador está usando.
 
 Para estos casos, el PR no se mergea sin aprobación documentada del

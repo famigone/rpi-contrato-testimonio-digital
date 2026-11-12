@@ -9,11 +9,22 @@ RPI                    : valida contrato, firmas, hash y reglas del acto
 RPI       → Colegio    : 202 Accepted   (o 4xx: rechazo estructural)
 RPI       → Registro   : sincroniza los datos
 Registro               : asigna la Entrada General
-RPI       → Colegio    : callback entrada_general_asignada
+RPI                    : encola la novedad entrada_general_asignada
+Colegio   → RPI        : GET /eventos              (cada 5 minutos)
+RPI       → Colegio    : la novedad, con su número de secuencia
+Colegio   → RPI        : POST /eventos/acuse       (las secuencias recibidas)
 Registro               : califica el documento
-RPI       → Colegio    : callback inscripcion_definitiva | inscripcion_provisoria | rechazo_registral
+RPI                    : encola inscripcion_definitiva | inscripcion_provisional
+                         | devuelto_sin_inscribir
+Colegio   → RPI        : GET /eventos + acuse      (igual que antes)
 Colegio   → Escribano  : muestra el resultado
 ```
+
+**El RPI no llama al sistema del Colegio.** Las novedades quedan en una lista
+que el Colegio **consulta y acusa**; no hay ningún `POST` del RPI hacia afuera.
+Las versiones anteriores de este capítulo describían *callbacks*, y el cambio es
+de la **v3.5.0**: el detalle, el porqué y el formato de cada novedad están en
+[08 — Novedades del trámite registral](08-novedades.md).
 
 ## Descripción paso a paso
 
@@ -105,24 +116,46 @@ definitivo.
 
 De manera asincrónica, el servicio del RPI sincroniza los datos con el sistema
 registral, que asigna la **Entrada General (EG)**. Con la EG, el testimonio
-queda ingresado al registro con su prioridad. El RPI lo notifica con el callback
-`entrada_general_asignada`.
+queda ingresado al registro con su prioridad. El RPI encola la novedad
+`entrada_general_asignada`, que el Colegio recibe en su próxima consulta. Es la
+primera novedad de todo testimonio aceptado.
 
 ### 6. El registro califica el documento
 
-El calificador evalúa el testimonio. El resultado posible es:
+El calificador evalúa el testimonio. Cada resultado tiene su novedad, y el
+documento del resultado se descarga aparte (ver
+[08](08-novedades.md#el-documento-de-resultado)):
 
-- **Inscripción definitiva**: el trámite se inscribe.
-- **Inscripción provisoria**: el documento tiene observaciones que deben
-  subsanarse dentro de un plazo (volante de subsanación). Conserva su prioridad
-  mientras se subsana en término.
-- **Rechazo registral**: el trámite no se inscribe (causales graves).
+- **Inscripción definitiva** (`inscripcion_definitiva`): el trámite se inscribe.
+  El documento trae las **planchas** de inscripción, una por titular.
+- **Inscripción provisional** (`inscripcion_provisional`): el documento tiene
+  observaciones que deben subsanarse dentro de un plazo. Conserva su prioridad
+  mientras se subsana en término. El documento es el **volante**, y nada más: no
+  trae planchas, porque mientras el trámite está observado no hay asiento que
+  entregar. Lo que se inscriba sale con la definitiva.
+- **Devuelto sin inscribir** (`devuelto_sin_inscribir`): el trámite no se
+  inscribe. El documento es el volante que lo dice.
 
-### 7. El RPI notifica al Colegio
+Puede llegar además una **inscripción complementaria**
+(`inscripcion_complementaria`) si después aparece un documento adicional de una
+EG ya informada.
 
-Cada resultado se notifica por callback. El sistema del Colegio actualiza su base
-interna y muestra el resultado al escribano. Detalles en
-[08 — Notificaciones de callback](08-notificaciones-callback.md).
+> **`rechazo_registral` ya no existe.** Las versiones anteriores lo listaban
+> como tercer resultado. El circuito registral real no emite esa figura por este
+> canal: lo que hay es el devuelto sin inscribir, que es una **salida con su
+> documento** y no un rechazo del envío (los rechazos del envío son los 4xx de
+> la recepción, y llegan en la respuesta HTTP). Ver
+> [08 — Tipos de novedad](08-novedades.md#tipos-de-novedad).
+
+### 7. El Colegio consulta las novedades
+
+Cada resultado queda disponible como una **novedad** que el sistema del Colegio
+consulta con `GET /api/v1/eventos` y **acusa** con `POST /api/v1/eventos/acuse`.
+Una novedad se vuelve a entregar hasta que el Colegio la acusa, así que no se
+pierde nada por un error de red, un reinicio o un despliegue a mitad de camino.
+El ritmo sugerido es **cada 5 minutos**: el procesamiento registral se mide en
+días. El Colegio actualiza su base interna y muestra el resultado al escribano.
+Detalles en [08 — Novedades del trámite registral](08-novedades.md).
 
 ## Qué pasa si algo falla
 
@@ -150,22 +183,32 @@ que corregir. El Colegio reintenta el **mismo envío, con el mismo
 
 ### Observación registral (después de la EG)
 
-El testimonio ingresó y el calificador lo observó: llega el callback
-`inscripcion_provisoria` con las observaciones y el plazo para subsanar.
+El testimonio ingresó y el calificador lo observó: queda disponible la novedad
+`inscripcion_provisional`, con el **vencimiento** del plazo y la referencia para
+descargar el documento. **Las observaciones están en el documento**, no en el
+JSON de la novedad: las redacta el registrador y son el contenido jurídico del
+resultado (ver [08](08-novedades.md#el-documento-de-resultado)).
 
 - El testimonio **conserva su EG y su prioridad** mientras se subsana en término.
-- **Por ahora, la subsanación se presenta por mesa de entradas**, citando la EG,
-  como cualquier documento observado. El registro la incorpora como una nueva
-  presentación sobre la misma EG.
-- La subsanación por testimonio digital está prevista para una versión futura del
-  contrato.
+- **La subsanación de un trámite que ingresó por testimonio digital es por
+  testimonio digital.** Lo que entró por este canal no se subsana por mesa de
+  entradas física. El registro la incorpora como una **presentación nueva sobre
+  la misma EG**, igual que en papel.
+- **Todavía no está disponible.** Está prevista para una versión futura del
+  contrato: falta que el envío pueda declarar de qué EG es subsanación. Hasta
+  entonces, un trámite digital observado no tiene cómo subsanarse por este
+  canal, y qué hacer en el intervalo lo definen el RPI y el Colegio.
 
 Una escritura rectificatoria o complementaria **no es una subsanación**: es un
 documento nuevo, que se envía como un testimonio nuevo con su propio ingreso.
 
-### Rechazo registral (después de la EG)
+### Devuelto sin inscribir (después de la EG)
 
-Llega el callback `rechazo_registral`. El trámite no se inscribe.
+Queda disponible la novedad `devuelto_sin_inscribir`, con su documento. El
+trámite no se inscribe. **No es un rechazo del envío:** el testimonio ingresó,
+tuvo su EG y su prioridad, y lo que llega es la salida registral que dice que no
+se inscribe. Los rechazos del envío son los 4xx de la recepción, y llegan en la
+respuesta HTTP.
 
 ## Tiempos esperados
 
@@ -173,8 +216,8 @@ Llega el callback `rechazo_registral`. El trámite no se inscribe.
 |--------|--------|
 | Respuesta al POST | Típico: menos de 5 segundos. Máximo: 30 segundos |
 | Asignación de la Entrada General | Minutos después del 202 |
-| Calificación (inscripción o rechazo) | Variable según la carga del RPI (horas a días hábiles) |
-| Callback al Colegio | Segundos después de cada evento |
+| Calificación (inscripción definitiva, provisional o devuelto) | Variable según la carga del RPI (horas a días hábiles) |
+| Novedad disponible para el Colegio | Inmediata; el Colegio la ve en su próxima consulta (ritmo sugerido: cada 5 minutos) |
 
 Estos tiempos son orientativos.
 

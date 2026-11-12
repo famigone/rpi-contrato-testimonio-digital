@@ -12,7 +12,7 @@ Para el panorama del repositorio (XSD, catálogo, ejemplos, gobernanza), ver el
 
 | Si sos… | Leé, en este orden |
 |---------|--------------------|
-| Programador que integra un sistema cliente con el RPI | [01](01-introduccion.md) → [02](02-flujo-end-to-end.md) → [03](03-endpoint-api.md) → [04](04-formato-xml.md) → [05](05-firma-digital.md) → [06](06-adjunto-pdf.md) → [07](07-respuestas-y-errores.md) → [08](08-notificaciones-callback.md) |
+| Programador que integra un sistema cliente con el RPI | [01](01-introduccion.md) → [02](02-flujo-end-to-end.md) → [03](03-endpoint-api.md) → [04](04-formato-xml.md) → [05](05-firma-digital.md) → [06](06-adjunto-pdf.md) → [07](07-respuestas-y-errores.md) → [08](08-novedades.md) |
 | Programador del editor del escribano (formulario) | [11](11-artefacto-campos-por-acto.md) → [10](10-campos-del-formulario.md) → [04](04-formato-xml.md) |
 | Tenés urgencia y querés mandar un testimonio ya | [03](03-endpoint-api.md) + [04](04-formato-xml.md) + [05](05-firma-digital.md), y mirá [`ejemplos/v3/`](../ejemplos/v3/) |
 | Auditor o revisor del contrato | [02](02-flujo-end-to-end.md) → [04](04-formato-xml.md) → [05](05-firma-digital.md) |
@@ -31,7 +31,7 @@ Para el panorama del repositorio (XSD, catálogo, ejemplos, gobernanza), ver el
 | 05 | [Firma digital](05-firma-digital.md) | XML-DSig: algoritmos, canonicalización, certificado del firmante, qué verifica el RPI, bibliotecas y errores comunes. |
 | 06 | [Adjunto PDF](06-adjunto-pdf.md) | Cómo viaja el PDF, su firma, y el hash SHA-256 que lo liga al XML. |
 | 07 | [Respuestas y errores](07-respuestas-y-errores.md) | Códigos HTTP, formato del cuerpo de error, **catálogo completo de códigos** y política de reintentos. |
-| 08 | [Notificaciones de callback](08-notificaciones-callback.md) | Cómo el RPI avisa los cambios de estado (provisorio, definitivo, rechazo): endpoint del Colegio, payload, reintentos, seguridad. |
+| 08 | [Novedades del trámite registral](08-novedades.md) | Cómo el Colegio se entera de los cambios de estado (EG asignada, inscripción, devolución): lista de novedades, acuse, consulta por testimonio. |
 | 09 | [Glosario](09-glosario.md) | Términos registrales, notariales y técnicos del contrato. |
 | 10 | [Campos del formulario](10-campos-del-formulario.md) | Tabla plana de **todos** los campos, con su camino XML, tipo, longitud y obligatoriedad. |
 | 11 | [Artefacto de campos por acto](11-artefacto-campos-por-acto.md) | Cómo consumir `artefacto-campos-por-acto.json` para **generar** el formulario por acto: partes, campos, asentimiento condicional, proporciones. |
@@ -57,7 +57,7 @@ Para el panorama del repositorio (XSD, catálogo, ejemplos, gobernanza), ver el
 | ¿Cómo calculo el hash del PDF? | [06 — Cómo calcular el hash](06-adjunto-pdf.md#cómo-calcular-el-hash) |
 | Me devolvió un error, ¿qué significa? | [07 — Catálogo de códigos de error](07-respuestas-y-errores.md#catálogo-de-códigos-de-error) |
 | ¿Reintento o no? | [07 — Política de reintentos](07-respuestas-y-errores.md#política-de-reintentos) |
-| ¿Cómo me entero de que se inscribió? | [08 — Tipos de eventos](08-notificaciones-callback.md#tipos-de-eventos) |
+| ¿Cómo me entero de que se inscribió? | [08 — Tipos de novedad](08-novedades.md#tipos-de-novedad) |
 | ¿Qué quiere decir "rogante" / "asiento" / "minuta"? | [09 — Glosario](09-glosario.md) |
 
 ---

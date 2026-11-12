@@ -311,7 +311,7 @@ El artefacto te ayuda a **armar y pre-validar** el formulario. Pero el testimoni
    - [05 — Firma digital](05-firma-digital.md): firma XML-DSig del testimonio.
    - [06 — Adjunto PDF](06-adjunto-pdf.md): cómo viaja el PDF firmado junto al XML.
    - [07 — Respuestas y errores](07-respuestas-y-errores.md): códigos HTTP, catálogo de errores, reintentos.
-   - [08 — Notificaciones de callback](08-notificaciones-callback.md): cambios de estado del testimonio.
+   - [08 — Novedades del trámite registral](08-novedades.md): cómo el Colegio se entera de los cambios de estado.
 
 > **Regla mental:** artefacto = **armar** el formulario · XSD = **validar** el XML · protocolo =
 > **enviar**. Los tres se usan, en ese orden.

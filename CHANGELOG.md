@@ -7,6 +7,206 @@ y este contrato adhiere a [Semantic Versioning 2.0.0](https://semver.org/spec/v2
 
 ---
 
+## [3.5.0] — 2026-11-12
+
+**El capítulo 08 cambia de mecanismo: de aviso a consulta.** El RPI deja de
+hacer `POST` a una URL del Colegio y pasa a ofrecer una **lista de novedades**
+que el Colegio consulta y acusa.
+
+> ### ⚠ Reemplaza un mecanismo completo, y se publica como MINOR
+>
+> Cambiar la dirección de la conexión no es un cambio compatible en general.
+> Acá lo es por un hecho verificable: **los callbacks nunca se
+> implementaron**. La versión anterior del capítulo 08 lo decía en su propio
+> texto ("Los callbacks todavía no están implementados (Fase 4)"), el endpoint
+> receptor del Colegio no existe, y la URL y el mecanismo de autenticación
+> estaban marcados como *pendientes de definición*. No hay nada que romper.
+>
+> **El XSD no cambia**, el namespace sigue siendo `/v3` y `VersionContrato`
+> sigue siendo `3.0`: este cambio es de los endpoints y de la documentación, no
+> del formato del envío. Un envío de la v3.4.0 es válido en la v3.5.0 sin
+> tocarlo.
+>
+> **Qué tiene que hacer el Colegio:** nada urgente, y menos trabajo del que
+> tenía pendiente. En lugar de publicar un endpoint hacia afuera y verificar la
+> firma de los avisos, consulta `GET /api/v1/eventos` cada pocos minutos y acusa
+> con `POST /api/v1/eventos/acuse`. Lo que ya hubiera construido del
+> vocabulario de eventos se conserva.
+
+> ### Qué de esta versión está operativo al publicarla
+>
+> La consulta, el acuse y la consulta puntual de un envío están implementados.
+> Las cuatro **novedades de resultado** —`inscripcion_definitiva`,
+> `inscripcion_provisional`, `devuelto_sin_inscribir`,
+> `inscripcion_complementaria`— y la **descarga del documento** se habilitan
+> **después de las pruebas del egreso con Registración**. Hasta entonces la
+> lista entrega `entrada_general_asignada` únicamente.
+>
+> Se publica así a propósito: la forma de pedir, de acusar y de leer los datos
+> no cambia cuando el egreso entre en servicio, así que el Colegio puede
+> implementar los cinco tipos de una vez en lugar de esperar y hacerlo dos
+> veces.
+
+### Agregado
+- **`GET /api/v1/eventos`** — las novedades pendientes de acuse del canal, en
+  orden y hasta 100 por llamada, con `hayMas` para saber si quedó algo afuera.
+  Misma autenticación que el envío (`Authorization: Bearer <token>`).
+- **`POST /api/v1/eventos/acuse`** — `{"secuencias": [41, 42, 43]}` marca
+  recibidas las novedades enumeradas. Idempotente.
+  - **Es un `POST` y no un parámetro del `GET`**: una consulta no puede cambiar
+    datos, porque los proxies la repiten y los clientes la reintentan solos, y
+    un `GET` que además marcara recibido convertiría cada reintento en una
+    pérdida silenciosa de novedades.
+  - **Y el cuerpo es una LISTA, no un `{"hasta": N}`.** Un tope decía "todo lo
+    que sea ≤ N" e incluía novedades que el Colegio **nunca recibió**: la lista
+    se sirve ordenada por secuencia y una novedad puede quedar disponible con
+    una secuencia menor que otra ya entregada, así que el tope la marcaba
+    recibida sin haberse entregado, en silencio. Enumerando, lo único que se
+    marca recibido es lo que el Colegio dijo que recibió.
+- **`GET /api/v1/documentos/{referencia}`** — descarga el PDF del resultado. La
+  `referencia` es un UUID opaco que viene en la novedad. **404** si no existe o
+  si es de otro canal, nunca 403. Cada descarga queda registrada con fecha,
+  hora, canal y clave, incluidos los intentos fallidos.
+- **`GET /api/v1/testimonios/{identificadorEnvio}`** — el estado actual de un
+  envío (`aceptado`, `con_entrada_general`, `con_resultado`), para reconciliar
+  o consultar puntualmente. **No consume novedades.**
+- **`devuelto_sin_inscribir`** e **`inscripcion_complementaria`** como tipos de
+  novedad.
+- **`datos.documentoAnterior` en `inscripcion_definitiva`**, opcional: aparece
+  cuando la definitiva no agrega asientos porque un documento anterior de la
+  misma Entrada General ya entregó las planchas —no una provisional, que no
+  entrega ninguna—. Su documento remite al anterior en lugar de volver a
+  transcribir el asiento, y el campo trae la `referencia` y el `sha256` de ese
+  documento.
+- **El presupuesto de pedidos queda documentado**: es **uno por clave para todo
+  `/api/v1`**, compartido con el envío — 600 por hora con ráfaga de 60. A la
+  cadencia sugerida son 24 por hora, un 4 % del presupuesto.
+
+### Corregido
+- **El capítulo 02 pasa al modelo de consulta** (y era el último que faltaba).
+  Seguía describiendo *callbacks* del RPI hacia el Colegio, con los tipos
+  viejos: el diagrama de secuencia, el paso 5, el paso 6, el paso 7, la
+  observación registral, el rechazo registral y la tabla de tiempos. Ahora dice
+  lo que el servicio hace —el RPI encola, el Colegio consulta y acusa— y usa los
+  tipos del capítulo 08. En particular, `rechazo_registral` deja de figurar como
+  tercer resultado de la calificación: lo que existe es el **devuelto sin
+  inscribir**, que es una salida con su documento y no un rechazo del envío.
+- **El capítulo 07 dejó de decir que la observación registral se subsana por
+  mesa de entradas** (tabla "¿Mismo `IdentificadorEnvio`?"), y la fila del 202
+  ya no dice "esperar callbacks".
+- **El documento de una inscripción provisional es el volante, y nada más**
+  (capítulo 08). El texto anterior daba por hecho que una provisional podía
+  traer "las planchas de lo que sí se inscribió"; Registración confirmó que en
+  el papel no es así, y que no existe la inscripción parcial por acto. El
+  ejemplo de `inscripcion_provisional` pasa a dos páginas, y la explicación de
+  `documentoAnterior` ya no se apoya en una provisional que entregue planchas.
+- **El glosario pasa al modelo de consulta** (capítulo 09), y era el último
+  lugar de la documentación que seguía nombrando *callbacks*. Entradas nuevas:
+  **Devuelto sin inscribir** y **Novedad**. **Rechazo registral** pasa a decir
+  que el término ya no se usa en el contrato y remite al devuelto sin inscribir
+  —se deja la entrada para quien venga de una versión anterior—, y
+  **Callback / Webhook** aclara que este contrato no los usa. Se corrigieron
+  además tres datos que no coincidían con el capítulo 08: el tipo de novedad se
+  llama `inscripcion_provisional` y no `inscripcion_provisoria`, el vencimiento
+  de la provisional viaja en `vencimiento` y no en un `fechaVencimientoVIP` que
+  no existe, y `fechaPresentacion` **no se informa**, aunque la entrada
+  *Presentación* decía que sí. La entrada *Subsanación* dejó de decir que se
+  presenta por mesa de entradas.
+- **El resumen del README** decía que el RPI notifica "vía callback HTTP". Ahora
+  nombra la consulta y el acuse.
+- **`GOVERNANCE.md` y `SECURITY.md` pasan al modelo de consulta**, y eran los
+  dos últimos archivos del repositorio que lo describían al revés. En
+  GOVERNANCE las reglas de compatibilidad hablan ahora de **tipos de novedad** y
+  del formato de `/api/v1/eventos`: agregar un tipo o un campo es MINOR —con la
+  condición, ahora escrita, de que el cliente ignore lo que no conoce—, y
+  pasan a MAJOR quitar un tipo o cambiarle el significado, cambiar de forma
+  incompatible los endpoints de consulta y **cambiar la semántica del acuse o
+  de la `secuencia`**, que es la garantía de que una caída no pierde novedades.
+  La advertencia de versión deprecada viaja en headers y no "en el callback", y
+  el acuerdo bilateral cubre también el **presupuesto de pedidos por clave**,
+  que la consulta comparte con el envío. En SECURITY se fue el ítem de
+  inyección en callbacks —no hay callbacks— y entraron los del mecanismo real:
+  leer novedades, testimonios o documentos **de otro canal**; **confirmar la
+  existencia** de un recurso ajeno, que se contesta 404 y no 403 a propósito;
+  un acuse que marque recibido lo que no se entregó; y falsear el registro de
+  descargas, del que depende el momento con efectos legales.
+- **El glosario tiene por fin "Plancha" y "Volante"**, que el capítulo 08 usa
+  en todo el apartado del documento de resultado y no estaban definidos en
+  ningún lado.
+- **El `mensaje` del 202 ya no habla de callbacks** (capítulo 03): pasa a
+  "Testimonio validado y aceptado. La Entrada General se informa en la novedad
+  entrada_general_asignada." Es el texto literal que devuelve el servicio, y se
+  cambia en los dos lados.
+- **La subsanación de un trámite digital es por el canal digital, no por mesa de
+  entradas** (capítulos 02 y 08). Las dos versiones anteriores del texto decían
+  que la subsanación se presenta en papel citando la EG; el equipo del RPI
+  confirmó que lo que ingresa por testimonio digital **no puede subsanarse por
+  mesa de entradas física**. Como la subsanación digital todavía no existe en el
+  contrato, los dos capítulos ahora remiten a una versión futura en lugar de
+  describir un circuito en papel que no corresponde.
+
+### Cambiado
+- **El capítulo 08 pasa a llamarse
+  [Novedades del trámite registral](docs/08-novedades.md)** (antes
+  `08-notificaciones-callback.md`). Se actualizaron las referencias de los
+  capítulos 02, 03, 07, 11, el índice y el README.
+- **Una novedad se entrega hasta que el Colegio la acusa.** Una caída del
+  sistema del Colegio ya no pierde novedades: quedan esperando. Antes dependía
+  de la política de reintentos del RPI y de que el endpoint receptor estuviera
+  disponible.
+- **El alcance es por canal:** cada token ve únicamente las novedades de los
+  testimonios que se enviaron con su canal. Un `identificadorEnvio` o una
+  `referencia` de otro canal responden **404**, no 403, para no confirmar que
+  existen.
+- **`inscripcion_provisoria` pasa a llamarse `inscripcion_provisional`**, que es
+  como la nombra el circuito registral: así se llama el volante que emite el
+  registro y la figura que fija la resolución de su plazo. Se corrige antes de
+  que haya integraciones contra el nombre viejo.
+- **`entradaGeneral` es explícitamente el mismo objeto que en el capítulo 03**
+  (`numero`, `anio` de cuatro dígitos, `numeroPresentacion`). No hay dos formas
+  de la EG en el contrato.
+
+### Quitado
+- **El callback `rechazo_registral`.** Nombraba un rechazo por causal grave, y
+  el circuito registral no emite esa figura por este canal. Lo que existe es el
+  **devuelto sin inscribir**, que es una salida con su documento y no un
+  rechazo del envío: por eso el tipo nuevo se llama `devuelto_sin_inscribir`.
+- **Los campos `matriculas` y `observaciones` estructuradas** de los eventos de
+  inscripción. El contenido jurídico del resultado es el **texto que redacta el
+  registrador**, y extraerle campos con un analizador sería inventar una
+  precisión que el dato no tiene. Viaja estructurado lo que tiene una columna
+  propia en el sistema registral —Entrada General, presentación, fecha de
+  salida, vencimiento de la provisional— y el resto está en el **PDF firmado**,
+  que se descarga con la referencia que trae la novedad.
+- **`fechaPresentacion`** del objeto `entradaGeneral`, por coherencia con el
+  capítulo 03: de esa fecha depende la prioridad registral y el RPI no informa
+  una que podría estar corrida un día hábil. La fecha figura en el documento de
+  resultado.
+- **La política de reintentos del RPI, los headers `X-RPI-*` y la sección de
+  seguridad del callback.** No aplican a un mecanismo de consulta: no hay
+  pedido que el RPI inicie, así que no hay nada que firmar ni que reintentar
+  contra el Colegio.
+
+### Pendiente de definición
+- **El momento con efectos legales.** Con este mecanismo el único momento
+  verificable del lado del RPI es la **descarga del documento**, que queda
+  registrada con fecha, hora y canal. Falta la confirmación formal de que ese es
+  el momento que corre el plazo de la inscripción provisional.
+- **Con qué se firma el documento de resultado**: la firma de la funcionaria, un
+  sello del organismo, o una forma mixta. Nada de lo que describe el capítulo
+  cambia con lo que se decida. Mientras no haya decisión **el documento sale sin
+  firma de ninguna clase**, con la marca visible
+  `DOCUMENTO DE PRUEBA – SIN FIRMA DIGITAL`, y **no tiene validez registral**.
+- **La subsanación por testimonio digital.** Lo que ingresa por este canal no se
+  subsana por mesa de entradas física, así que hasta que un envío pueda declarar
+  de qué Entrada General es subsanación, un trámite digital observado no tiene
+  por dónde volver. Las novedades ya están listas para entregar el resultado de
+  una presentación posterior —el RPI enumera todas las presentaciones de la EG—;
+  lo que falta es el envío.
+- **Un PDF con todas las planchas, o uno por titular.**
+
+---
+
 ## [3.4.0] — 2026-10-28
 
 **`NumeroTasa` pasa a ser obligatorio.** El escribano informa el número de la

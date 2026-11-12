@@ -12,15 +12,15 @@ Antes del catálogo, la distinción que define qué hacer:
 
 Los rechazos de este capítulo ocurren **antes** de que el testimonio tenga Entrada
 General. Las observaciones del calificador, que ocurren después, no son errores de
-la API: llegan por callback (ver [02 — Qué pasa si algo falla](02-flujo-end-to-end.md#qué-pasa-si-algo-falla)
-y [08 — Notificaciones](08-notificaciones-callback.md)).
+la API: llegan como novedades del trámite (ver [02 — Qué pasa si algo falla](02-flujo-end-to-end.md#qué-pasa-si-algo-falla)
+y [08 — Novedades](08-novedades.md)).
 
 ## Códigos HTTP de respuesta
 
 | Código | Significado | Acción del cliente |
 |--------|-------------|--------------------|
 | 200 OK | Testimonio ya recibido y aceptado previamente (idempotencia) | Usar la respuesta para sincronizar el estado local. No reenviar. |
-| 202 Accepted | Testimonio validado y aceptado | Guardar el `identificadorEnvio` y esperar callbacks. |
+| 202 Accepted | Testimonio validado y aceptado | Guardar el `identificadorEnvio` y consultar las novedades ([08](08-novedades.md)). |
 | 400 Bad Request | **Todo rechazo del envío**: XML mal formado o inválido (XSD), reglas del contrato no cumplidas, multipart inválido, hash del PDF, **cualquier problema de firma o de certificado**, y el **escribano no registrado como rogante** | Corregir y enviar con un `identificadorEnvio` nuevo. El del rogante no se corrige en el XML: ver [`ROGANTE_NO_ENCONTRADO`](#rogante_no_encontrado--el-alta-la-hace-el-rpi). |
 | 401 Unauthorized | **Solo la clave de API**: faltante o inválida | Revisar la clave. No es un problema del envío. |
 | 403 Forbidden | *Reservado, no implementado.* Hoy no se devuelve nunca | — |
@@ -98,7 +98,7 @@ servicio, incluidas las 429 y las 5xx.
 | `CERTIFICADO_NO_VIGENTE` | **400** | `motivo: "firma_invalida"`, `causa: "cadena_no_confiable"` (XML) · `motivo: "pdf_cadena_no_confiable"` (PDF) | El certificado del firmante está vencido a la fecha de recepción. |
 | `CERTIFICADO_REVOCADO` | — | ***reservado, no implementado*** | El RPI **no consulta revocación**: sin OCSP ni CRL, por decisión de diseño del **ADR-003**. Un certificado revocado pero vigente y con cadena válida hoy **pasa**. |
 | `CERTIFICADO_NO_RECONOCIDO` | **400** | `motivo: "firma_invalida"`, `causa: "cadena_no_confiable"` (XML) · `motivo: "pdf_cadena_no_confiable"` (PDF) | La cadena del firmante no ancla en una raíz confiable del RPI. |
-| `CUIT_NO_COINCIDE` | 400 | `motivo: "firma_invalida"` + `info.causa` | El CUIT del certificado del firmante no coincide con el del XML, o no se pudo leer. Las dos causas, en [El CUIT del firmante](#el-cuit-del-firmante-causas-de-firma_invalida). |
+| `CUIT_NO_COINCIDE` | 400 | `motivo: "firma_invalida"` + `info.causa` | El CUIT del certificado del firmante no coincide con el del XML, o no se pudo leer. Las dos causas, en [El CUIT del firmante](#el-cuit-del-firmante--causas-de-firma_invalida). |
 | `HASH_PDF_NO_COINCIDE` | 400 | `motivo: "hash_pdf_no_coincide"` | El hash declarado en el XML no coincide con el PDF recibido. |
 | `PDF_NO_FIRMADO` | 400 | `motivo: "pdf_firmante_no_coincide"` | Ninguna firma del PDF corresponde al escribano autorizante: incluye el caso del PDF sin ninguna firma. `info.firmantesPdf` trae lo que se encontró. |
 | `PDF_FIRMA_INVALIDA` | 400 | `motivo: "pdf_firma_invalida"` · `"pdf_contenido_alterado"` | La firma del escribano en el PDF no verifica, o no cubre todo el documento. |
@@ -513,7 +513,7 @@ operador del sistema del Colegio para que investigue.
 |-----------|------------------------------|
 | Timeout, error de red, 5xx, 429 | Sí: es el mismo envío |
 | Rechazo 4xx, después de corregir | No: es un envío nuevo |
-| Observación registral (callback `inscripcion_provisoria`) | No aplica: se subsana por mesa de entradas (ver [02](02-flujo-end-to-end.md#observación-registral-después-de-la-eg)) |
+| Observación registral (novedad `inscripcion_provisional`) | No aplica: no es un reenvío. La subsanación de un trámite digital es **por este canal**, y todavía no está disponible — está prevista para una versión futura del contrato (ver [02](02-flujo-end-to-end.md#observación-registral-después-de-la-eg)) |
 
 ## Ejemplos de respuestas de error
 
