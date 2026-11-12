@@ -29,8 +29,22 @@ Ejemplos de cosas que califican:
   campo de hash y eso permite ataques).
 - Una debilidad criptográfica en los algoritmos elegidos (ej. si SHA-256 se
   considera comprometido en el futuro).
-- Un problema en cómo se manejan los callbacks que permita inyección de
-  eventos falsos.
+- Una manera de que un canal lea **novedades, testimonios o documentos de
+  otro**. El alcance de la consulta está atado al canal con el que se envió
+  cada testimonio, no al token concreto, y es la propiedad que sostiene todo
+  el mecanismo: la lista de un token trae únicamente las novedades de sus
+  propios envíos.
+- Una manera de **confirmar la existencia** de un recurso ajeno. Una
+  `referencia` de documento o un `identificadorEnvio` de otro canal se
+  contestan con **404**, igual que uno inexistente, y a propósito: un 403
+  confirmaría que existe. Un camino que distinga los dos casos —por el código,
+  por el cuerpo, por el tiempo de respuesta— es un problema de seguridad.
+- Una manera de que un acuse marque como recibidas novedades que **no se
+  entregaron**, o de que una novedad se pierda sin acusar. El acuse enumera
+  secuencias justamente para eso ([08](docs/08-novedades.md)).
+- Un problema en el registro de descargas que permita **negar o falsear** una
+  descarga que ocurrió: de ese registro depende el momento con efectos
+  legales.
 
 ---
 

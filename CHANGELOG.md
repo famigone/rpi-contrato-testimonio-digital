@@ -100,6 +100,25 @@ que el Colegio consulta y acusa.
   presenta por mesa de entradas.
 - **El resumen del README** decía que el RPI notifica "vía callback HTTP". Ahora
   nombra la consulta y el acuse.
+- **`GOVERNANCE.md` y `SECURITY.md` pasan al modelo de consulta**, y eran los
+  dos últimos archivos del repositorio que lo describían al revés. En
+  GOVERNANCE las reglas de compatibilidad hablan ahora de **tipos de novedad** y
+  del formato de `/api/v1/eventos`: agregar un tipo o un campo es MINOR —con la
+  condición, ahora escrita, de que el cliente ignore lo que no conoce—, y
+  pasan a MAJOR quitar un tipo o cambiarle el significado, cambiar de forma
+  incompatible los endpoints de consulta y **cambiar la semántica del acuse o
+  de la `secuencia`**, que es la garantía de que una caída no pierde novedades.
+  La advertencia de versión deprecada viaja en headers y no "en el callback", y
+  el acuerdo bilateral cubre también el **presupuesto de pedidos por clave**,
+  que la consulta comparte con el envío. En SECURITY se fue el ítem de
+  inyección en callbacks —no hay callbacks— y entraron los del mecanismo real:
+  leer novedades, testimonios o documentos **de otro canal**; **confirmar la
+  existencia** de un recurso ajeno, que se contesta 404 y no 403 a propósito;
+  un acuse que marque recibido lo que no se entregó; y falsear el registro de
+  descargas, del que depende el momento con efectos legales.
+- **El glosario tiene por fin "Plancha" y "Volante"**, que el capítulo 08 usa
+  en todo el apartado del documento de resultado y no estaban definidos en
+  ningún lado.
 - **El `mensaje` del 202 ya no habla de callbacks** (capítulo 03): pasa a
   "Testimonio validado y aceptado. La Entrada General se informa en la novedad
   entrada_general_asignada." Es el texto literal que devuelve el servicio, y se

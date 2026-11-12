@@ -184,6 +184,28 @@ Entrada General). Da lugar a una
 subsana en término. No confundir con el
 [rechazo estructural](#rechazo-estructural).
 
+### Plancha
+
+**Asiento de inscripción**: el texto que el registrador redacta cuando un acto
+queda inscripto. En papel se abrocha al testimonio, y por eso la plancha —no un
+campo estructurado— es el contenido jurídico del resultado. Tiene número y
+texto propios, y una clave de verificación.
+
+En el flujo digital las planchas se **transcriben palabra por palabra** en el
+[documento de resultado](08-novedades.md#el-documento-de-resultado), una por
+página. Las trae la novedad `inscripcion_definitiva` —o la
+`inscripcion_complementaria`, si después aparece un asiento más—, y un
+testimonio de varios actos puede producir varias. **Una
+[inscripción provisoria](#inscripción-provisoria) no trae ninguna**: mientras el
+trámite está observado no hay asiento que entregar, y lo que se inscriba se
+asienta cuando el trámite cierra.
+
+**Cada plancha se entrega una sola vez.** Si un documento anterior de la misma
+Entrada General ya la entregó y la salida nueva no agrega asientos, el documento
+nuevo **remite** a ese en lugar de volver a transcribirla (campo
+`documentoAnterior` de la novedad): el mismo asiento no viaja en dos documentos
+con dos huellas distintas.
+
 ### Plataforma Digital (PD)
 
 Canal digital existente del RPI para formularios estructurados (Dominio,
@@ -294,6 +316,19 @@ Documento que el RPI emite cuando un trámite queda inscripto provisoriamente,
 detallando las observaciones que deben subsanarse (volante de subsanación).
 Por extensión, se usa "VIP" para referirse al estado de inscripción provisoria
 en sí.
+
+### Volante
+
+Documento que el RPI emite cuando una salida **no es una inscripción
+definitiva**, y que dice qué pasó con el trámite. El de una
+[inscripción provisoria](#inscripción-provisoria) detalla las observaciones a
+subsanar y lleva el vencimiento —es el VIP, la entrada de arriba—; el de un
+[devuelto sin inscribir](#devuelto-sin-inscribir) dice que no se inscribió.
+
+Como las [planchas](#plancha), el volante se transcribe palabra por palabra en
+el [documento de resultado](08-novedades.md#el-documento-de-resultado). **El
+documento de una provisional es el volante, y nada más**: el volante y el bloque
+de vinculación, dos páginas.
 
 ## Términos notariales
 
